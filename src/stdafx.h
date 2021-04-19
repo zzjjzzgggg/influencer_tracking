@@ -12,10 +12,10 @@
 #include <future>
 #include <thread>
 
-#include <adv/LRUCache.h>
 #include <os/osutils.h>
 #include <io/ioutils.h>
 #include <adv/rngutils.h>
 #include <graph/graph.h>
 
 using namespace fmt::literals;
+using ISet = std::vector<int>;
