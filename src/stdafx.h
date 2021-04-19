@@ -19,3 +19,12 @@
 
 using namespace fmt::literals;
 using ISet = std::vector<int>;
+
+using namespace graph;
+
+typedef std::pair<int,int> Edge;
+//typedef std::vector<std::pair<int,int>> SocialAction;
+using BernoulliSet = std::vector<int>;
+
+//typedef std::pair<int, int> IntPr;
+typedef std::vector<std::pair<int, int>> Edges;
