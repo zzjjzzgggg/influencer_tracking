@@ -19,7 +19,7 @@ message(STATUS "LIBRARIES " ${LIBRARIES})
 
 
 
-add_library(dyn_dgraph_mgr dyn_dgraph_mgr.cpp sam_graph.h)
+add_library(dyn_dgraph_mgr dyn_dgraph_mgr.cpp)
 target_link_libraries(dyn_dgraph_mgr ${LIBRARIES})
 
 

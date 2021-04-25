@@ -7,9 +7,6 @@
 
 #include "dyn_dgraph_mgr.h"
 #include "candidate.h"
-#include "social_action.h"
-#include "sam_graph.h"
-//#include "obj_fun.h"
 
 class SievePAG{
 public:
