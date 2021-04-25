@@ -5,7 +5,7 @@
 #ifndef SIEVEPAG_BERNOULLI_GET_H
 #define SIEVEPAG_BERNOULLI_GET_H
 
-#endif //SIEVEPAG_BERNOULLI_GET_H
+
 
 #include "stdafx.h"
 
@@ -26,3 +26,5 @@ public:
         return bs;
     }
 };
+
+#endif //SIEVEPAG_BERNOULLI_GET_H

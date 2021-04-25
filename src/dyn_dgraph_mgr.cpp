@@ -1,6 +1,8 @@
 //
-// Created by weiwei on 2021/4/19.
+// Created by weiwei on 2021/4/20.
 //
+
+#include "dyn_dgraph_mgr.h"
 
 int DynDGraphMgr::getCC(const int u) {
     if (nd_cc_.find(u) != nd_cc_.end())
@@ -53,8 +55,12 @@ void DynDGraphMgr::reverseFanOut(const dir::DGraph& G, const int cv,
     }
 }
 
+
 void DynDGraphMgr::addEdge(const int u, const int v) {
     int cu = getCC(u), cv = getCC(v);
+
+    dag_.isEdge(cu, cv);
+
     // omit self-loop edges and edges already in DAG
     if (cu != cv && !dag_.isEdge(cu, cv)) {
         dag_.addEdge(cu, cv);
@@ -155,5 +161,6 @@ void DynDGraphMgr::clear(const bool deep) {
         while (!recycle_bin_.empty()) recycle_bin_.pop();
     }
 }
+
 
 

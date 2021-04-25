@@ -4,7 +4,6 @@ project (Example C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_BUILD_TYPE "Release")
@@ -23,6 +22,9 @@ find_package(Threads REQUIRED)
 find_package(gflags REQUIRED)
 find_package(CPPLIB REQUIRED)
 
+# eigen3
+include_directories($ENV{EIGEN_INCLUDE_DIR})
+
 add_definitions(${CPPLIB_DEFINITIONS})
 include_directories(${CPPLIB_INCLUDE_DIRS})
 
@@ -32,3 +34,4 @@ set(LIBRARIES ${LIBRARIES} gflags ${CPPLIB_LIBRARIES})
 # MESSAGE(STATUS "LIBRARIES: " ${LIBRARIES})
 
 add_subdirectory(src)
+

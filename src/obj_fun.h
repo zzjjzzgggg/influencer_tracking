@@ -1,10 +1,9 @@
-/**
- * Copyright (C) by J.Z. 2019-03-25 16:37
- * Distributed under terms of the MIT license.
- */
+//
+// Created by weiwei on 2021/4/20.
+//
 
-#ifndef __OBJ_FUN_H__
-#define __OBJ_FUN_H__
+#ifndef TEST_CMAKE_OBJ_FUN_H
+#define TEST_CMAKE_OBJ_FUN_H
 
 #include "stdafx.h"
 
@@ -12,10 +11,11 @@ class ObjFun {
 public:
     virtual ~ObjFun() {}
 
-    virtual double getVal(const int) const = 0;
+    virtual double getVal(const int u) const = 0;
     virtual double getVal(const std::vector<int>&) const = 0;
     virtual double getGain(const int, const std::vector<int>&) const = 0;
 
 }; /* ObjFun */
 
-#endif /* __OBJ_FUN_H__ */
+
+#endif //TEST_CMAKE_OBJ_FUN_H

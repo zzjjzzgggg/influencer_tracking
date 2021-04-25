@@ -3,11 +3,20 @@
 //
 
 #include "sieve_pag.h"
-#include "dyn_dgraph_mgr.h"
+//#include "dyn_dgraph_mgr.h"
+#include "bernoulli_get.h"
+
 void SievePAG::addTheta(const int i) {
-    /*int pos;
-    pos=candidate_buf_.size();
-    candidate_buf_.emplace_back()*/
+    int pos;
+    if(!recycle_bin_.empty()){
+        pos=recycle_bin();
+        recycle_.pop_back();
+    }
+    else{ //other realloc room
+        pos=candidate_buf_.size();
+        candidate_buf_.emplace_back(num_smaples);
+    }
+    this_pos_[i]=pos;
 
 }
 
@@ -45,8 +54,14 @@ void SievePAG::updateThresholds(std::vector<int> new_thresholds) {
 }
 void SievePAG::getGraphEdge(){
     DynDGraphMgr dynDGraphMgr;
+    //n is the num_smaples
+    BernoulliSet berSet(num_samples,5);
     for(auto& social_action:social_actions_){
+        ISet I_set=berSet.getBernoulliSet();
+        
         dynDGraphMgr.addEdge(social_action.edge.first,social_action.edge.second);
+        
+
     }
 }
 

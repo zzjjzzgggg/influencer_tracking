@@ -5,7 +5,7 @@
 #ifndef SIEVEPAG_SOCIAL_STREAM_H
 #define SIEVEPAG_SOCIAL_STREAM_H
 
-#endif //SIEVEPAG_SOCIAL_STREAM_H
+
 
 #include "stdafx.h"
 #include "social_action.h"
@@ -39,3 +39,5 @@ SocialStream::SocialStream(std::vector<SocialAction> &S) {
 //如果candidate的数量是小于k个，并且这个节点的增益值大于theta的
 //这个节点v加入这个theta的集合
 //使用monte-carlo 得到Ft的最大值
+
+#endif //SIEVEPAG_SOCIAL_STREAM_H

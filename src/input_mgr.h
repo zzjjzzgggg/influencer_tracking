@@ -1,12 +1,9 @@
 //
-// Created by weiwei on 2021/4/19.
+// Created by weiwei on 2021/4/20.
 //
 
-#ifndef SIEVEPAG_INPUT_MGR_H
-#define SIEVEPAG_INPUT_MGR_H
-
-#endif //SIEVEPAG_INPUT_MGR_H
-
+#ifndef TEST_CMAKE_INPUT_MGR_H
+#define TEST_CMAKE_INPUT_MGR_H
 
 #include "stdafx.h"
 
@@ -17,6 +14,7 @@
  */
 class InputMgr {
 public:
+    int serial;
     mutable int oracle_calls_ = 0;
     std::unordered_set<int> affected_nodes_;
 
@@ -68,4 +66,4 @@ public:
 
 }; /* InputMgr */
 
-
+#endif //TEST_CMAKE_INPUT_MGR_H

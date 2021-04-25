@@ -1,12 +1,9 @@
 //
-// Created by weiwei on 2021/4/19.
+// Created by weiwei on 2021/4/20.
 //
 
-#ifndef SIEVEPAG_DYN_DGRAPH_MGR_H
-#define SIEVEPAG_DYN_DGRAPH_MGR_H
-
-#endif //SIEVEPAG_DYN_DGRAPH_MGR_H
-
+#ifndef TEST_CMAKE_DYN_DGRAPH_MGR_H
+#define TEST_CMAKE_DYN_DGRAPH_MGR_H
 
 #include "input_mgr.h"
 
@@ -62,7 +59,7 @@ public:
               new_cc_edges_(o.new_cc_edges_) {}
 
     // copy assignment
-    DynDGraphMgr& operator=(const DynDGraphMgr& o) {
+    DynDGraphMgr& operator=(const DynDGraphMgr &o) {
         InputMgr::operator=(o);
         HyperANF::operator=(o);
         dag_ = o.dag_;
@@ -76,8 +73,7 @@ public:
 
     // Run DFS to identify CCs in DAG, return affected nodes.
     // will use new_cc_edges_.
-    std::vector<int> getAffectedNodes() override{
-        return std::vector<int>(affected_nodes_.begin(), affected_nodes_.end());}
+    std::vector<int> getAffectedNodes() override;
 
     void clear(const bool deep = false) override;
     std::vector<int> getNodes() const override {
@@ -86,7 +82,9 @@ public:
         return nodes;
     }
     int getNumNodes() const override { return nd_cc_.size(); }
-    double getReward(const int node) const override { return estimate(node); }
+    double getReward(const int node) const override {
+            return estimate(node);
+    }
     double getReward(const std::vector<int>& S) const override {
         return estimate(S.begin(), S.end());
     }
@@ -100,7 +98,6 @@ public:
                    const std::unordered_set<int>& S) const override {
         return getGain(u, S.begin(), S.end());
     }
-
 
 }; /* DynDGraphMgr */
 
@@ -131,3 +128,4 @@ double DynDGraphMgr::getGain(const int u, const InputIter first,
     return gain;
 }
 
+#endif //TEST_CMAKE_DYN_DGRAPH_MGR_H

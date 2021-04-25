@@ -1,19 +1,16 @@
 //
-// Created by weiwei on 2021/4/19.
+// Created by weiwei on 2021/4/20.
 //
 
-#ifndef SIEVEPAG_CANDIDATE_H
-#define SIEVEPAG_CANDIDATE_H
-
-#endif //SIEVEPAG_CANDIDATE_H
-
+#ifndef TEST_CMAKE_CANDIDATE_H
+#define TEST_CMAKE_CANDIDATE_H
 
 #include "stdafx.h"
 #include "obj_fun.h"
-
 /**
  * The candidate items corresponding to a threshold.
  */
+
 class Candidate {
 public:
     int num_samples_;
@@ -40,11 +37,14 @@ public:
         S_vec_.clear();
         S_vec_.resize(num_samples_);
     }
-
-    void insert(const int e, const BernoulliSet& bs) {
+    void insert(const int e, const BernoulliSet& bs){
         S_.insert(e);
         for (int i : bs) S_vec_[i].push_back(e);
     }
+//    void insert(const int e, const BernoulliSet& bs) {
+//        S_.insert(e);
+//        for (int i : bs) S_vec_[i].push_back(e);
+//    }
 
     std::vector<int> getMembers() const {
         return std::vector<int>(S_.begin(), S_.end());
@@ -67,6 +67,13 @@ public:
     }
 
     //
+//    double gain(const int e, const BernoulliSet& bs,
+//                const ObjFun* obj_ptr) const {
+//        double g = 0;
+//        for (int trial : bs) g += obj_ptr->getGain(e, S_vec_[trial]);
+//        return g / num_samples_;
+//    }
+
     double gain(const int e, const BernoulliSet& bs,
                 const ObjFun* obj_ptr) const {
         double g = 0;
@@ -76,5 +83,4 @@ public:
 
 }; /* Candidate */
 
-#endif /* __CANDIDATE_H__ */
-
+#endif //TEST_CMAKE_CANDIDATE_H
