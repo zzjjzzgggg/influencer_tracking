@@ -2,8 +2,8 @@
 // Created by weiwei on 2021/4/20.
 //
 
-#ifndef TEST_CMAKE_STDAFX_H
-#define TEST_CMAKE_STDAFX_H
+#ifndef STDAFX_H
+#define STDAFX_H
 
 #include <cstdio>
 #include <cassert>
@@ -48,4 +48,4 @@ using BernoulliSet = std::vector<int>;
 typedef std::pair<int, int> IntPr;
 typedef std::vector<std::pair<int, int>> IntPrV;
 
-#endif //TEST_CMAKE_STDAFX_H
+#endif //STDAFX_H

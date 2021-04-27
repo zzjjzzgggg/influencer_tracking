@@ -2,8 +2,8 @@
 // Created by weiwei on 2021/4/20.
 //
 
-#ifndef TEST_CMAKE_INPUT_MGR_H
-#define TEST_CMAKE_INPUT_MGR_H
+#ifndef INPUT_MGR_H
+#define INPUT_MGR_H
 
 #include "stdafx.h"
 
@@ -66,4 +66,4 @@ public:
 
 }; /* InputMgr */
 
-#endif //TEST_CMAKE_INPUT_MGR_H
+#endif //INPUT_MGR_H

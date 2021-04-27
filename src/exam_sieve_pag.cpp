@@ -3,7 +3,7 @@
 //
 
 #include "sieve_pag.h"
-#include "dyn_dgraph_mgr.h"
+//#include "dyn_dgraph_mgr.h"
 #include "bernoulli_get.h"
 #include <gflags/gflags.h>
 
@@ -11,20 +11,34 @@
 int main(){
     int budget=10;
     double eps=0.2;
-    int num_samples=3;
-    double p=1;
+    int num_samples=5;
+    double p=0.8;
     SievePAG pag{num_samples,budget,eps};
     SocialAcs ss;
+    ss.push_back({{1,2},1619009223});
+
     ss.push_back({{1,2},1619009211});
-    ss.push_back({{1,4},1619009223});
-//    ss.push_back({{1,2},1619009224});
-    ss.push_back({{1,3},1619009222});
-    ss.push_back({{2,5},1619009223});
-    ss.push_back({{2,6},1619009223});
+    ss.push_back({{1,2},1619009211});
+    ss.push_back({{1,4},1619009211});
+//
+    ss.push_back({{2,3},1619009224});
+    ss.push_back({{2,3},1619009224});
+    ss.push_back({{2,3},1619009224});
+
+    ss.push_back({{4,5},1619009223});
+    ss.push_back({{4,5},1619009223});
+
+    ss.push_back({{4,5},1619009223});
+    ss.push_back({{4,5},1619009223});
+    ss.push_back({{4,5},1619009223});
+
+    ss.push_back({{4,5},1619009223});
+
+    ss.push_back({{5,8},1619009223});
     ss.push_back({{2,7},1619009223});
-//    ss.push_back({{2,8},1619009223});
-//    ss.push_back({{1,3},1619009211});
-//    ss.push_back({{2,3},1619009211});
+    ss.push_back({{2,8},1619009223});
+    ss.push_back({{1,3},1619009211});
+    ss.push_back({{2,9},1619009211});
 //    ss.push_back({{2,3},1619009211});
 //    ss.push_back({{2,3},1619009211});
 //    ss.push_back({{2,3},1619009211});
@@ -69,18 +83,19 @@ int main(){
 //        std::cout<<s.first.first<<" "<<s.first.second<<std::endl;
 //    }
     for(auto &s:ss){
+
         BernoulliSetGenerator bsgen(num_samples,p);
         BernoulliSet bs=bsgen.getBernoulliSet();
 
-        pag.feed(s,bs);
+//        pag.feed(s,bs);
+        pag.update(s,bs);
         std::vector<int> St=pag.getResult();
-        pag.clear();
 
-        for(auto &item:St){
+       for(auto &item:St){
             std::cout<<item<<" ";
         }
         std::cout<<std::endl;
-//        pag.clear();
+        pag.clear();
     }
 
     return 0;

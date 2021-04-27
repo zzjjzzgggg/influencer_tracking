@@ -1,107 +1,154 @@
 //
 // Created by weiwei on 2021/4/18.
 //
-
 #include "sieve_pag.h"
-//#include "dyn_dgraph_mgr.h"
-#include "bernoulli_get.h"
-
+/**
+ *add threshold theta
+ */
 void SievePAG::addTheta(const int i) {
     int pos;
-    if(!recycle_bin_.empty()){
-        pos=recycle_bin();
-        recycle_.pop_back();
+    if(!recycle_bin_.empty()){//if recycle_bin has an unoccupied room
+        pos=recycle_bin_.top();//the last
+        recycle_bin_.pop();//delete the last one in recycle bin
+        candidate_buf_[pos].clear();
     }
-    else{ //other realloc room
-        pos=candidate_buf_.size();
-        candidate_buf_.emplace_back(num_smaples);
+    else{ //otherwise realloc room
+        pos=candidate_buf_.size();//add a new one in candidate_buf
+        candidate_buf_.emplace_back();
     }
     this_pos_[i]=pos;
-
 }
 
+/**
+ *delete threshold theta
+ */
 void SievePAG::delTheta(const int i) {
     //get pos
-    int pos=thi_pos_[i];
+    int pos=this_pos_[i];
     candidate_buf_[pos].clear();
+    recycle_bin_.push(pos);
     this_pos_.erase(i);
 }
 
-void SievePAG::updateThresholds(std::vector<int> new_thresholds) {
-    if(!this_pos_.empty()){
-        std::vector<int> v_intersection;
-        std::set_intersection(thresholds_.begin(), thresholds_.end(),
-                              new_thresholds.begin(), new_thresholds.end(),
-                              std::back_inserter(v_intersection));
-        std::vector<int> insec1;
-        // new theta中有，old theta中没有
-        set_difference(thresholds_.begin(), thresholds_.end(), v_intersection.begin(), v_intersection.end(), inserter(insec1, insec1.begin()));
-
-        // old theta中有，new theta中没有
-        std::vector<int> insec2;
-        set_difference(new_thresholds.begin(), new_thresholds.end(), v_intersection.begin(), v_intersection.end(), inserter(insec2, insec2.begin()));
-        for(auto& item:insec1){
-            /***
-             * clear every stheat
-             */
-        }
-        for(auto& item:insec2){
-            /***
-             * delete S theta
-             */
+/**
+ * update thresholds
+ */
+void SievePAG::updateThresholds() {
+    int new_li =(int)std::floor(std::log( (1-eps_)*mx_gain_) / std::log(1 + eps_)),
+            new_ui =(int)std::ceil(std::log(2 * budget_ * mx_gain_) / std::log(1 + eps_));
+    int li, ui;               // lower bound and upper bound of theata index
+    if (!this_pos_.empty()) {
+        li = this_pos_.begin()->first;//get the theta index
+        ui = this_pos_.rbegin()->first;//get the theta index reverse
+        while (li <= ui && li < new_li) {
+            delTheta(li);// delete outdated thresholds
+            li++;
         }
     }
+    li = this_pos_.empty() ? new_li : ui + 1;
+    for (int i = li; i <= new_ui; i++) addTheta(i);
 }
-void SievePAG::getGraphEdge(){
-    DynDGraphMgr dynDGraphMgr;
-    //n is the num_smaples
-    BernoulliSet berSet(num_samples,5);
-    for(auto& social_action:social_actions_){
-        ISet I_set=berSet.getBernoulliSet();
-        
-        dynDGraphMgr.addEdge(social_action.edge.first,social_action.edge.second);
-        
 
+/**
+ * check whether the delta change
+ */
+bool SievePAG::updateMaxGain(const std::vector<int> &nodes) {
+
+    bool is_changed=false;
+    for(auto u:nodes){ //for all node,calculate the Ft({v})
+        double reward_sums=0;
+        for(int i=0;i<num_samples_;i++){
+            std::vector<int> all_node=sam_graphs_[i]->getNodes();
+            bool flag=(std::find(all_node.begin(),all_node.end(),u)!=all_node.end());
+            if(flag){
+                reward_sums+=sam_graphs_[i]->getReward(u);
+            }
+        }
+        double reward=reward_sums/num_samples_;
+        if(reward>mx_gain_){
+            mx_gain_=reward;
+            is_changed= true;
+        }
     }
+    return is_changed;
 }
 
-double SievePAG::getMaxDelta(std::vector<int> nodes) {
-    double maxDelta=0.0;
-    /***
-     *  calculate Ft(v) get max
-     */
-    return maxDelta;
-}
+// Process social action s and its Bernoulli set.
+void SievePAG::update(const SocialAc &s,const BernoulliSet& bs){
+    //add edge
+    input_mgr_.addEdge(s.first.first,s.first.second);
+    //get affected nodes
+    std::vector<int> nodes=input_mgr_.getAffectedNodes();
 
-//get nodes whose influence spread changes
-std::vector<int> SievePAG::getInfluencers(SocialAction e) {
-    DynDGraphMgr dynDGraphMgr;
-    dynDGraphMgr.addEdge(e.edge.first,e.edge.second);
-    std::vector<int> affect_nodes=dynDGraphMgr.getAffectedNodes();
-    return affect_nodes;
-}
+    for(auto b:bs){
+        sam_graphs_[b]->addEdge(s.first.first,s.first.second);
+    }
 
-void SievePAG::filterNodes(std::vector<int> affect_nodes) {
-    for(auto& nodev:affect_nodes){
-        for(auto& theta:thresholds_){
-            int index=thresholds_.at(theta);
-            if(getCandidate(index).size()<budget_&&getGain(affect_nodes)>=theta){
-                /***
-                 * nodev is added to S theta
-                 */
+    //if max delta change ,delta change,need to update thresholds
+    if(updateMaxGain(nodes)) {
+        updateThresholds();
+    }
+
+    // filter nodes by thresholds
+    for(auto u:nodes){
+        for(auto &pr:this_pos_){
+            int i=pr.first;//theta-index
+            auto& ca=getCandidate(i);//definite cite may need to insert item
+            if(!ca.isMember(u)&&ca.size()<budget_){
+                double gain_sums=0;//sum of gain
+                double threshold=getThreshold(i);
+
+                std::vector<int> SS=ca.getMembers();
+                for(int k=0;k<num_samples_;k++){
+                    std::vector<int> all_node=sam_graphs_[k]->getNodes();
+
+                    if(std::find(all_node.begin(),all_node.end(),u)==all_node.end()){
+                        continue;//u is not in the sample graph
+                    }
+                    std::vector<int> new_S;//the new_S delete the item not in graph
+                    for(auto &item:SS){
+                        bool flag=(std::find(all_node.begin(),all_node.end(),item)!=all_node.end());
+                        if(flag){
+                            new_S.push_back(item);
+                        }
+                    }
+                    gain_sums+=sam_graphs_[k]->getGain(u,new_S);
+                    new_S.clear();
+                }
+                double gain=gain_sums/num_samples_;
+                if(gain>=threshold){
+                    ca.insert(u);
+                }
             }
         }
     }
+};
+
+std::vector<int> SievePAG::getResult() {
+    int i_mx=-100;//theta-index
+    double rwd_mx=0;
+    for(auto &pr:this_pos_){
+        double rwd_sum=0;
+        int i=pr.first;//theta index
+        auto ca=getCandidate(i);//get the theta to index
+        std::vector<int> SS=ca.getMembers();
+        for(int k=0;k<num_samples_;k++) {
+            std::vector<int> all_node = sam_graphs_[k]->getNodes();
+            std::vector<int> new_S;
+            for (auto &item:SS) {
+                bool flag = (std::find(all_node.begin(), all_node.end(), item) != all_node.end());
+                if (flag) {
+                    new_S.push_back(item);
+                }
+            }
+            rwd_sum += sam_graphs_[k]->getReward(new_S);
+            new_S.clear();
+        }
+        double rwd=rwd_sum/num_samples_;
+        if(rwd>rwd_mx){
+            rwd_mx=rwd;
+            i_mx=i;
+        }
+    }
+    return getCandidate(i_mx).getMembers();
 }
-
-//delta S theta  v for filter nodes
-double SievePAG::getGain(std::vector<int> affect_nodes) {
-    double gain=0.0;
-
-    /***
-     * calculate the gain for nodev
-     */
-
-    return gain;
-}
-

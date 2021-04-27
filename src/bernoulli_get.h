@@ -2,8 +2,8 @@
 // Created by weiwei on 2021/4/18.
 //
 
-#ifndef SIEVEPAG_BERNOULLI_GET_H
-#define SIEVEPAG_BERNOULLI_GET_H
+#ifndef BERNOULLI_GET_H
+#define BERNOULLI_GET_H
 
 
 
@@ -27,4 +27,4 @@ public:
     }
 };
 
-#endif //SIEVEPAG_BERNOULLI_GET_H
+#endif //BERNOULLI_GET_H
