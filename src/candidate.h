@@ -2,11 +2,11 @@
 // Created by weiwei on 2021/4/20.
 //
 
-#ifndef CANDIDATE_H
-#define CANDIDATE_H
+#ifndef TEST_CMAKE_CANDIDATE_H
+#define TEST_CMAKE_CANDIDATE_H
 
 #include "stdafx.h"
-
+#include "obj_fun.h"
 /**
  * The candidate items corresponding to a threshold.
  */
@@ -47,4 +47,4 @@ public:
 
 }; /* Candidate */
 
-#endif //CANDIDATE_H
+#endif //TEST_CMAKE_CANDIDATE_H

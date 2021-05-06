@@ -34,7 +34,8 @@ void SievePAG::delTheta(const int i) {
  * update thresholds
  */
 void SievePAG::updateThresholds() {
-    int new_li =(int)std::floor(std::log( (1-eps_)*mx_gain_) / std::log(1 + eps_)),
+    //the new_li may be the log( (1-eps)*mx_gain_) /log(1 + eps_)
+    int new_li =(int)std::floor(std::log( mx_gain_) / std::log(1 + eps_)),
             new_ui =(int)std::ceil(std::log(2 * budget_ * mx_gain_) / std::log(1 + eps_));
     int li, ui;               // lower bound and upper bound of theata index
     if (!this_pos_.empty()) {
@@ -58,9 +59,9 @@ bool SievePAG::updateMaxGain(const std::vector<int> &nodes) {
     for(auto u:nodes){ //for all node,calculate the Ft({v})
         double reward_sums=0;
         for(int i=0;i<num_samples_;i++){
-            std::vector<int> all_node=sam_graphs_[i]->getNodes();
-            bool flag=(std::find(all_node.begin(),all_node.end(),u)!=all_node.end());
-            if(flag){
+//            std::vector<int> all_node=sam_graphs_[i]->getNodes();
+//            bool flag=(std::find(all_node.begin(),all_node.end(),u)!=all_node.end());
+            if(sam_graphs_[i]->existsNode(u)){
                 reward_sums+=sam_graphs_[i]->getReward(u);
             }
         }
@@ -100,20 +101,31 @@ void SievePAG::update(const SocialAc &s,const BernoulliSet& bs){
 
                 std::vector<int> SS=ca.getMembers();
                 for(int k=0;k<num_samples_;k++){
-                    std::vector<int> all_node=sam_graphs_[k]->getNodes();
+//                    std::vector<int> all_node=sam_graphs_[k]->getNodes();
+//
+//                    if(std::find(all_node.begin(),all_node.end(),u)==all_node.end()){
+//                        continue;//u is not in the sample graph
+//                    }
+//                    std::vector<int> new_S;//the new_S delete the item not in graph
+//                    for(auto &item:SS){
+//                        bool flag=(std::find(all_node.begin(),all_node.end(),item)!=all_node.end());
+//                        if(flag){
+//                            new_S.push_back(item);
+//                        }
+//                    }
+//                    gain_sums+=sam_graphs_[k]->getGain(u,new_S);
+//                    new_S.clear();
 
-                    if(std::find(all_node.begin(),all_node.end(),u)==all_node.end()){
+                    if(!sam_graphs_[k]->existsNode(u)){
                         continue;//u is not in the sample graph
                     }
                     std::vector<int> new_S;//the new_S delete the item not in graph
                     for(auto &item:SS){
-                        bool flag=(std::find(all_node.begin(),all_node.end(),item)!=all_node.end());
-                        if(flag){
+                        if(sam_graphs_[k]->existsNode(item)){
                             new_S.push_back(item);
                         }
                     }
                     gain_sums+=sam_graphs_[k]->getGain(u,new_S);
-                    new_S.clear();
                 }
                 double gain=gain_sums/num_samples_;
                 if(gain>=threshold){
@@ -124,7 +136,7 @@ void SievePAG::update(const SocialAc &s,const BernoulliSet& bs){
     }
 };
 
-std::vector<int> SievePAG::getResult() {
+double SievePAG::getResult() {
     int i_mx=-100;//theta-index
     double rwd_mx=0;
     for(auto &pr:this_pos_){
@@ -133,16 +145,15 @@ std::vector<int> SievePAG::getResult() {
         auto ca=getCandidate(i);//get the theta to index
         std::vector<int> SS=ca.getMembers();
         for(int k=0;k<num_samples_;k++) {
-            std::vector<int> all_node = sam_graphs_[k]->getNodes();
+//            std::vector<int> all_node = sam_graphs_[k]->getNodes();
             std::vector<int> new_S;
             for (auto &item:SS) {
-                bool flag = (std::find(all_node.begin(), all_node.end(), item) != all_node.end());
-                if (flag) {
+//                bool flag = (std::find(all_node.begin(), all_node.end(), item) != all_node.end());
+                if (sam_graphs_[k]->existsNode(item)) {
                     new_S.push_back(item);
                 }
             }
             rwd_sum += sam_graphs_[k]->getReward(new_S);
-            new_S.clear();
         }
         double rwd=rwd_sum/num_samples_;
         if(rwd>rwd_mx){
@@ -150,5 +161,11 @@ std::vector<int> SievePAG::getResult() {
             i_mx=i;
         }
     }
-    return getCandidate(i_mx).getMembers();
+//    std::vector<int> x=getCandidate(i_mx).getMembers();
+//    for(auto &t:x){
+//        std::cout<<t<<" ";
+//    }
+//    std::cout<<getCandidate(i_mx).getMembers().size()<<std::endl;
+
+    return rwd_mx;
 }

@@ -59,8 +59,6 @@ void DynDGraphMgr::reverseFanOut(const dir::DGraph& G, const int cv,
 void DynDGraphMgr::addEdge(const int u, const int v) {
     int cu = getCC(u), cv = getCC(v);
 
-    dag_.isEdge(cu, cv);
-
     // omit self-loop edges and edges already in DAG
     if (cu != cv && !dag_.isEdge(cu, cv)) {
         dag_.addEdge(cu, cv);

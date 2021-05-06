@@ -86,6 +86,18 @@ public:
             return estimate(node);
     }
     double getReward(const std::vector<int>& S) const override {
+        if(S.empty()){
+            return 0;
+        }
+//       std::unordered_set<int> covered;
+//        for (auto it = S.begin(); it != S.end(); ++it) {
+//            int v = *it;
+//            if (dag_.isNodeR(v)) {
+//                const auto& nd_v = graph_.getNodeR(v);
+//                covered.insert(nd_v.beginNbr(), nd_v.endNbr());
+//            }
+//        }
+//        return covered.size();
         return estimate(S.begin(), S.end());
     }
     double getReward(const std::unordered_set<int>& S) const override {

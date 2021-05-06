@@ -6,7 +6,7 @@
 #define SIEVE_PAG_H
 
 
-#include "dyn_bgraph_mgr.h"
+#include "dyn_dgraph_mgr_v2.h"
 #include "candidate.h"
 
 class SievePAG{
@@ -16,8 +16,9 @@ public:
     double eps_;  //epsilon
     double mx_gain_=0; //max_gain
 
-    DynBGraphMgr input_mgr_;
-    std::vector<DynBGraphMgr*> sam_graphs_;  //store the n sample graphs
+    DynDGraphMgr input_mgr_;
+
+    std::vector<DynDGraphMgr*> sam_graphs_;  //store the n sample graphs
 
     std::vector<Candidate> candidate_buf_; //store the candidate
 
@@ -50,7 +51,7 @@ public:
     SievePAG(const int num_samples,const int budget,const double eps):num_samples_(num_samples),budget_(budget),eps_(eps)
             {
         for(int i=0;i<num_samples;i++){
-            DynBGraphMgr *sg=new DynBGraphMgr();
+            DynDGraphMgr *sg=new DynDGraphMgr();
             sam_graphs_.push_back(sg);
         }
     }
@@ -85,8 +86,8 @@ public:
     void update(const SocialAc &s,const BernoulliSet& bs);
 
     // Get current maximum reward.
-    std::vector<int> getResult() ;
-
+//    std::vector<int> getResult() ;
+    double getResult();
     void updateThresholds();
 
     bool updateMaxGain(const std::vector<int> &nodes);

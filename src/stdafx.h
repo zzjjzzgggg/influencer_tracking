@@ -2,8 +2,8 @@
 // Created by weiwei on 2021/4/20.
 //
 
-#ifndef STDAFX_H
-#define STDAFX_H
+#ifndef TEST_CMAKE_STDAFX_H
+#define TEST_CMAKE_STDAFX_H
 
 #include <cstdio>
 #include <cassert>
@@ -20,6 +20,10 @@
 #include <unordered_set>
 #include <experimental/tuple>
 #include <stdlib.h>
+
+#include <fstream>
+#include <sstream>
+#include <string>
 
 #include <mutex>
 #include <future>
@@ -48,4 +52,4 @@ using BernoulliSet = std::vector<int>;
 typedef std::pair<int, int> IntPr;
 typedef std::vector<std::pair<int, int>> IntPrV;
 
-#endif //STDAFX_H
+#endif //TEST_CMAKE_STDAFX_H
