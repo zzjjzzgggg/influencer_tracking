@@ -19,21 +19,22 @@ message(STATUS "LIBRARIES " ${LIBRARIES})
 
 
 
-add_library(dyn_dgraph_mgr dyn_dgraph_mgr_v2.cpp lifespan_generator.h exam_lifespan_generator.cpp bernoulli_segment.h)
+add_library(dyn_dgraph_mgr dyn_dgraph_mgr_v2.cpp lifespan_generator.h exam_lifespan_generator.cpp ISet_segment.h hist_pdg.h)
 target_link_libraries(dyn_dgraph_mgr ${LIBRARIES})
 
-add_library(sieve_pag sieve_pag.cpp)
+#add_library(sieve_pag sieve_pag.cpp)
 #add_executable(influencers_tracking main.cpp)
 
 #target_link_libraries(sieve_pag dyn_dgraph_mgr)
 
 #add_executable(influencers_tracking exam_sieve_and_greedy.cpp)
 #add_executable(influencers_tracking exam_greedy_pag.cpp)
-#add_executable(influencers_tracking exam_lifespan_generator.cpp)
-add_executable(influencers_tracking exam_basic_pdg.cpp)
+#add_executable(influencers_tracking exam_basic_pdg.cpp)
+add_executable(influencers_tracking  exam_hist.cpp)
+#add_executable(influencers_tracking  exam_sieve_pag.cpp)
 
 #add_executable(dyn_dgraph_mgr dyn_dgraph_mgr.cpp)
 
-target_link_libraries(influencers_tracking dyn_dgraph_mgr sieve_pag)
+target_link_libraries(influencers_tracking dyn_dgraph_mgr)
 
 #target_link_libraries(influencers_tracking dyn_dgraph_mgr)
