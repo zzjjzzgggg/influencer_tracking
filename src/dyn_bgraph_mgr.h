@@ -49,7 +49,15 @@ public:
         if (deep) graph_.clear();
     }
 
+    bool existNode(const int v)const{
+        for (auto it = graph_.beginNIR(); it != graph_.endNIR(); ++it){
+            if(it->first==v)
+                return true;
+        }
+        return false;
+    }
     int getNumNodes() const override { return graph_.getNodesR(); }
+
 
     std::vector<int> getNodes() const override {
         std::vector<int> nodes;
@@ -60,7 +68,9 @@ public:
     }
 
     double getReward(const int v) const override {
-        return graph_.getNodeR(v).getDeg();
+        if(existNode(v))
+           return graph_.getNodeR(v).getDeg();
+        return 0;
     }
 
     double getReward(const std::vector<int>& S) const override {
