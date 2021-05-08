@@ -1,5 +1,6 @@
 build/
 .ccls-cache/
+.idea/
 *.json
 *.o
 *.dat
