@@ -2,8 +2,8 @@
 // Created by weiwei on 2021/4/20.
 //
 
-#ifndef TEST_CMAKE_OBJ_FUN_H
-#define TEST_CMAKE_OBJ_FUN_H
+#ifndef INFLUENCERS_TRACKING_OBJ_FUN_H
+#define INFLUENCERS_TRACKING_OBJ_FUN_H
 
 #include "stdafx.h"
 
@@ -18,4 +18,4 @@ public:
 }; /* ObjFun */
 
 
-#endif //TEST_CMAKE_OBJ_FUN_H
+#endif //INFLUENCERS_TRACKING_OBJ_FUN_H
