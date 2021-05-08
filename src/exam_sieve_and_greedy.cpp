@@ -3,8 +3,8 @@
 //
 
 #include "sieve_pag.h"
-//#include "dyn_dgraph_mgr.h"
-#include "bernoulli_get.h"
+#include "dyn_bgraph_mgr.h"
+#include "ISet_generator.h"
 #include <gflags/gflags.h>
 #include "greedy_alg.h"
 
@@ -14,14 +14,15 @@ int main(){
     double eps=0.1;
     int num_samples=10;
     double p=0.6;
-    SievePAG pag{num_samples,budget,eps};
-    GreedyAlg greedy{num_samples,budget};
+    SievePAG<DynBGraphMgr> pag{num_samples,budget,eps};
+    GreedyAlg<DynBGraphMgr> greedy{num_samples,budget};
 
     SocialAcs ss;
 //    std::ifstream data;
 //    data.open("test.txt",std::ios::in);
 //    std::string filename="Gowalla_totalCheckins.txt";
-    std::string filename="sx-stackoverflow-c2a.txt";
+//    std::string filename="sx-stackoverflow-c2a.txt";
+    std::string filename="output2.txt";
     std::ifstream data(filename);
     std::string oneline;
     int x=0;
@@ -75,31 +76,18 @@ int main(){
     std::string outfile="data1.txt";
     std::ofstream out(outfile);
     for(auto &s:sc){
-        BernoulliSetGenerator bsgen(num_samples,p);
-        BernoulliSet bs=bsgen.getBernoulliSet();
+        ISetGenerator isgen(num_samples,p);
+        ISet is=isgen.getISet();
 
-//        pag.feed(s,bs);
-        pag.update(s,bs);
-//        std::vector<int> St=pag.getResult();
-//        std::cout<<temp<<" ";
+        pag.update(s,is);
         double pag_mx=pag.getResult();
         std::cout<<"sieve_pag"<<pag_mx<<"  ";
-//        std::cout<<"sieve_pag"<<std::endl;
-//       for(auto &item:St){
-//            std::cout<<item<<" ";
-//        }
-//        std::cout<<std::endl;
 
-        std::vector<int> nodes=greedy.update(s,bs);
+        std::vector<int> nodes=greedy.update(s,is);
 
-//        std::vector<int> x=greedy.getResult(nodes);
         double greedy_gain=greedy.getResult(nodes);
         std::cout<<"greedy:"<<greedy_gain<<std::endl;
-//        std::cout<<"greedy_pag"<<std::endl;
-//        for(auto &item:x){
-//            std::cout<<item<<" ";
-//        }
-//        std::cout<<std::endl;
+
         out<<temp<<'\t'<<pag_mx<<'\t'<<greedy_gain<<std::endl;
         pag.clear();
         temp++;
