@@ -75,7 +75,7 @@ bool SievePAG::updateMaxGain(const std::vector<int> &nodes) {
 }
 
 // Process social action s and its Bernoulli set.
-void SievePAG::update(const SocialAc &s,const BernoulliSet& bs){
+void SievePAG::update(const SocialAc &s,const ISet& bs){
     //add edge
     input_mgr_.addEdge(s.first.first,s.first.second);
     //get affected nodes
@@ -126,6 +126,7 @@ void SievePAG::update(const SocialAc &s,const BernoulliSet& bs){
                         }
                     }
                     gain_sums+=sam_graphs_[k]->getGain(u,new_S);
+                    new_S.clear();
                 }
                 double gain=gain_sums/num_samples_;
                 if(gain>=threshold){
