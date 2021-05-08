@@ -7,41 +7,46 @@
 
 #include "dyn_dgraph_mgr_v2.h"
 
+template<class InputMgr>
 class GreedyAlg{
 private:
     int budget_;     //k
     int num_samples_;   //n
-    DynDGraphMgr input_mgr_;
-    std::vector<DynDGraphMgr*> sam_graphs_;  //store the n sample graphs
+    InputMgr input_mgr_;
+    std::vector<InputMgr*> sam_graphs_;  //store the n sample graphs
 public:
-    GreedyAlg(const int num_samples,const int budget):num_samples_(num_samples),budget_(budget){
-        for(int i=0;i<num_samples;i++) {
-            DynDGraphMgr *sg = new DynDGraphMgr();
-            sam_graphs_.push_back(sg);
-        }
-    }
+    GreedyAlg(const int num_samples,const int budget);
     std::vector<int> update(const SocialAc &s,const BernoulliSet& bs);
-//    std::vector<int> getResult(std::vector<int> nodes);
     double getResult(std::vector<int> nodes);
 };
+template<class InputMgr>
+GreedyAlg<InputMgr>::GreedyAlg(const int num_samples,const int budget)
+{
+    num_samples_=num_samples;
+    budget_=budget;
+    for(int i=0;i<num_samples;i++){
+        InputMgr *sg=new InputMgr();
+        sam_graphs_.push_back(sg);
+    }
+}
 
-std::vector<int> GreedyAlg::update(const SocialAc &s, const BernoulliSet &bs) {
+template<class InputMgr>
+std::vector<int> GreedyAlg<InputMgr>::update(const SocialAc &s, const ISet &is) {
     //add edge
     input_mgr_.addEdge(s.first.first,s.first.second);
 
     //get affected nodes
     std::vector<int> nodes=input_mgr_.getAffectedNodes();
 
-    for(auto b:bs){
-        sam_graphs_[b]->addEdge(s.first.first,s.first.second);
+    for(auto i:is){
+        sam_graphs_[i]->addEdge(s.first.first,s.first.second);
     }
-//    for(int i=0;i<num_samples_;i++){
-//        sam_graphs_[i]->getAffectedNodes();
-//    }
+
     return nodes;
 }
 
-double GreedyAlg::getResult(std::vector<int> nodes){
+template<class InputMgr>
+double GreedyAlg<InputMgr>::getResult(std::vector<int> nodes){
     double rwd_mx=0;
     std::vector<int> S;
     std::vector<int> resultS;
@@ -51,25 +56,7 @@ double GreedyAlg::getResult(std::vector<int> nodes){
         for(auto &node:nodes){
             double gain_sums=0;
             for(int k=0;k<num_samples_;k++){
-//                std::vector<int> all_node = sam_graphs_[k]->getNodes();
-                std::vector<int> new_S;
-//                if(!sam_graphs_[k]->existsNode(node)){
-//                    continue;
-//                }
-                for (auto &item:S) {
-//                    bool flag = (std::find(all_node.begin(), all_node.end(), item) != all_node.end());
-                    if (sam_graphs_[k]->existsNode(item)) {
-                        new_S.push_back(item);
-                    }
-                }
-                if(new_S.empty()){
-                    if(sam_graphs_[k]->existsNode(node)){
-                        gain_sums+=sam_graphs_[k]->getReward(node);
-                    }
-                }else{
-                    gain_sums+=sam_graphs_[k]->getGain(node,new_S);
-                }
-                new_S.clear();
+                    gain_sums+=sam_graphs_[k]->getGain(node,S);
             }
             double gain=gain_sums/num_samples_;
             if(gain>gain_mx){
@@ -78,26 +65,16 @@ double GreedyAlg::getResult(std::vector<int> nodes){
             }
         }
         S.push_back(mx_gain_node);
-        resultS.push_back(mx_gain_node);
         nodes.erase(remove(nodes.begin(), nodes.end(), mx_gain_node), nodes.end());
-//        std::cout<<"node size"<<nodes.size()<<std::endl;
         if(nodes.empty()){
             break;
         }
     }
     double gains_all=0;
     for(int i=0;i<num_samples_;i++){
-//        std::vector<int> all_node = sam_graphs_[i]->getNodes();
-        std::vector<int> filtered_result;
-        for (auto &item:resultS) {
-//            bool flag = (std::find(all_node.begin(), all_node.end(), item) != all_node.end());
-            if (sam_graphs_[i]->existsNode(item)) {
-                filtered_result.push_back(item);
-            }
-        }
-        gains_all+=sam_graphs_[i]->getReward(filtered_result);
+        gains_all+=sam_graphs_[i]->getReward(S);
     }
-    std::cout<<resultS.size();
+//    std::cout<<S.size();
     rwd_mx=gains_all/num_samples_;
     return  rwd_mx;
 }
