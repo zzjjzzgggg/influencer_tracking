@@ -74,12 +74,28 @@ public:
     }
 
     int getNumNodes() const override { return nd_cc_.size(); }
-    double getReward(const int node) const override { return estimate(node); }
+    double getReward(const int node) const override {
+        if(existsNode(node))
+            return estimate(node);
+        return 0;
+    }
     double getReward(const std::vector<int>& S) const override {
-        return estimate(S.begin(), S.end());
+        std::vector<int> true_S;
+        for(auto &item:S){
+            if(existsNode(item)){
+                true_S.push_back(item);
+            }
+        }
+        return estimate(true_S.begin(), true_S.end());
     }
     double getReward(const std::unordered_set<int>& S) const override {
-        return estimate(S.begin(), S.end());
+        std::vector<int> true_S;
+        for(auto &item:S){
+            if(existsNode(item)){
+                true_S.push_back(item);
+            }
+        }
+        return estimate(true_S.begin(), true_S.end());
     }
     double getGain(const int u, const std::vector<int>& S) const override {
         return getGain(u, S.begin(), S.end());
