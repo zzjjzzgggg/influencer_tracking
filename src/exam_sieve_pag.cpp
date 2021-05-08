@@ -3,8 +3,9 @@
 //
 
 #include "sieve_pag.h"
-//#include "dyn_dgraph_mgr.h"
-#include "bernoulli_get.h"
+#include "dyn_bgraph_mgr.h"
+
+#include "ISet_generator.h"
 #include <gflags/gflags.h>
 //#include "greedy_alg.h"
 
@@ -12,8 +13,8 @@ int main() {
     int budget = 10;
     double eps = 0.1;
     int num_samples = 10;
-    double p = 0.5;
-    SievePAG pag{num_samples, budget, eps};
+    double p = 0.6;
+    SievePAG<DynBGraphMgr> pag{num_samples, budget, eps};
 //    GreedyAlg greedy{num_samples, budget};
 
     SocialAcs ss;
@@ -44,7 +45,7 @@ int main() {
             break;
     }
     ss.push_back({{1,2},1619009223});
-//    ss.push_back({{1,2},1619009223});
+    ss.push_back({{1,2},1619009223});
 
     ss.push_back({{1,3},1619009211});
 ////
@@ -57,13 +58,13 @@ int main() {
 //    ss.push_back({{6,7},1619009223});
 //    int temp=1;
 
-    for(auto &s:ss){
+    for(auto &s:sc){
 
-        BernoulliSetGenerator bsgen(num_samples,p);
-        BernoulliSet bs=bsgen.getBernoulliSet();
+        ISetGenerator isgen(num_samples,p);
+        ISet is=isgen.getISet();
 
 //        pag.feed(s,bs);
-        pag.update(s,bs);
+        pag.update(s,is);
 //        std::cout<<temp<<" ";
 
         double pag_mx=pag.getResult();
