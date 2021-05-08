@@ -6,17 +6,18 @@
 #define INFLUENCERS_TRACKING_BASIC_PDG_H
 
 #include "sieve_pag.h"
-#include "bernoulli_segment.h"
+#include "ISet_segment.h"
 
+template<class InputMgr>
 class BasicPAG{
 private:
     int L_,cur_=0;
-    std::vector<SievePAG*> sieve_ptrs_;
+    std::vector<SievePAG<InputMgr>*> sieve_ptrs_;
 public:
     BasicPAG(const int L,const int budget,const double eps,const int num_samples):L_(L){
         sieve_ptrs_.resize(L);
         for(int l=0;l<L_;l++){
-            sieve_ptrs_[l]=new SievePAG(num_samples,budget,eps);
+            sieve_ptrs_[l]=new SievePAG<InputMgr>(num_samples,budget,eps);
         }
     }
 
@@ -26,10 +27,10 @@ public:
         }
     }
 
-    void update(SocialAc s,const BernoulliSegments& segs){
+    void update(SocialAc s,const ISetSegments& segs){
         for (auto& seg : segs.segments_)
             for (int i = seg.start_; i < seg.end_; ++i)
-                sieve_ptrs_[(i + cur_) % L_]->update(s, seg.bs_);
+                sieve_ptrs_[(i + cur_) % L_]->update(s, seg.is_);
     }
 
 //    std::pair<int, double> getResult() const {
@@ -48,7 +49,6 @@ public:
     }
 
 };
-
 
 
 #endif //INFLUENCERS_TRACKING_BASIC_PDG_H
