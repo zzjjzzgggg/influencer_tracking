@@ -2,8 +2,8 @@
 // Created by weiwei on 2021/4/20.
 //
 
-#ifndef TEST_CMAKE_STDAFX_H
-#define TEST_CMAKE_STDAFX_H
+#ifndef INFLUENCERS_TRACKING_STDAFX_H
+#define INFLUENCERS_TRACKING_STDAFX_H
 
 #include <cstdio>
 #include <cassert>
@@ -45,11 +45,10 @@ using namespace graph;
 typedef std::pair<int,int> Edge;
 typedef std::pair<Edge,int> SocialAc;
 typedef std::vector<SocialAc> SocialAcs;
-//typedef std::vector<std::pair<int,int>> SocialAction;
-using BernoulliSet = std::vector<int>;
+
 
 
 typedef std::pair<int, int> IntPr;
 typedef std::vector<std::pair<int, int>> IntPrV;
 
-#endif //TEST_CMAKE_STDAFX_H
+#endif //INFLUENCERS_TRACKING_STDAFX_H
