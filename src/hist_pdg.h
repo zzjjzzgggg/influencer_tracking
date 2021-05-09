@@ -7,19 +7,22 @@
 
 #include "ISet_segment.h"
 #include "sieve_pag.h"
-#include "dyn_bgraph_mgr.h"
+#include "dyn_dgraph_mgr_v2.h"
 //template<class InputMgr>
 class HistPDG{
 private:
     class Alg{
     private:
-        SievePAG<DynBGraphMgr>* sieve_ptr_;
+        SievePAG<DynDGraphMgr>* sieve_ptr_;
     public:
         int l_;
         double val_;
     public:
         Alg(const int l,const int num_samples,const int budget,const double eps):l_(l){
-            sieve_ptr_=new SievePAG<DynBGraphMgr>(num_samples,budget,eps);
+            sieve_ptr_=new SievePAG<DynDGraphMgr>(num_samples,budget,eps);
+        }
+        Alg(const Alg& o) : l_(o.l_), val_(o.val_) {
+            sieve_ptr_ = new SievePAG<DynDGraphMgr>(*o.sieve_ptr_);
         }
 
         virtual ~Alg(){delete sieve_ptr_;}
@@ -55,6 +58,8 @@ public:
 
     double getResult() const { return algs_.front()->val_; }
     void next();
+    void reduce();
+    void process(const SocialAc e,const int l,const int r,const ISetSegment& seg);
 };
 
 /**
@@ -74,11 +79,12 @@ void HistPDG::feed(const SocialAc e,const ISetSegments& segs){
 
     auto it=algs_.begin();
     for(auto& seg:segs.segments_){
-        // Update instances belonging to this segment.
+         //Update instances belonging to this segment.
         feedSegment(e,seg,it);
 
+        if(it==algs_.end())continue;
         auto pre=it;
-        //if last updated alg.l_=l,return
+        //if last updated alg.l_=l,continue
         if (it != algs_.begin()) {
             --pre;  // let "pre" be the precessor of "it"
             // no need to create a new instance
@@ -86,7 +92,8 @@ void HistPDG::feed(const SocialAc e,const ISetSegments& segs){
         }
 
         //create new alg before succ
-        if(it==algs_.begin()){
+        if(it==algs_.begin()||(*pre)->l_<(seg.end_-1)){
+//        if(it==algs_.begin()||(*it)->val_<(1-eps_)*(*pre)->val_){
             //create alg_l based on its successor
             Alg* alg=new Alg(*(*it));
             alg->l_=seg.end_-1;
@@ -94,20 +101,24 @@ void HistPDG::feed(const SocialAc e,const ISetSegments& segs){
             alg->feed(e,seg.is_);
             algs_.insert(it,alg);
         }
+//        process(e,seg.start_,seg.end_-1,seg);
     }
 
 }
+
 //template<class InputMgr>
 // Update instances belonging to this segment.
 void HistPDG::feedSegment(const SocialAc e, const ISetSegment& seg,
                               std::list<Alg*>::iterator& it) {
-    auto job = [e, &seg](Alg* alg) { alg->feed(e, seg.is_ ); };
-    std::vector<std::future<void>> futures;
+//    auto job = [e, &seg](Alg* alg) { alg->feed(e, seg.is_ ); };
+//    std::vector<std::future<void>> futures;
     while (it != algs_.end() && (*it)->l_ < seg.end_) {
-        futures.push_back(std::async(std::launch::async, job, *it));
+//        futures.push_back(std::async(std::launch::async, job, *it));
+        (*it)->feed(e,seg.is_);
+
         ++it;
     }
-    for (auto& future : futures) future.get();
+//    for (auto& future : futures) future.get();
 }
 
 //template<class InputMgr>
@@ -124,4 +135,27 @@ void HistPDG::next() {
     }
 }
 
+void HistPDG::reduce() {
+    // For each i, find the largest j such that A(j) >= (1-e)A(i)
+    auto start = algs_.begin();
+    while (start != algs_.end()) {
+        auto last = start, it = start;
+        double bound = (*start)->val_ * (1 - eps_);
+        while(true){
+            ++it;
+            if(it==algs_.end()||(*it)->val_<bound)break;
+            ++last;
+        }
+        if(start!=last){
+            it=start;
+            while(++it!=last){
+                delete *it;
+            }
+            algs_.erase(++start,last);
+            start = last;
+        }else
+            ++start;
+    }
+}
 #endif //INFLUENCERS_TRACKING_HIST_PDG_H
+
