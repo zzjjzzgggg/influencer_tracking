@@ -37,7 +37,6 @@
 
 using namespace fmt::literals;
 
-
 using ISet = std::vector<int>;
 
 using namespace graph;
@@ -46,9 +45,6 @@ typedef std::pair<int,int> Edge;
 typedef std::pair<Edge,int> SocialAc;
 typedef std::vector<SocialAc> SocialAcs;
 
-
-
-typedef std::pair<int, int> IntPr;
 typedef std::vector<std::pair<int, int>> IntPrV;
 
 #endif //INFLUENCERS_TRACKING_STDAFX_H
