@@ -5,7 +5,7 @@
 #ifndef INFLUENCERS_TRACKING_HIST_PDG_H
 #define INFLUENCERS_TRACKING_HIST_PDG_H
 
-#include "ISet_segment.h"
+#include "iset_segment.h"
 #include "sieve_pag.h"
 #include "dyn_dgraph_mgr_v2.h"
 //template<class InputMgr>
@@ -106,6 +106,40 @@ void HistPDG::feed(const SocialAc e,const ISetSegments& segs){
 
 }
 
+void HistPDG::process(const SocialAc e,const int l,const int r,const ISetSegment& seg){
+
+    auto it=algs_.begin();
+
+//    auto job = [e, &seg](Alg* alg) { alg->feed(e, seg.is_ ); };
+//    std::vector<std::future<void>> futures;
+    while (it != algs_.end() && (*it)->l_ < seg.end_) {
+//        futures.push_back(std::async(std::launch::async, job, *it));
+        (*it)->feed(e,seg.is_);
+
+        ++it;
+    }
+//    for (auto& future : futures) future.get();
+
+    if(it==algs_.end())return;
+    auto pre=it;
+    //if last updated alg.l_=l,continue
+    if (it != algs_.begin()) {
+        --pre;  // let "pre" be the precessor of "it"
+        // no need to create a new instance
+        if ((*pre)->l_ == seg.end_ - 1) return;
+    }
+
+    //create new alg before succ
+    //  if(it==algs_.begin()||(*pre)->l_>(seg.end_-1)){
+    if(it==algs_.begin()||(*it)->val_<(1-eps_)*(*pre)->val_){
+        //create alg_l based on its successor
+        Alg* alg=new Alg(*(*it));
+        alg->l_=seg.end_-1;
+        alg->clear();
+        alg->feed(e,seg.is_);
+        algs_.insert(it,alg);
+    }
+}
 //template<class InputMgr>
 // Update instances belonging to this segment.
 void HistPDG::feedSegment(const SocialAc e, const ISetSegment& seg,
@@ -157,5 +191,6 @@ void HistPDG::reduce() {
             ++start;
     }
 }
-#endif //INFLUENCERS_TRACKING_HIST_PDG_H
 
+
+#endif //INFLUENCERS_TRACKING_HIST_PDG_H
