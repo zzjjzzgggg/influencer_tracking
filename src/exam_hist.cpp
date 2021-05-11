@@ -4,7 +4,7 @@
 
 #include "hist_pdg.h"
 #include "basic_pdg.h"
-#include "ISet_segment.h"
+#include "iset_segment.h"
 #include "lifespan_generator.h"
 #include "dyn_dgraph_mgr_v2.h"
 //#include "dyn_bgraph_mgr.h"
@@ -17,11 +17,10 @@ int main(){
 
     double lmd=0.01;
     LifespanGenerator lifegen(L,1-exp(-lmd));
-    std::string filename="output2.txt";
+    std::string filename="Gowalla_Checkins.txt";
     std::ifstream data(filename);
     std::string oneline;
     int x=0;
-    SocialAcs ss;
     SocialAcs sc;
 
     while(getline(data,oneline)){
@@ -39,22 +38,14 @@ int main(){
 
     HistPDG hist(num_samples,budget,eps);
     BasicPAG<DynDGraphMgr> basic(L,budget,eps,num_samples);
-    ss.push_back({{1,2},1619009223});
-    ss.push_back({{1,2},1619009223});
-    ss.push_back({{1,3},1619009223});
-    ss.push_back({{3,4},1619009223});
-    ss.push_back({{4,5},1619009223});
+
     int i=1;
 
-    int temp=1;
     std::string outfile="hist.txt";
     std::ofstream out(outfile);
     for(auto &s:sc){
         std::vector<int> lifespan=lifegen.getLifespans(num_samples);
         ISetSegments segs(lifespan);
-//        for(auto seg:segs.segments_){
-//            std::cout<<"start"<<seg.start_<<" "<<seg.end_<<std::endl;
-//        }
         hist.feed(s,segs);
         std::cout<<i++<<" ";
         double hist_mx=hist.getResult();
