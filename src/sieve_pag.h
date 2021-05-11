@@ -160,11 +160,7 @@ bool SievePAG<InputMgr>::updateMaxGain(const std::vector<int> &nodes) {
     for(auto u:nodes){ //for all node,calculate the Ft({v})
         double reward_sums=0;
         for(int i=0;i<num_samples_;i++){
-//            std::vector<int> all_node=sam_graphs_[i]->getNodes();
-//            bool flag=(std::find(all_node.begin(),all_node.end(),u)!=all_node.end());
-//            if(sam_graphs_[i]->existsNode(u)){
                 reward_sums+=sam_graphs_[i]->getReward(u);
-//            }
         }
         double reward=reward_sums/num_samples_;
         if(reward>mx_gain_){
@@ -179,14 +175,14 @@ bool SievePAG<InputMgr>::updateMaxGain(const std::vector<int> &nodes) {
 *Process social action s and its Bernoulli set.
 */
 template<class InputMgr>
-void SievePAG<InputMgr>::update(const SocialAc &s,const ISet& bs){
+void SievePAG<InputMgr>::update(const SocialAc &s,const ISet& is){
     //add edge
     input_mgr_.addEdge(s.first.first,s.first.second);
     //get affected nodes
     std::vector<int> nodes=input_mgr_.getAffectedNodes();
 
-    for(auto b:bs){
-        sam_graphs_[b]->addEdge(s.first.first,s.first.second);
+    for(auto i:is){
+        sam_graphs_[i]->addEdge(s.first.first,s.first.second);
     }
 
     //if max delta change ,delta change,need to update thresholds
@@ -202,32 +198,9 @@ void SievePAG<InputMgr>::update(const SocialAc &s,const ISet& bs){
             if(!ca.isMember(u)&&ca.size()<budget_){
                 double gain_sums=0;//sum of gain
                 double threshold=getThreshold(i);
-
                 std::vector<int> SS=ca.getMembers();
                 for(int k=0;k<num_samples_;k++){
-//                    std::vector<int> all_node=sam_graphs_[k]->getNodes();
-//
-//                    if(std::find(all_node.begin(),all_node.end(),u)==all_node.end()){
-//                        continue;//u is not in the sample graph
-//                    }
-//                    std::vector<int> new_S;//the new_S delete the item not in graph
-//                    for(auto &item:SS){
-//                        bool flag=(std::find(all_node.begin(),all_node.end(),item)!=all_node.end());
-//                        if(flag){
-//                            new_S.push_back(item);
-//                        }
-//                    }
-//                    gain_sums+=sam_graphs_[k]->getGain(u,new_S);
-//                    new_S.clear();
-
-//                    std::vector<int> new_S;//the new_S delete the item not in graph
-//                    for(auto &item:SS){
-//                        if(sam_graphs_[k]->existsNode(item)){
-//                            new_S.push_back(item);
-//                        }
-//                    }
                     gain_sums+=sam_graphs_[k]->getGain(u,SS);
-//                    new_S.clear();
                 }
                 double gain=gain_sums/num_samples_;
                 if(gain>=threshold){
@@ -248,14 +221,6 @@ double SievePAG<InputMgr>::getResult() {
         auto ca=getCandidate(i);//get the theta to index
         std::vector<int> SS=ca.getMembers();
         for(int k=0;k<num_samples_;k++) {
-//            std::vector<int> all_node = sam_graphs_[k]->getNodes();
-//            std::vector<int> new_S;
-//            for (auto &item:SS) {
-////                bool flag = (std::find(all_node.begin(), all_node.end(), item) != all_node.end());
-//                if (sam_graphs_[k]->existsNode(item)) {
-//                    new_S.push_back(item);
-//                }
-//            }
             rwd_sum += sam_graphs_[k]->getReward(SS);
         }
         double rwd=rwd_sum/num_samples_;
@@ -264,12 +229,6 @@ double SievePAG<InputMgr>::getResult() {
             i_mx=i;
         }
     }
-//    std::vector<int> x=getCandidate(i_mx).getMembers();
-//    for(auto &t:x){
-//        std::cout<<t<<" ";
-//    }
-//    std::cout<<getCandidate(i_mx).getMembers().size()<<std::endl;
-
     return rwd_mx;
 }
 
