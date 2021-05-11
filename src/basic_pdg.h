@@ -5,8 +5,9 @@
 #ifndef INFLUENCERS_TRACKING_BASIC_PDG_H
 #define INFLUENCERS_TRACKING_BASIC_PDG_H
 
+#include "stdafx.h"
 #include "sieve_pag.h"
-#include "ISet_segment.h"
+#include "iset_segment.h"
 
 template<class InputMgr>
 class BasicPAG{
@@ -33,10 +34,6 @@ public:
                 sieve_ptrs_[(i + cur_) % L_]->update(s, seg.is_);
     }
 
-//    std::pair<int, double> getResult() const {
-//        return sieve_ptrs_[cur_]->getResult();
-//    }
-
     double getResult() const {
         return sieve_ptrs_[cur_]->getResult();
     }
@@ -49,6 +46,5 @@ public:
     }
 
 };
-
 
 #endif //INFLUENCERS_TRACKING_BASIC_PDG_H
