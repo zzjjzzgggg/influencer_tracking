@@ -4,20 +4,25 @@
 
 #ifndef INFLUENCERS_TRACKING_GREEDY_ALG_H
 #define INFLUENCERS_TRACKING_GREEDY_ALG_H
-
-#include "dyn_dgraph_mgr_v2.h"
+#include "stdafx.h"
 
 template<class InputMgr>
 class GreedyAlg{
-private:
+public:
     int budget_;     //k
     int num_samples_;   //n
     InputMgr input_mgr_;
     std::vector<InputMgr*> sam_graphs_;  //store the n sample graphs
 public:
     GreedyAlg(const int num_samples,const int budget);
-    std::vector<int> update(const SocialAc &s,const BernoulliSet& bs);
-    double getResult(std::vector<int> nodes);
+    void update(const SocialAc &s,const BernoulliSet& bs);
+    double getResult();
+    void clear(const bool deep= false){
+        input_mgr_.clear(deep);
+        for(int i=0;i<num_samples_;i++){
+            sam_graphs_[i]->clear(deep);
+        }
+    }
 };
 template<class InputMgr>
 GreedyAlg<InputMgr>::GreedyAlg(const int num_samples,const int budget)
@@ -31,32 +36,29 @@ GreedyAlg<InputMgr>::GreedyAlg(const int num_samples,const int budget)
 }
 
 template<class InputMgr>
-std::vector<int> GreedyAlg<InputMgr>::update(const SocialAc &s, const ISet &is) {
+void GreedyAlg<InputMgr>::update(const SocialAc &s, const ISet &is) {
     //add edge
     input_mgr_.addEdge(s.first.first,s.first.second);
-
-    //get affected nodes
-    std::vector<int> nodes=input_mgr_.getAffectedNodes();
 
     for(auto i:is){
         sam_graphs_[i]->addEdge(s.first.first,s.first.second);
     }
-
-    return nodes;
 }
 
 template<class InputMgr>
-double GreedyAlg<InputMgr>::getResult(std::vector<int> nodes){
+double GreedyAlg<InputMgr>::getResult(){
+    //get nodes
+    std::vector<int> nodes=input_mgr_.getNodes();
+
     double rwd_mx=0;
     std::vector<int> S;
-    std::vector<int> resultS;
     int mx_gain_node;
     for(int i=0;i<budget_;i++){
         double gain_mx=-100;
         for(auto &node:nodes){
             double gain_sums=0;
             for(int k=0;k<num_samples_;k++){
-                    gain_sums+=sam_graphs_[k]->getGain(node,S);
+                gain_sums+=sam_graphs_[k]->getGain(node,S);
             }
             double gain=gain_sums/num_samples_;
             if(gain>gain_mx){
@@ -71,10 +73,10 @@ double GreedyAlg<InputMgr>::getResult(std::vector<int> nodes){
         }
     }
     double gains_all=0;
+
     for(int i=0;i<num_samples_;i++){
         gains_all+=sam_graphs_[i]->getReward(S);
     }
-//    std::cout<<S.size();
     rwd_mx=gains_all/num_samples_;
     return  rwd_mx;
 }
