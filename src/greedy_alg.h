@@ -15,7 +15,7 @@ public:
     std::vector<InputMgr*> sam_graphs_;  //store the n sample graphs
 public:
     GreedyAlg(const int num_samples,const int budget);
-    void update(const SocialAc &s,const BernoulliSet& bs);
+    void update(const SocialAc &s,const ISet& is);
     double getResult();
     void clear(const bool deep= false){
         input_mgr_.clear(deep);
@@ -82,3 +82,4 @@ double GreedyAlg<InputMgr>::getResult(){
 }
 
 #endif //INFLUENCERS_TRACKING_GREEDY_ALG_H
+
