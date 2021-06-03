@@ -47,4 +47,10 @@ typedef std::vector<SocialAc> SocialAcs;
 
 typedef std::vector<std::pair<int, int>> IntPrV;
 
+typedef std::pair<int,int> UV;
+typedef std::pair<UV,int> UVC;
+typedef std::vector<UVC> UVCs;
+
+
+
 #endif //INFLUENCERS_TRACKING_STDAFX_H
