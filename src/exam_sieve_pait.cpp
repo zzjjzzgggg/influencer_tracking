@@ -39,8 +39,8 @@ int main(){
         ISet is=isgen.getISet();
         pait.update(s,is);
 
-        double pag_mx=pait.getResult();
-        std::cout<<pag_mx<<std::endl;
+        double pait_mx=pait.getResult();
+        std::cout<<pait_mx<<std::endl;
         pait.clear();
     }
 
