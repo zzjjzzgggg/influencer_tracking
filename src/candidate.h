@@ -6,7 +6,7 @@
 #define TEST_CMAKE_CANDIDATE_H
 
 #include "stdafx.h"
-#include "obj_fun.h"
+//#include "obj_fun.h"
 /**
  * The candidate items corresponding to a threshold.
  */
@@ -27,22 +27,10 @@ public:
     void insert(const int e){
         S_.insert(e);
     }
-//    void insert(const int e, const BernoulliSet& bs) {
-//        S_.insert(e);
-//        for (int i : bs) S_vec_[i].push_back(e);
-//    }
 
     std::vector<int> getMembers() const {
         return std::vector<int>(S_.begin(), S_.end());
     }
-
-    //
-//    double gain(const int e, const BernoulliSet& bs,
-//                const ObjFun* obj_ptr) const {
-//        double g = 0;
-//        for (int trial : bs) g += obj_ptr->getGain(e, S_vec_[trial]);
-//        return g / num_samples_;
-//    }
 
 
 }; /* Candidate */
