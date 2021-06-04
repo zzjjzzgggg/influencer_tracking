@@ -6,7 +6,7 @@
 #include "lifespan_generator.h"
 
 int main(){
-    int L=10;
+    int L=40;
     int budget=10;
     int num_samples=10;
 
@@ -32,10 +32,10 @@ int main(){
         if(x==300)
             break;
     }
-    for(auto &s:social_actions){
+    for(auto &a:social_actions){
         std::vector<int> lifespan=lifegen.getLifespans(num_samples);
         ISetSegments segs(lifespan);
-        greedy.update(s,segs);
+        greedy.update(a,segs);
 
         double greedy_basic=greedy.getResult();
         std::cout<<greedy_basic<<std::endl;
