@@ -33,10 +33,10 @@ int main(){
         if(x==500)
             break;
     }
-    for(auto &s:social_actions){
+    for(auto &a:social_actions){
         std::vector<int> lifespan=lifegen.getLifespans(num_samples);
         ISetSegments segs(lifespan);
-        basic.update(s,segs);
+        basic.update(a,segs);
 
         double basic_mx=basic.getResult();
         std::cout<<basic_mx<<std::endl;
