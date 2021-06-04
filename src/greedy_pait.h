@@ -17,12 +17,12 @@ public:
 
 public:
     GreedyAlg(const int num_samples,const int budget);
-    void update(const SocialAc &s,const ISet& is);
+    void update(const SocialAc &a, const ISet& is);
     double getResult();
-    void clear(){
-        sg_.clear();
+    void clear(const bool deep=false){
+        sg_.clear(deep);
         for(int i=0;i<num_samples_;i++){
-            sam_graphs_[i]->clear();
+            sam_graphs_[i]->clear(deep);
         }
     }
 };
@@ -36,15 +36,12 @@ GreedyAlg::GreedyAlg(const int num_samples,const int budget)
     }
 }
 
-void GreedyAlg::update(const SocialAc &s, const ISet &is) {
+void GreedyAlg::update(const SocialAc &a, const ISet &is) {
     //add social action
-    sg_.addSocialAction(s.first.first,s.first.second,s.second);
-
-    //get affected nodes
-//    std::vector<int> nodes=sg_.getAffectedNodes();
+    sg_.addSocialAction(a.first.first, a.first.second, a.second);
 
     for(auto i:is){
-        sam_graphs_[i]->addSocialAction(s.first.first,s.first.second,s.second);
+        sam_graphs_[i]->addSocialAction(a.first.first, a.first.second, a.second);
     }
 }
 
