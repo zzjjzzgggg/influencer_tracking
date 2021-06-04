@@ -23,7 +23,7 @@ public:
         }
     }
 
-    void update(SocialAc s,const ISetSegments& segs);
+    void update(const UVC &s,const ISetSegments& segs);
 
     double getResult()const;
 
@@ -38,7 +38,7 @@ GreedyBasic::GreedyBasic(const int L,const int budget,const int num_samples){
     }
 }
 
-void GreedyBasic::update(SocialAc s,const ISetSegments& segs){
+void GreedyBasic::update(const UVC &s,const ISetSegments& segs){
     for(auto& seg:segs.segments_){
         for(int i=seg.start_;i<seg.end_;i++){
             greedy_ptrs_[(i+cur_)%L_]->update(s,seg.is_);
@@ -47,7 +47,7 @@ void GreedyBasic::update(SocialAc s,const ISetSegments& segs){
 }
 
 void GreedyBasic::next(){
-    greedy_ptrs_[cur_]->clear();
+    greedy_ptrs_[cur_]->clear(true);
     for(int i=0;i<L_;i++){
         greedy_ptrs_[i]->clear();
     }
