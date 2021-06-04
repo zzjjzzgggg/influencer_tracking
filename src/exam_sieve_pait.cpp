@@ -10,7 +10,7 @@ int main(){
     int budget=10;
     double eps=0.2;
     int num_samples=10;
-    double p=0.3;
+    double p=0.6;
 
     UVCs social_actions;
 
@@ -29,18 +29,18 @@ int main(){
         UVC soca = std::make_pair(std::make_pair(temp[1], temp[2]), temp[0]);
         social_actions.push_back(soca);
         x++;
-        if(x==100)
+        if(x==500)
             break;
     }
 
     SievePAIT pait{num_samples,budget,eps};
-    for(auto &s:social_actions){
+    for(auto &a:social_actions){
         ISetGenerator isgen(num_samples,p);
         ISet is=isgen.getISet();
-        pait.update(s,is);
+        pait.update(a,is);
 
-        double pait_mx=pait.getResult();
-        std::cout<<pait_mx<<std::endl;
+        double pag_mx=pait.getResult();
+        std::cout<<pag_mx<<std::endl;
         pait.clear();
     }
 
