@@ -49,18 +49,44 @@ private:
 public:
     SievePAIT(const int num_samples,const int budget,const double eps);
 
+    SievePAIT(const SievePAIT& o):num_samples_(o.num_samples_),
+    budget_(o.budget_),eps_(o.eps_),mx_gain_(o.mx_gain_),
+    candidate_buf_(o.candidate_buf_), sg_(o.sg_),
+    sam_graphs_(o.sam_graphs_),recycle_bin_(o.recycle_bin_),this_pos_(o.this_pos_){
+    }
+
+    SievePAIT& operator=(const SievePAIT& o){
+        num_samples_=o.num_samples_;
+        budget_=o.budget_;
+        eps_=o.eps_;
+        mx_gain_=o.mx_gain_;
+        candidate_buf_=o.candidate_buf_;
+        sg_=o.sg_;
+        sam_graphs_=o.sam_graphs_;
+        recycle_bin_=o.recycle_bin_;
+        this_pos_=o.this_pos_;
+        return *this;
+    }
     //Process social action e and its I set
-    void update(const UVC &s,const ISet & bs);
+    void update(const UVC &a, const ISet & bs);
 
     double getResult();
     void updateThresholds();
 
     bool updateMaxGain(const std::vector<int> &nodes);
 
-    void clear(){
-        sg_.clear();
+    void clear(const bool deep=false){
+        sg_.clear(deep);
         for(int i=0;i<num_samples_;i++){
-            sam_graphs_[i]->clear();
+            sam_graphs_[i]->clear(deep);
+        }
+        if(deep){
+            mx_gain_=0;
+            this_pos_.clear();
+            while (!recycle_bin_.empty()) recycle_bin_.pop();
+            for(auto& cad:candidate_buf_){
+                cad.clear();
+            }
         }
     }
 };
@@ -132,14 +158,14 @@ bool SievePAIT::updateMaxGain(const std::vector<int> &nodes) {
     return is_changed;
 }
 
-void SievePAIT::update(const UVC &s,const ISet& is){
+void SievePAIT::update(const UVC &a, const ISet& is){
     //add social action
-    sg_.addSocialAction(s.first.first,s.first.second,s.second);
+    sg_.addSocialAction(a.first.first, a.first.second, a.second);
     //get affected nodes
     std::vector<int> nodes=sg_.getAffectedNodes();
 
     for(auto i:is){
-        sam_graphs_[i]->addSocialAction(s.first.first,s.first.second,s.second);
+        sam_graphs_[i]->addSocialAction(a.first.first, a.first.second, a.second);
     }
 
     //if max delta change ,delta change,need to update thresholds
