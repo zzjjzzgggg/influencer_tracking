@@ -33,7 +33,7 @@ int main(){
         UVC soca=std::make_pair(std::make_pair(temp[1],temp[2]),temp[0]);
         social_actions.push_back(soca);
         x++;
-        if(x==50000)
+        if(x==300)
             break;
     }
     int temp=1;
