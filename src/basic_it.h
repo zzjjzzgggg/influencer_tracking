@@ -28,17 +28,17 @@ public:
         }
     }
 
-    void update(SocialAc s,const ISetSegments& segs){
+    void update(const UVC &a,const ISetSegments& segs){
         for (auto& seg : segs.segments_)
             for (int i = seg.start_; i < seg.end_; ++i)
-                sieve_ptrs_[(i + cur_) % L_]->update(s, seg.is_);
+                sieve_ptrs_[(i + cur_) % L_]->update(a, seg.is_);
     }
 
     double getResult() const {
         return sieve_ptrs_[cur_]->getResult();
     }
     void next() {
-        sieve_ptrs_[cur_]->clear();
+        sieve_ptrs_[cur_]->clear(true);
         for(int i=0;i<L_;i++){
             sieve_ptrs_[i]->clear();
         }
