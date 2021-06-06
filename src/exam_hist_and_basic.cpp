@@ -37,15 +37,15 @@ int main(){
     HistITSEG hist(num_samples, budget, eps);
     BasicIT basic(L,budget,eps,num_samples);
 
-    int i=1;
     int temp=1;
     std::string outfile="6_6hist_and_basic.txt";
     std::ofstream out(outfile);
+    double sum=0;
     for(auto &a:social_actions){
         std::vector<int> lifespan=lifegen.getLifespans(num_samples);
         ISetSegments segs(lifespan);
         hist.feed(a,segs);
-        std::cout<<i++<<" ";
+        std::cout<<temp<<" ";
         double hist_mx=hist.getResult();
         std::cout<<"hist"<<hist_mx<<"   ";
 
@@ -58,8 +58,9 @@ int main(){
         basic.next();
 
         out<<temp<<'\t'<<basic_mx<<'\t'<<hist_mx<<std::endl;
+        sum+=hist_mx/basic_mx;
         temp++;
     }
-
+    std::cout<<sum/x<<std::endl;
     return 0;
 }
