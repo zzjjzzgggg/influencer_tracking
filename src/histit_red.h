@@ -119,12 +119,12 @@ void HistITRED::feedSegment(const UVC &a, const ISetSegment& seg,
 }
 
 void HistITRED::next() {
-    // If head SievePAG instance expires
+    // If head SievePAIT instance expires
     if (algs_.front()->l_ == 0) {
         delete algs_.front();
         algs_.pop_front();
     }
-    // clear remaining SievePAG instances
+    // clear remaining SievePAIT instances
     for (auto it = algs_.begin(); it != algs_.end(); ++it) {
         (*it)->clear();
         (*it)->l_--;
@@ -147,12 +147,12 @@ void HistITRED::reduce() {
         // Now (*l) points to the first instance to be deleted, (*j) points to
         // the last instance that should be kept.
 
-        // cannot remember why do following operation? so comment it.
         // (*i)->uncertainty_ = (*l)->uncertainty_;
         while (l != j) {
             delete *l;
             ++l;
         }
+        //get the uncertainty of this interval
         (*j)->uncertainty_ = (*i)->upper() * eps_;
         algs_.erase(++i, j);
         i = j;
