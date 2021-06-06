@@ -24,8 +24,11 @@ public:
         return std::vector<int>(affected_nodes_.begin(),affected_nodes_.end());
     }
 
-    void clear(){
+    void clear(const bool deep= false){
         affected_nodes_.clear();
+        if(deep){
+            user_sigma_.clear();
+        }
     }
 
     std::vector<int> getNodes(){
