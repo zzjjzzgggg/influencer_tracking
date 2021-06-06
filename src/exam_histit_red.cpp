@@ -38,16 +38,17 @@ int main(){
     HistITSEG hist(num_samples,budget,eps);
     HistITRED hist_red(num_samples, budget, eps);
 
-    int i=1;
+    int temp=1;
 
     std::string outfile="6_6hist_and_red.txt";
     std::ofstream out(outfile);
+
     for(auto &a:social_actions){
         std::vector<int> lifespan=lifegen.getLifespans(num_samples);
         ISetSegments segs(lifespan);
 
         hist.feed(a,segs);
-        std::cout<<i++<<" ";
+        std::cout<<temp<<" ";
         double hist_mx=hist.getResult();
         std::cout<<"hist"<<hist_mx<<" ";
         hist.next();
@@ -56,8 +57,11 @@ int main(){
         double hist_red_mx=hist_red.getResult();
         std::cout<<"histred"<<hist_red_mx<<std::endl;
 
+        out<<temp<<'\t'<<hist_mx<<'\t'<<hist_red_mx<<std::endl;
+
         hist_red.reduce();
         hist_red.next();
+        temp++;
     }
 
     return 0;
