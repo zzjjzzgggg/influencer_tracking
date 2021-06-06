@@ -68,7 +68,7 @@ public:
         return *this;
     }
     //Process social action e and its I set
-    void update(const UVC &a, const ISet & bs);
+    void update(const UVC &a, const ISet & is);
 
     double getResult();
     void updateThresholds();
@@ -154,7 +154,6 @@ bool SievePAIT::updateMaxGain(const std::vector<int> &nodes) {
             is_changed= true;
         }
     }
-//    std::cout<<"is"<<is_changed;
     return is_changed;
 }
 
@@ -182,12 +181,10 @@ void SievePAIT::update(const UVC &a, const ISet& is){
                 double gain_sums=0;//sum of gain
                 double threshold=getThreshold(i);
                 std::vector<int> SS=ca.getMembers();
-//                std::cout<<threshold<<std::endl;
                 for(int k=0;k<num_samples_;k++){
                     gain_sums+=sam_graphs_[k]->getGain(u,SS);
                 }
                 double gain=gain_sums/num_samples_;
-//                std::cout<<"gain"<<gain;
                 if(gain>=threshold){
                     ca.insert(u);
                 }
