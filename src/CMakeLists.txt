@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.19)
 project(influencers_tracking)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -25,11 +25,14 @@ message(STATUS "LIBRARIES " ${LIBRARIES})
 
 #add_executable(influencers_tracking exam_lifespan_generator.cpp)
 
-
 #add_executable(influencers_tracking  exam_sieve_pait.cpp)
 #add_executable(influencers_tracking exam_greedy.cpp)
-add_executable(influencers_tracking  exam_greedy_and_pait.cpp)
-
-#target_link_libraries(influencers_tracking dyn_dgraph_mgr)
+#add_executable(influencers_tracking  exam_greedy_and_pait.cpp)
+#add_executable(influencers_tracking  exam_basic_it.cpp)
+#add_executable(influencers_tracking  exam_greedy_and_basicit.cpp)
+#add_executable(influencers_tracking exam_histit_seg.cpp)
+add_executable(influencers_tracking exam_histit_red.cpp)
+#add_executable(influencers_tracking exam_hist_and_basic.cpp)
+#add_executable(influencers_tracking exam_greedy_basic.cpp)
 
 #target_link_libraries(influencers_tracking dyn_dgraph_mgr)
