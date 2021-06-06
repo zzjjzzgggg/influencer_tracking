@@ -31,12 +31,12 @@ int main(){
         UVC soca=std::make_pair(std::make_pair(temp[1],temp[2]),temp[0]);
         social_actions.push_back(soca);
         x++;
-        if(x==5000)
+        if(x==10000)
             break;
     }
 
     int temp=1;
-    std::string outfile="data6_3.txt";
+    std::string outfile="data6_6greedy_pait.txt";
     std::ofstream out(outfile);
     double sum=0;
     for(auto &s:social_actions){
@@ -45,6 +45,7 @@ int main(){
 
         pait.update(s,is);
         double pait_mx=pait.getResult();
+        std::cout<<temp<<" ";
         std::cout<<"sieve_pait"<<pait_mx<<"  ";
 
         pait.clear();
@@ -56,10 +57,10 @@ int main(){
 
         out<<temp<<'\t'<<pait_mx<<'\t'<<greedy_gain<<std::endl;
         greedy.clear();
-        sum+=greedy_gain/pait_mx;
+        sum+=pait_mx/greedy_gain;
         temp++;
     }
-    std::cout<<x/sum<<std::endl;
+    std::cout<<sum/x<<std::endl;
     return 0;
 }
 
