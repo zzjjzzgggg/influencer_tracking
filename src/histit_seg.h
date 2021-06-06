@@ -106,12 +106,12 @@ void HistITSEG::feedSegment(const UVC &a, const ISetSegment& seg,
 }
 
 void HistITSEG::next() {
-    // If head SievePAG instance expires
+    // If head SievePAIT instance expires
     if (algs_.front()->l_ == 0) {
         delete algs_.front();
         algs_.pop_front();
     }
-    // clear remaining SievePAG instances
+    // clear remaining SievePAIT instances
     for (auto it = algs_.begin(); it != algs_.end(); ++it) {
         (*it)->clear();
         (*it)->l_--;
