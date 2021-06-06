@@ -14,8 +14,9 @@ private:
     private:
         SievePAIT* sieve_ptr_;
     public:
-        int l_;
-        double val_=0;
+        int l_;//instance index
+        double val_=0;//current utility value
+
     public:
         Alg(const int l,const int num_samples,const int budget,const double eps):l_(l){
             sieve_ptr_=new SievePAIT(num_samples,budget,eps);
@@ -48,7 +49,6 @@ public:
         for (auto it = algs_.begin(); it != algs_.end(); ++it) delete *it;
     }
 
-    void newEndIfNeed(const int l);
 
     void feed(const UVC &a,const ISetSegments& segs);
 
@@ -57,25 +57,24 @@ public:
 
     double getResult() const { return algs_.front()->val_; }
     void next();
-    void reduce();
-    void process(const SocialAc a, const int l, const int r, const ISetSegment& seg);
 };
 
-void HistITSEG::newEndIfNeed(const int l) {
-    if (algs_.empty() || algs_.back()->l_ < l)
-        algs_.push_back(new Alg(l, num_samples_, budget_, eps_));
-}
-
-void HistITSEG::feed(const UVC &a,const ISetSegments& segs){
-    //create a new tail instance if necessary
-    newEndIfNeed(segs.getMnIdx());
+void HistITSEG::feed(const UVC &a, const ISetSegments& segs){
 
     auto it=algs_.begin();
     for(auto& seg:segs.segments_){
+        //create a new head instance if necessary
+        if(algs_.empty()) {
+            algs_.push_back(new Alg(seg.end_ - 1, num_samples_, budget_, eps_));
+            it = algs_.begin();
+        }
+        if (algs_.back()->l_ < seg.end_-1){
+            algs_.push_back(new Alg(seg.end_-1, num_samples_, budget_, eps_));
+
+        }
         //Update instances belonging to this segment.
         feedSegment(a,seg,it);
 
-        if(it==algs_.end())return;
         auto pre=it;
         //if last updated alg.l_=l,continue
         if (it != algs_.begin()) {
@@ -84,9 +83,8 @@ void HistITSEG::feed(const UVC &a,const ISetSegments& segs){
             if ((*pre)->l_ == seg.end_ - 1) continue;
         }
 
-        //create new alg before succ
+        //create new alg from successor
         if(it==algs_.begin()||(*pre)->l_<(seg.end_-1)){
-         // if(it==algs_.begin()||(*it)->val_<(1-eps_)*(*pre)->val_){
             //create alg_l based on its successor
             Alg* alg=new Alg(*(*it));
             alg->l_=seg.end_-1;
@@ -101,15 +99,10 @@ void HistITSEG::feed(const UVC &a,const ISetSegments& segs){
 // Update instances belonging to this segment.
 void HistITSEG::feedSegment(const UVC &a, const ISetSegment& seg,
                             std::list<Alg*>::iterator& it) {
-//    auto job = [a, &seg](Alg* alg) { alg->feed(a, seg.is_ ); };
-//    std::vector<std::future<void>> futures;
     while (it != algs_.end() && (*it)->l_ < seg.end_) {
-//        futures.push_back(std::async(std::launch::async, job, *it));
         (*it)->feed(a, seg.is_);
-
         ++it;
     }
-//    for (auto& future : futures) future.get();
 }
 
 void HistITSEG::next() {
@@ -122,29 +115,6 @@ void HistITSEG::next() {
     for (auto it = algs_.begin(); it != algs_.end(); ++it) {
         (*it)->clear();
         (*it)->l_--;
-    }
-}
-
-void HistITSEG::reduce() {
-    // For each i, find the largest j such that A(j) >= (1-e)A(i)
-    auto start = algs_.begin();
-    while (start != algs_.end()) {
-        auto last = start, it = start;
-        double bound = (*start)->val_ * (1 - eps_);
-        while(true){
-            ++it;
-            if(it==algs_.end()||(*it)->val_<bound)break;
-            ++last;
-        }
-        if(start!=last){
-            it=start;
-            while(++it!=last){
-                delete *it;
-            }
-            algs_.erase(++start,last);
-            start = last;
-        }else
-            ++start;
     }
 }
 
