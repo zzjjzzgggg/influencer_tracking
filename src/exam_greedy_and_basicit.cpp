@@ -11,7 +11,6 @@ int main(){
     int budget=10;
     double eps=0.2;
     int num_samples=10;
-    double p=0.6;
 
     double lmd=0.01;
     GreedyBasic greedy(L,budget,num_samples);
@@ -33,18 +32,18 @@ int main(){
         UVC soca=std::make_pair(std::make_pair(temp[1],temp[2]),temp[0]);
         social_actions.push_back(soca);
         x++;
-        if(x==300)
+        if(x==5000)
             break;
     }
     int temp=1;
     double ritio_sums=0;
-//    std::string outfile="greedy_and_basic.txt";
-//    std::ofstream out(outfile);
+    std::string outfile="6_6greedy_and_basic.txt";
+    std::ofstream out(outfile);
     for(auto &s:social_actions){
         std::vector<int> lifespan=lifegen.getLifespans(num_samples);
         ISetSegments segs(lifespan);
         greedy.update(s,segs);
-//        std::cout<<temp<<" ";
+        std::cout<<temp<<" ";
         double greedy_basic=greedy.getResult();
         std::cout<<"greedy_basic "<<greedy_basic<<" ";
         greedy.next();
@@ -54,10 +53,9 @@ int main(){
         double basic_it=basic.getResult();
         std::cout<<"basic_it "<<basic_it<<std::endl;
         basic.next();
-//        out<<temp<<'\t'<<greedy_basic<<'\t'<<basic_pdg<<std::endl;
+        out<<temp<<'\t'<<greedy_basic<<'\t'<<basic_it<<std::endl;
         ritio_sums+=basic_it/greedy_basic;
         temp++;
-//        std::cout<<temp<<std::endl;
     }
     double ritio=ritio_sums/x;
     std::cout<<ritio;
