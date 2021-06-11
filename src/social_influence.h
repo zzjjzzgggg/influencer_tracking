@@ -9,9 +9,30 @@
 
 class SocialInfluence{
 public:
+    mutable int oracle_calls_ = 0;
+    std::vector<int> users;
     std::unordered_set<int> affected_nodes_;
     std::map<int,std::set<int>> user_sigma_;
 public:
+    SocialInfluence(){}
+    SocialInfluence(const SocialInfluence& o){
+        oracle_calls_=o.oracle_calls_;
+        affected_nodes_=o.affected_nodes_;
+        user_sigma_=o.user_sigma_;
+    }
+
+    SocialInfluence& operator=(const SocialInfluence& o){
+        oracle_calls_=o.oracle_calls_;
+        affected_nodes_=o.affected_nodes_;
+        user_sigma_=o.user_sigma_;
+        return *this;
+    }
+
+    inline bool exists(const int u){
+        bool is=std::find(users.begin(),users.end(),u)!=users.end();
+        return is;
+    }
+
     void addSocialAction(const int u,const int v,const int c);
 
     double getReward(const int u);
@@ -25,6 +46,7 @@ public:
     }
 
     void clear(const bool deep= false){
+        oracle_calls_=0;
         affected_nodes_.clear();
         if(deep){
             user_sigma_.clear();
@@ -41,6 +63,7 @@ public:
 };
 
 
+
 void SocialInfluence::addSocialAction(const int u, const int v, const int c) {
     //map: automatic deduplication
     user_sigma_[u].insert(u);
@@ -48,6 +71,10 @@ void SocialInfluence::addSocialAction(const int u, const int v, const int c) {
     user_sigma_[v].insert(v);
     affected_nodes_.insert(u);
     affected_nodes_.insert(v);
+    if(!exists(u))
+        users.push_back(u);
+    if(!exists(v))
+        users.push_back(v);
 }
 
 double SocialInfluence::getReward(const int u) {
@@ -57,7 +84,8 @@ double SocialInfluence::getReward(const int u) {
 double SocialInfluence::getReward(const std::vector<int> &S){
     double gain=0;
     for(auto &item:S){
-        gain+=user_sigma_[item].size();
+        if(exists(item))
+            gain+=user_sigma_[item].size();
     }
     return gain;
 }
