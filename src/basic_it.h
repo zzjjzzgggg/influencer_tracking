@@ -28,7 +28,7 @@ public:
         }
     }
 
-    void update(const UVC &a,const ISetSegments& segs){
+    void update(const SocialAc &a,const ISetSegments& segs){
         for (auto& seg : segs.segments_)
             for (int i = seg.start_; i < seg.end_; ++i)
                 sieve_ptrs_[(i + cur_) % L_]->update(a, seg.is_);
