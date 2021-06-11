@@ -6,6 +6,7 @@
 #define INFLUENCERS_TRACKING_SAMPLES_H
 
 #include "stdafx.h"
+#include "social_influence.h"
 
 std::string into2bin(int n,int count){
     std::string str="";
@@ -15,7 +16,6 @@ std::string into2bin(int n,int count){
     }
     return str;
 }
-
 
 double get_prob(double lambda,int time,int ta){
     return exp(-lambda*(time-ta));
@@ -30,30 +30,29 @@ double cal_nrmse(std::vector<double> &s,double expect){
     return nrmse;
 }
 
-double get_expect(){
-    double test_pa=0.9;
+double get_expect(const double lambda, int k, SocialInfluence &s_sin, int time, std::map<int,int> u_t){
     double expect=0;
-    for(int i=1;i<pow(2,num_sample);i++){
-        std::string t= into2bin(i,num_sample);
+    for(int i=1;i<pow(2, k); i++){
+        std::string t= into2bin(i, k);
         double temp_prob=1;
-        for(int j=0;j<num_sample;j++){
+        auto iter=u_t.begin();
+        std::vector<int> u;
+        for(int j=0; j < k; j++){
             int ex;
-            std::vector<int> u;
             if(t[j]=='1'){
-                u.push_back()
+                u.push_back(iter->first);
                 ex=1;
             }else{
                 ex=0;
             }
-
-            temp_prob=temp_prob*pow(test_pa),ex)*
-                      pow((1-test_pa), 1-ex);
+            temp_prob=temp_prob*pow(get_prob(lambda,time,iter->second),ex)
+                      *pow(1-get_prob(lambda,time,iter->second), 1-ex);
+            iter++;
         }
-        expect+=temp_prob*;
+        double reward=s_sin.getReward(u);
+        expect+=temp_prob*reward;
     }
     return expect;
 }
-
-
 
 #endif //INFLUENCERS_TRACKING_SAMPLES_H
