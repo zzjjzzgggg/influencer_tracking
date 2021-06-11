@@ -5,44 +5,54 @@
 
 #include "greedy_pait.h"
 #include "iset_generator.h"
+#include <gflags/gflags.h>
+
+DEFINE_string(dir, "", "working directory");
+DEFINE_string(stream, "comment_post.txt", "input streaming data file name");
+DEFINE_string(obj, "output.txt", "objective file name");
+DEFINE_int32(n, 10, "number of samples");
+DEFINE_int32(B, 10, "budget");
+DEFINE_double(p, 0.6, "probability");
 
 int main(){
-    int budget=10;
-    int num_samples=10;
-    double p=0.6;
+    GreedyAlg greedy{FLAGS_n,FLAGS_B};
+    ISetGenerator isgen(FLAGS_n,FLAGS_p);
 
-    GreedyAlg greedy{num_samples,budget};
-
-    std::string filename="comment_post.txt";
-
-    std::ifstream data(filename);
+    std::ifstream data(FLAGS_stream);
     std::string oneline;
     int x=0;
 
-    UVCs social_actions;
+    SocialAcs social_actions;
     while(getline(data,oneline)){
         std::istringstream read_str(oneline);
         int item;
         std::vector<int> temp;
         while(read_str>>item)
             temp.push_back(int(item));
-        UVC soca=std::make_pair(std::make_pair(temp[1],temp[2]),temp[0]);
-        social_actions.push_back(soca);
+        social_actions.emplace_back(std::make_pair(temp[1],temp[2]),temp[0],temp[3]);
         x++;
         if(x==100)
             break;
     }
 
+    int temp=1;
+    std::vector<std::tuple<int,double>> rst;
+    std::ofstream out(FLAGS_obj);
     for(auto &a:social_actions){
-        ISetGenerator isgen(num_samples,p);
         ISet is=isgen.getISet();
-
         greedy.update(a,is);
 
         double greedy_gain=greedy.getResult();
         std::cout<<"greedy:"<<greedy_gain<<std::endl;
         greedy.clear();
+        rst.emplace_back(temp,greedy_gain);
+        temp++;
     }
+    std::string ofnm = osutils::join(
+            FLAGS_dir,
+            "greedy_n{}b{}p{}.dat"_format(FLAGS_n, FLAGS_B,FLAGS_p));
+    ioutils::saveTupleVec(rst, ofnm, "{}\t{}\n");
+    gflags::ShutDownCommandLineFlags();
     return 0;
 }
 

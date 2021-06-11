@@ -6,43 +6,43 @@
 #include "basic_it.h"
 #include "iset_segment.h"
 #include "lifespan_generator.h"
+#include <gflags/gflags.h>
+
+DEFINE_string(dir, "", "working directory");
+DEFINE_string(stream, "comment_post.txt", "input streaming data file name");
+DEFINE_int32(n, 10, "number of samples");
+DEFINE_int32(B, 10, "budget");
+DEFINE_double(eps, 0.2, "epsilon");
+DEFINE_double(lmd, .01, "decaying rate");
+DEFINE_int32(L, 40, "maximum lifetime");
 
 int main(){
-    int L=40;
-    int budget=10;
-    double eps=0.2;
-    int num_samples=10;
-    double lmd=0.01;
-    LifespanGenerator lifegen(L,1-exp(-lmd));
-    std::string filename="comment_post.txt";
-    std::ifstream data(filename);
+    BasicIT basic(FLAGS_L,FLAGS_B,FLAGS_eps,FLAGS_n);
+    HistITSEG hist(FLAGS_n,FLAGS_B,FLAGS_eps);
+    LifespanGenerator lifegen(FLAGS_L,1-exp(-FLAGS_lmd));
+
+    std::ifstream data(FLAGS_stream);
     std::string oneline;
     int x=0;
 
-    UVCs social_actions;
-
+    SocialAcs social_actions;
     while(getline(data,oneline)){
         std::istringstream read_str(oneline);
         int item;
         std::vector<int> temp;
         while(read_str>>item)
             temp.push_back(int(item));
-        UVC soca=std::make_pair(std::make_pair(temp[1],temp[2]),temp[0]);
-        social_actions.push_back(soca);
+        social_actions.emplace_back(std::make_pair(temp[1],temp[2]),temp[0],temp[3]);
         x++;
-        if(x==5000)
+        if(x==1000)
             break;
     }
 
-    HistITSEG hist(num_samples, budget, eps);
-    BasicIT basic(L,budget,eps,num_samples);
-
     int temp=1;
-    std::string outfile="6_6hist_and_basic.txt";
-    std::ofstream out(outfile);
     double sum=0;
+    std::vector<std::tuple<int,double,double>> rst;
     for(auto &a:social_actions){
-        std::vector<int> lifespan=lifegen.getLifespans(num_samples);
+        std::vector<int> lifespan=lifegen.getLifespans(FLAGS_n);
         ISetSegments segs(lifespan);
         hist.feed(a,segs);
         std::cout<<temp<<" ";
@@ -57,10 +57,15 @@ int main(){
         std::cout<<"basic"<<basic_mx<<std::endl;
         basic.next();
 
-        out<<temp<<'\t'<<basic_mx<<'\t'<<hist_mx<<std::endl;
         sum+=hist_mx/basic_mx;
+        rst.emplace_back(temp,basic_mx,hist_mx);
         temp++;
     }
     std::cout<<sum/x<<std::endl;
+    std::string ofnm = osutils::join(
+            FLAGS_dir,
+            "basic_and_hist_n{}b{}eps{}lmd{}L{}.dat"_format(FLAGS_n, FLAGS_B,FLAGS_eps,FLAGS_lmd,FLAGS_L));
+    ioutils::saveTupleVec(rst, ofnm, "{}\t{}\t{}\n");
+    gflags::ShutDownCommandLineFlags();
     return 0;
 }
