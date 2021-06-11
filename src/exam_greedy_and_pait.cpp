@@ -14,7 +14,10 @@ DEFINE_int32(B, 10, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
 DEFINE_double(p, 0.6, "probability");
 
-int main(){
+int main(int argc, char* argv[]){
+    gflags::SetUsageMessage("usage:");
+    gflags::ParseCommandLineFlags(&argc, &argv, true);
+
     SievePAIT pait(FLAGS_n,FLAGS_B,FLAGS_eps);
     ISetGenerator isgen(FLAGS_n,FLAGS_p);
     GreedyAlg greedy{FLAGS_n,FLAGS_B};

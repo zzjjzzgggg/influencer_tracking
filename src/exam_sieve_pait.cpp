@@ -16,7 +16,7 @@ DEFINE_double(p, 0.6, "probability");
 
 
 int main(int argc, char* argv[]){
-    gflags::SetUsageMessage("xxxx");
+    gflags::SetUsageMessage("usage:");
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     osutils::Timer tm;
 

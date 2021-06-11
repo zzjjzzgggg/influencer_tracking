@@ -13,7 +13,10 @@ DEFINE_int32(B, 10, "budget");
 DEFINE_double(lmd, .01, "decaying rate");
 DEFINE_int32(L, 500, "maximum lifetime");
 
-int main(){
+int main(int argc, char* argv[]){
+    gflags::SetUsageMessage("usage:");
+    gflags::ParseCommandLineFlags(&argc, &argv, true);
+
     GreedyBasic greedy(FLAGS_L,FLAGS_B,FLAGS_n);
     LifespanGenerator lifegen(FLAGS_L,1-exp(-FLAGS_lmd));
 

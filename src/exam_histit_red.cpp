@@ -16,7 +16,10 @@ DEFINE_double(eps, 0.2, "epsilon");
 DEFINE_double(lmd, .01, "decaying rate");
 DEFINE_int32(L, 40, "maximum lifetime");
 
-int main(){
+int main(int argc, char* argv[]){
+    gflags::SetUsageMessage("usage:");
+    gflags::ParseCommandLineFlags(&argc, &argv, true);
+
     LifespanGenerator lifegen(FLAGS_L,1-exp(-FLAGS_lmd));
     HistITSEG hist(FLAGS_n,FLAGS_B,FLAGS_eps);
     HistITRED hist_red(FLAGS_n,FLAGS_B,FLAGS_eps);
