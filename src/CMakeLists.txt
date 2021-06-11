@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.16)
 project(influencers_tracking)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -19,7 +19,6 @@ message(STATUS "LIBRARIES " ${LIBRARIES})
 
 
 
-#add_library(dyn_dgraph_mgr dyn_dgraph_mgr_v2.cpp lifespan_generator.h exam_lifespan_generator.cpp iset_segment.h hist_pdg.h sieve_pait.h social_network.h subgraph.h)
 #target_link_libraries(dyn_dgraph_mgr ${LIBRARIES})
 
 
@@ -29,10 +28,14 @@ message(STATUS "LIBRARIES " ${LIBRARIES})
 #add_executable(influencers_tracking exam_greedy.cpp)
 #add_executable(influencers_tracking  exam_greedy_and_pait.cpp)
 #add_executable(influencers_tracking  exam_basic_it.cpp)
+#add_executable(influencers_tracking exam_greedy_basic.cpp)
 #add_executable(influencers_tracking  exam_greedy_and_basicit.cpp)
 #add_executable(influencers_tracking exam_histit_seg.cpp)
-add_executable(influencers_tracking exam_histit_red.cpp)
 #add_executable(influencers_tracking exam_hist_and_basic.cpp)
-#add_executable(influencers_tracking exam_greedy_basic.cpp)
+add_executable(influencers_tracking exam_histit_red.cpp)
+#add_executable(influencers_tracking test.cpp)
+#add_executable(influencers_tracking exam_samples.cpp)
+#add_executable(influencers_tracking exam_hist_and_basic.cpp)
 
-#target_link_libraries(influencers_tracking dyn_dgraph_mgr)
+
+target_link_libraries(influencers_tracking ${LIBRARIES})
