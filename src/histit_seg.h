@@ -27,7 +27,7 @@ private:
 
         virtual ~Alg(){delete sieve_ptr_;}
 
-        inline void feed(const UVC &a, const ISet& is) {
+        inline void feed(const SocialAc &a, const ISet& is) {
             sieve_ptr_->update(a, is);
             val_ = sieve_ptr_->getResult();
         }
@@ -50,16 +50,16 @@ public:
     }
 
 
-    void feed(const UVC &a,const ISetSegments& segs);
+    void feed(const SocialAc &a,const ISetSegments& segs);
 
-    void feedSegment(const UVC &a, const ISetSegment& seg,
+    void feedSegment(const SocialAc &a, const ISetSegment& seg,
                      typename std::list<Alg*>::iterator& it);
 
     double getResult() const { return algs_.front()->val_; }
     void next();
 };
 
-void HistITSEG::feed(const UVC &a, const ISetSegments& segs){
+void HistITSEG::feed(const SocialAc &a, const ISetSegments& segs){
 
     auto it=algs_.begin();
     for(auto& seg:segs.segments_){
@@ -97,7 +97,7 @@ void HistITSEG::feed(const UVC &a, const ISetSegments& segs){
 
 }
 // Update instances belonging to this segment.
-void HistITSEG::feedSegment(const UVC &a, const ISetSegment& seg,
+void HistITSEG::feedSegment(const SocialAc &a, const ISetSegment& seg,
                             std::list<Alg*>::iterator& it) {
     while (it != algs_.end() && (*it)->l_ < seg.end_) {
         (*it)->feed(a, seg.is_);

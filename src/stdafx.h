@@ -41,16 +41,21 @@ using ISet = std::vector<int>;
 
 using namespace graph;
 
-typedef std::pair<int,int> Edge;
-typedef std::pair<Edge,int> SocialAc;
-typedef std::vector<SocialAc> SocialAcs;
 
 typedef std::vector<std::pair<int, int>> IntPrV;
 
 typedef std::pair<int,int> UV;
-typedef std::pair<UV,int> UVC;
-typedef std::vector<UVC> UVCs;
+typedef std::tuple<UV,int,int> SocialAc;
+typedef std::vector<SocialAc> SocialAcs;
+
+//struct SocialAc{
+//    int u;
+//    int v;
+//    int c;
+//    int timestamp;
+//};
 
 
+//std::vector<s_c> S
 
 #endif //INFLUENCERS_TRACKING_STDAFX_H

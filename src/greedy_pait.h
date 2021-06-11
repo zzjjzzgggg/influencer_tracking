@@ -38,10 +38,10 @@ GreedyAlg::GreedyAlg(const int num_samples,const int budget)
 
 void GreedyAlg::update(const SocialAc &a, const ISet &is) {
     //add social action
-    sg_.addSocialAction(a.first.first, a.first.second, a.second);
+    sg_.addSocialAction(std::get<0>(a).first, std::get<0>(a).second, std::get<1>(a));
 
     for(auto i:is){
-        sam_graphs_[i]->addSocialAction(a.first.first, a.first.second, a.second);
+        sam_graphs_[i]->addSocialAction(std::get<0>(a).first, std::get<0>(a).second, std::get<1>(a));
     }
 }
 
