@@ -60,6 +60,8 @@ public:
         }
         return nodes;
     }
+
+    int getOracleCalls()const {return oracle_calls_;}
 };
 
 
@@ -92,6 +94,7 @@ double SocialInfluence::getReward(const std::vector<int> &S){
 
 double SocialInfluence::getGain(const int u, const std::vector<int> &S) {
     //u not in subgraphs
+    oracle_calls_++;
 
     if(user_sigma_.find(u) == user_sigma_.end())
     {

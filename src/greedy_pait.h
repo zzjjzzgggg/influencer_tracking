@@ -25,6 +25,13 @@ public:
             sam_graphs_[i]->clear(deep);
         }
     }
+    int getOracleCalls(){
+        int oracle_calls=0;
+        for(int i=0;i<num_samples_;i++){
+            oracle_calls+=sam_graphs_[i]->getOracleCalls();
+        }
+        return oracle_calls;
+    }
 };
 GreedyAlg::GreedyAlg(const int num_samples,const int budget)
 {

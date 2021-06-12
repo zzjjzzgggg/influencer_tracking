@@ -9,6 +9,7 @@
 
 DEFINE_string(dir, "", "working directory");
 DEFINE_string(stream, "comment_post.txt", "input streaming data file name");
+DEFINE_string(obj, "output.txt", "objective file name");
 DEFINE_int32(n, 10, "number of samples");
 DEFINE_int32(B, 10, "budget");
 DEFINE_double(p, 0.6, "probability");
@@ -42,7 +43,10 @@ int main(){
         greedy.update(a,is);
 
         double greedy_gain=greedy.getResult();
+        int g_ocalls=greedy.getOracleCalls();
+
         std::cout<<"greedy:"<<greedy_gain<<std::endl;
+        std::cout<<g_ocalls<<std::endl;
         greedy.clear();
         rst.emplace_back(temp,greedy_gain);
         temp++;

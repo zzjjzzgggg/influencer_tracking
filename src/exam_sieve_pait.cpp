@@ -9,6 +9,7 @@
 
 DEFINE_string(dir, "", "working directory");
 DEFINE_string(stream, "comment_post.txt", "input streaming data file name");
+DEFINE_string(obj, "output.txt", "objective file name");
 DEFINE_int32(n, 10, "number of samples");
 DEFINE_int32(B, 10, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
@@ -26,7 +27,6 @@ int main(int argc, char* argv[]){
     SocialAcs social_actions;
 
     //postid postuserid commentuserid timestamp
-
     std::ifstream data(FLAGS_stream);
     std::string oneline;
     int x = 0;
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]){
             temp.push_back(int(item));
         social_actions.emplace_back(std::make_pair(temp[1],temp[2]),temp[0],temp[3]);
         x++;
-        if(x==500)
+        if(x==100)
             break;
     }
     std::vector<std::tuple<int,double>> rst;
@@ -49,10 +49,14 @@ int main(int argc, char* argv[]){
         pait.update(a,is);
 
         double pag_mx=pait.getResult();
+        int g_ocalls=pait.getOracleCalls();
+
         std::cout<<pag_mx<<std::endl;
+//        std::cout<<g_ocalls<<std::endl;
         pait.clear();
         rst.emplace_back(temp,pag_mx);
     }
+
     std::string ofnm = osutils::join(
             FLAGS_dir,
             "pait_n{}b{}eps{}p{}.dat"_format(FLAGS_n, FLAGS_B,FLAGS_eps,FLAGS_p

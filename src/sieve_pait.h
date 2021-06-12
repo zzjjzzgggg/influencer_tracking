@@ -68,7 +68,7 @@ public:
         return *this;
     }
     //Process social action e and its I set
-    void update(const SocialAc &a, const ISet & is);
+    void update(const SocialAc &a,const ISet & is);
 
     double getResult();
     void updateThresholds();
@@ -88,6 +88,13 @@ public:
                 cad.clear();
             }
         }
+    }
+    int getOracleCalls(){
+        int oracle_calls=0;
+        for(int i=0;i<num_samples_;i++){
+            oracle_calls+=sam_graphs_[i]->getOracleCalls();
+        }
+        return oracle_calls;
     }
 };
 
@@ -157,15 +164,16 @@ bool SievePAIT::updateMaxGain(const std::vector<int> &nodes) {
     return is_changed;
 }
 
-void SievePAIT::update(const SocialAc &a, const ISet& is){
-    //add social action
-    sg_.addSocialAction(std::get<0>(a).first, std::get<0>(a).second, std::get<1>(a));
-    //get affected nodes
-    std::vector<int> nodes=sg_.getAffectedNodes();
 
+void SievePAIT::update(const SocialAc &a,const ISet & is){
+    //add social action
+
+    sg_.addSocialAction(std::get<0>(a).first, std::get<0>(a).second, std::get<1>(a));
     for(auto i:is){
         sam_graphs_[i]->addSocialAction(std::get<0>(a).first, std::get<0>(a).second, std::get<1>(a));
     }
+    //get affected nodes
+    std::vector<int> nodes=sg_.getAffectedNodes();
 
     //if max delta change ,delta change,need to update thresholds
     if(updateMaxGain(nodes)) {
