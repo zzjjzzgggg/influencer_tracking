@@ -17,12 +17,14 @@ public:
     SocialInfluence(){}
     SocialInfluence(const SocialInfluence& o){
         oracle_calls_=o.oracle_calls_;
+        users=o.users;
         affected_nodes_=o.affected_nodes_;
         user_sigma_=o.user_sigma_;
     }
 
     SocialInfluence& operator=(const SocialInfluence& o){
         oracle_calls_=o.oracle_calls_;
+        users=o.users;
         affected_nodes_=o.affected_nodes_;
         user_sigma_=o.user_sigma_;
         return *this;
