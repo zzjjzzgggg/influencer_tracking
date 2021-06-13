@@ -28,6 +28,7 @@ public:
         }
     }
 
+
     void update(const SocialAc &a,const ISetSegments& segs){
         for (auto& seg : segs.segments_)
             for (int i = seg.start_; i < seg.end_; ++i)
@@ -37,12 +38,21 @@ public:
     double getResult() const {
         return sieve_ptrs_[cur_]->getResult();
     }
+
     void next() {
         sieve_ptrs_[cur_]->clear(true);
         for(int i=0;i<L_;i++){
             sieve_ptrs_[i]->clear();
         }
         cur_ = (cur_ + 1) % L_;
+    }
+
+    int statOracleCalls(){
+        int oracle_calls=0;
+        for(int i=0;i<L_;i++){
+            oracle_calls+=sieve_ptrs_[i]->getOracleCalls();
+        }
+        return oracle_calls;
     }
 
 };

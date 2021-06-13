@@ -28,6 +28,14 @@ public:
     double getResult()const;
 
     void next();
+
+    int statOracleCalls(){
+        int oracle_calls=0;
+        for(int i=0;i<L_;i++){
+            oracle_calls+=greedy_ptrs_[i]->getOracleCalls();
+        }
+        return oracle_calls;
+    }
 };
 
 GreedyBasic::GreedyBasic(const int L,const int budget,const int num_samples){
@@ -57,6 +65,7 @@ void GreedyBasic::next(){
 double GreedyBasic::getResult()const {
     return greedy_ptrs_[cur_]->getResult();
 }
+
 
 
 #endif //INFLUENCERS_TRACKING_GREEDY_BASIC_H
