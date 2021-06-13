@@ -14,7 +14,7 @@ DEFINE_int32(n, 10, "number of samples");
 DEFINE_int32(B, 10, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
 DEFINE_double(lmd, .01, "decaying rate");
-DEFINE_int32(L, 500, "maximum lifetime");
+DEFINE_int32(L, 50, "maximum lifetime");
 
 int main(int argc, char* argv[]){
     gflags::SetUsageMessage("usage:");
@@ -37,31 +37,38 @@ int main(int argc, char* argv[]){
             temp.push_back(int(item));
         social_actions.emplace_back(std::make_pair(temp[1],temp[2]),temp[0],temp[3]);
         x++;
-        if(x==500)
+        if(x==300)
             break;
     }
     int temp=1;
     std::vector<std::tuple<int,double,double>> rst;
     double ritio_sums=0;
+    int ocalls_ritio_sum=0;
+    double ocalls_ritio;
     for(auto &s:social_actions){
         std::vector<int> lifespan=lifegen.getLifespans(FLAGS_n);
         ISetSegments segs(lifespan);
         greedy.update(s,segs);
         std::cout<<temp<<" ";
         double greedy_basic=greedy.getResult();
-        std::cout<<"greedy_basic "<<greedy_basic<<" ";
+//        std::cout<<"greedy_basic "<<greedy_basic<<" ";
+        int g_ocalls=greedy.statOracleCalls();
         greedy.next();
-
+        std::cout<<g_ocalls<<" ";
         basic.update(s,segs);
 
         double basic_it=basic.getResult();
-        std::cout<<"basic_it "<<basic_it<<std::endl;
+//        std::cout<<"basic_it "<<basic_it<<std::endl;
+        int b_ocalls=basic.statOracleCalls();
+
         basic.next();
         ritio_sums+=basic_it/greedy_basic;
 
         rst.emplace_back(temp,basic_it,greedy_basic);
 
         temp++;
+
+        std::cout<<b_ocalls<<std::endl;
     }
     double ritio=ritio_sums/x;
     std::cout<<ritio;

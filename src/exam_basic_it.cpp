@@ -9,6 +9,7 @@
 
 DEFINE_string(dir, "", "working directory");
 DEFINE_string(stream, "comment_post.txt", "input streaming data file name");
+DEFINE_string(obj, "output.txt", "objective file name");
 DEFINE_int32(n, 10, "number of samples");
 DEFINE_int32(B, 10, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
@@ -36,7 +37,7 @@ int main(int argc, char* argv[]){
             temp.push_back(int(item));
         social_actions.emplace_back(std::make_pair(temp[1],temp[2]),temp[0],temp[3]);
         x++;
-        if(x==500)
+        if(x==3000)
             break;
     }
     int temp=1;
@@ -47,7 +48,11 @@ int main(int argc, char* argv[]){
         basic.update(a,segs);
 
         double basic_mx=basic.getResult();
+        int b_ocalls=basic.statOracleCalls();
+
         std::cout<<basic_mx<<std::endl;
+        std::cout<<b_ocalls<<std::endl;
+
         basic.next();
         rst.emplace_back(temp,basic_mx);
         temp++;
