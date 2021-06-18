@@ -35,11 +35,25 @@ public:
         return std::find(users.begin(), users.end(), u) != users.end();
     }
 
-    void addSocialAction(const int u, const int v, const int c);
+    void addSocialAction(const int u, const int v, const int c) {
+        user_sigma_[u].insert(u);
+        user_sigma_[u].insert(v);
+        user_sigma_[v].insert(v);
+        affected_nodes_.insert(u);
+        affected_nodes_.insert(v);
+        if (!exists(u)) users.push_back(u);
+        if (!exists(v)) users.push_back(v);
+    }
 
-    double getReward(const int u);
+    double getReward(const int u) { return user_sigma_[u].size(); }
 
-    double getReward(const std::vector<int> &S);
+    double getReward(const std::vector<int> &S) {
+        double gain = 0;
+        for (auto &item : S) {
+            if (exists(item)) gain += user_sigma_[item].size();
+        }
+        return gain;
+    }
 
     double getGain(const int u, const std::vector<int> &S);
 
@@ -64,39 +78,14 @@ public:
     int getOracleCalls() const { return oracle_calls_; }
 };
 
-void SocialInfluence::addSocialAction(const int u, const int v, const int c) {
-    // map: automatic deduplication
-    user_sigma_[u].insert(u);
-    user_sigma_[u].insert(v);
-    user_sigma_[v].insert(v);
-    affected_nodes_.insert(u);
-    affected_nodes_.insert(v);
-    if (!exists(u)) users.push_back(u);
-    if (!exists(v)) users.push_back(v);
-}
-
-double SocialInfluence::getReward(const int u) { return user_sigma_[u].size(); }
-
-double SocialInfluence::getReward(const std::vector<int> &S) {
-    double gain = 0;
-    for (auto &item : S) {
-        if (exists(item)) gain += user_sigma_[item].size();
-    }
-    return gain;
-}
-
 double SocialInfluence::getGain(const int u, const std::vector<int> &S) {
     // u not in subgraphs
     ++oracle_calls_;
 
-    if (user_sigma_.find(u) == user_sigma_.end()) {
-        return 0;
-    }
+    if (user_sigma_.find(u) == user_sigma_.end()) return 0;
 
     double rwd_S = 0;
-    for (auto &item : S) {
-        rwd_S += user_sigma_[item].size();
-    }
+    for (auto &item : S) rwd_S += user_sigma_[item].size();
 
     double gain_sum = rwd_S + user_sigma_[u].size();
     double gain = gain_sum - rwd_S;

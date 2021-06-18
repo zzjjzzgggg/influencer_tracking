@@ -6,22 +6,18 @@
 #define INFLUENCERS_TRACKING_SIEVE_PAIT_H
 
 #include "candidate.h"
-#include "social_influence.h"
+#include "obj_fun.h"
 
 class SievePAIT {
 public:
-    int num_samples_;     // n
-    int budget_;          // k
-    double eps_;          // epsilon
-    double mx_gain_ = 0;  // max_gain
+    int num_samples_, budget_;  // n and k
+    double eps_, mx_gain_ = 0;  // epsilon and max gain
 
-    SocialInfluence sg_;
-
-    std::vector<SocialInfluence *> sam_graphs_;
+    const ObjMgr *obj_mgr_ptr_;
 
     std::vector<Candidate> candidate_buf_;  // store the candidate
 
-    std::map<int, int> this_pos_;  // theta_index->buf_position
+    std::map<int, int> thi_pos_;   // theta_index->buf_position
     std::stack<int> recycle_bin_;  // a vector of positions for recycling
 
 private:
@@ -38,75 +34,61 @@ private:
 
     // Given a threshold index i, return candidate c.
     inline const Candidate &getCandidate(const int i) const {
-        return candidate_buf_[this_pos_.at(i)];
+        return candidate_buf_[thi_pos_.at(i)];
     }
 
-    // for a threshold index i,return candidate c
+    // for a threshold index i, return candidate c
     inline Candidate &getCandidate(const int i) {
-        return candidate_buf_[this_pos_.at(i)];
+        return candidate_buf_[thi_pos_.at(i)];
     }
 
 public:
-    SievePAIT(const int num_samples, const int budget, const double eps);
+    SievePAIT(const int num_samples, const int budget, const double eps,
+              const ObjMgr *obj_mgr_ptr)
+        : num_samples_(num_samples), budget_(budget), eps_(eps),
+          obj_mgr_ptr_(obj_mgr_ptr) {
+        // |\Theta| = O(\epsilon^{-1}\log 2k)
+        candidate_buf_.reserve((int)(std::log2(2 * budget_) / eps_));
+    }
 
     SievePAIT(const SievePAIT &o)
         : num_samples_(o.num_samples_), budget_(o.budget_), eps_(o.eps_),
-          mx_gain_(o.mx_gain_), candidate_buf_(o.candidate_buf_), sg_(o.sg_),
-          sam_graphs_(o.sam_graphs_), recycle_bin_(o.recycle_bin_),
-          this_pos_(o.this_pos_) {}
+          mx_gain_(o.mx_gain_), obj_mgr_ptr_(o.obj_mgr_ptr_),
+          candidate_buf_(o.candidate_buf_), thi_pos_(o.thi_pos_),
+          recycle_bin_(o.recycle_bin_) {}
 
     SievePAIT &operator=(const SievePAIT &o) {
         num_samples_ = o.num_samples_;
         budget_ = o.budget_;
         eps_ = o.eps_;
         mx_gain_ = o.mx_gain_;
+        obj_mgr_ptr_ = o.obj_mgr_ptr_;
         candidate_buf_ = o.candidate_buf_;
-        sg_ = o.sg_;
-        sam_graphs_ = o.sam_graphs_;
+        thi_pos_ = o.thi_pos_;
         recycle_bin_ = o.recycle_bin_;
-        this_pos_ = o.this_pos_;
         return *this;
     }
     // Process social action e and its I set
-    void update(const SocialAc &a, const ISet &is);
+    void update(const SocialAc &a, const ISet &iset);
 
     double getResult();
     void updateThresholds();
 
-    bool updateMaxGain(const std::vector<int> &nodes);
-
-    void clear(const bool deep = false) {
-        sg_.clear(deep);
-        for (int i = 0; i < num_samples_; i++) {
-            sam_graphs_[i]->clear(deep);
-        }
-        if (deep) {
-            mx_gain_ = 0;
-            this_pos_.clear();
-            while (!recycle_bin_.empty()) recycle_bin_.pop();
-            for (auto &cad : candidate_buf_) {
-                cad.clear();
-            }
-        }
+    void clear() {
+        mx_gain_ = 0;
+        thi_pos_.clear();
+        while (!recycle_bin_.empty()) recycle_bin_.pop();
+        for (auto &ca : candidate_buf_) ca.clear();
     }
+
     int getOracleCalls() {
         int oracle_calls = 0;
-        for (int i = 0; i < num_samples_; i++) {
-            oracle_calls += sam_graphs_[i]->getOracleCalls();
-        }
+        // for (int i = 0; i < num_samples_; i++) {
+        //     oracle_calls += sam_graphs_[i]->getOracleCalls();
+        // }
         return oracle_calls;
     }
 };
-
-SievePAIT::SievePAIT(const int num_samples, const int budget, const double eps) {
-    num_samples_ = num_samples;
-    budget_ = budget;
-    eps_ = eps;
-    for (int i = 0; i < num_samples; i++) {
-        SocialInfluence *sg = new SocialInfluence();
-        sam_graphs_.push_back(sg);
-    }
-}
 
 void SievePAIT::addTheta(const int i) {
     int pos;
@@ -118,15 +100,15 @@ void SievePAIT::addTheta(const int i) {
         pos = candidate_buf_.size();  // add a new one in candidate_buf
         candidate_buf_.emplace_back();
     }
-    this_pos_[i] = pos;
+    thi_pos_[i] = pos;
 }
 
 void SievePAIT::delTheta(const int i) {
     // get pos
-    int pos = this_pos_[i];
+    int pos = thi_pos_[i];
     candidate_buf_[pos].clear();
     recycle_bin_.push(pos);
-    this_pos_.erase(i);
+    thi_pos_.erase(i);
 }
 
 void SievePAIT::updateThresholds() {
@@ -135,66 +117,37 @@ void SievePAIT::updateThresholds() {
         new_ui =
             (int)std::ceil(std::log(2 * budget_ * mx_gain_) / std::log(1 + eps_));
     int li, ui;  // lower bound and upper bound of theata index
-    if (!this_pos_.empty()) {
-        li = this_pos_.begin()->first;   // get the theta index
-        ui = this_pos_.rbegin()->first;  // get the theta index reverse
+    if (!thi_pos_.empty()) {
+        li = thi_pos_.begin()->first;   // get the theta index
+        ui = thi_pos_.rbegin()->first;  // get the theta index reverse
         while (li <= ui && li < new_li) {
             delTheta(li);  // delete outdated thresholds
-            li++;
+            ++li;
         }
     }
-    li = this_pos_.empty() ? new_li : ui + 1;
+    li = thi_pos_.empty() ? new_li : ui + 1;
     for (int i = li; i <= new_ui; i++) addTheta(i);
 }
 
-bool SievePAIT::updateMaxGain(const std::vector<int> &nodes) {
-    bool is_changed = false;
-    for (auto u : nodes) {  // for all node,calculate the Ft({v})
-        double reward_sums = 0;
-        for (int i = 0; i < num_samples_; i++) {
-            reward_sums += sam_graphs_[i]->getReward(u);
-        }
-        double reward = reward_sums / num_samples_;
-        if (reward > mx_gain_) {
-            mx_gain_ = reward;
-            is_changed = true;
-        }
-    }
-    return is_changed;
-}
-
 void SievePAIT::update(const SocialAc &a, const ISet &is) {
-    // add social action
-    sg_.addSocialAction(std::get<0>(a).first, std::get<0>(a).second,
-                        std::get<1>(a));
-    for (auto i : is) {
-        sam_graphs_[i]->addSocialAction(std::get<0>(a).first,
-                                        std::get<0>(a).second, std::get<1>(a));
-    }
     // get affected nodes
-    std::vector<int> nodes = sg_.getAffectedNodes();
-
-    // if max delta change ,delta change,need to update thresholds
-    if (updateMaxGain(nodes)) {
-        updateThresholds();
-    }
+    std::vector<int> nodes;  // = sg_.getAffectedNodes();
 
     // filter nodes by thresholds
     for (auto u : nodes) {
-        for (auto &pr : this_pos_) {
+        double val = obj_mgr_ptr_->getVal(u);
+        if (val > mx_gain_) {
+            mx_gain_ = val;
+            updateThresholds();
+        }
+
+        for (auto &pr : thi_pos_) {
             int i = pr.first;            // theta-index
             auto &ca = getCandidate(i);  // definite cite may need to insert item
             if (!ca.isMember(u) && ca.size() < budget_) {
-                double gain_sums = 0;  // sum of gain
                 double threshold = getThreshold(i);
-                std::vector<int> SS = ca.getMembers();
-                for (int k = 0; k < num_samples_; k++) {
-                    gain_sums += sam_graphs_[k]->getGain(u, SS);
-                }
-                double gain = gain_sums / num_samples_;
-                if (gain >= threshold) {
-                    ca.insert(u);
-                }
+                double gain = obj_mgr_ptr_->getGain(u, ca.getMembers());
+                if (gain >= threshold) ca.insert(u);
             }
         }
     }
@@ -203,15 +156,11 @@ void SievePAIT::update(const SocialAc &a, const ISet &is) {
 double SievePAIT::getResult() {
     int i_mx = -100;  // theta-index
     double rwd_mx = 0;
-    for (auto &pr : this_pos_) {
+    for (auto &pr : thi_pos_) {
         double rwd_sum = 0;
         int i = pr.first;           // theta index
         auto ca = getCandidate(i);  // get the theta to index
-        std::vector<int> SS = ca.getMembers();
-        for (int k = 0; k < num_samples_; k++) {
-            rwd_sum += sam_graphs_[k]->getReward(SS);
-        }
-        double rwd = rwd_sum / num_samples_;
+        double rwd = obj_mgr_ptr_->getVal(ca.getMembers());
         if (rwd > rwd_mx) {
             rwd_mx = rwd;
             i_mx = i;
