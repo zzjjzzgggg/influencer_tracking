@@ -12,7 +12,7 @@ public:
     mutable int oracle_calls_ = 0;
     std::vector<int> users;
     std::unordered_set<int> affected_nodes_;
-    std::map<int, std::set<int>> user_sigma_;
+    std::unordered_map<int, std::set<int>> user_sigma_;
 
 public:
     SocialInfluence() {}
@@ -57,9 +57,7 @@ public:
 
     std::vector<int> getNodes() {
         std::vector<int> nodes;
-        for (auto iter = user_sigma_.begin(); iter != user_sigma_.end(); iter++) {
-            nodes.push_back(iter->first);
-        }
+        for (const auto &it : user_sigma_) nodes.push_back(it.first);
         return nodes;
     }
 
@@ -89,7 +87,7 @@ double SocialInfluence::getReward(const std::vector<int> &S) {
 
 double SocialInfluence::getGain(const int u, const std::vector<int> &S) {
     // u not in subgraphs
-    oracle_calls_++;
+    ++oracle_calls_;
 
     if (user_sigma_.find(u) == user_sigma_.end()) {
         return 0;

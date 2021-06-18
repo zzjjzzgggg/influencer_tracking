@@ -38,12 +38,13 @@ int main(int argc, char* argv[]) {
         x++;
         if (x == 100) break;
     }
+
     std::vector<std::tuple<int, double>> rst;
     int temp = 1;
     std::ofstream out(FLAGS_obj);
     for (auto& a : social_actions) {
-        ISet is = isgen.getISet();
-        pait.update(a, is);
+        ISet iset = isgen.getISet();
+        pait.update(a, iset);
 
         double pag_mx = pait.getResult();
         int g_ocalls = pait.getOracleCalls();

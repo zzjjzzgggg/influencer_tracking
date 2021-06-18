@@ -165,7 +165,6 @@ bool SievePAIT::updateMaxGain(const std::vector<int> &nodes) {
 
 void SievePAIT::update(const SocialAc &a, const ISet &is) {
     // add social action
-
     sg_.addSocialAction(std::get<0>(a).first, std::get<0>(a).second,
                         std::get<1>(a));
     for (auto i : is) {
