@@ -76,11 +76,14 @@ public:
     double getResult() const;
     void updateThresholds();
 
-    void clear() {
-        mx_gain_ = 0;
-        thi_pos_.clear();
-        while (!recycle_bin_.empty()) recycle_bin_.pop();
-        for (auto &ca : candidate_buf_) ca.clear();
+    void clear(const bool deep = false) {
+        obj_mgr_.clear(deep);
+        if (deep) {
+            mx_gain_ = 0;
+            thi_pos_.clear();
+            while (!recycle_bin_.empty()) recycle_bin_.pop();
+            for (auto &ca : candidate_buf_) ca.clear();
+        }
     }
 
     int getOracleCalls() const { return obj_mgr_.getOracleCalls(); }

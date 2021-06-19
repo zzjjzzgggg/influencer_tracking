@@ -13,9 +13,9 @@
  * is suitable for other datasets.
  */
 class StackExObjFun : public ObjFun {
-private:
+public:
     mutable int oracle_calls_ = 0;
-    std::unordered_set<int> affected_nodes_;
+    std::unordered_set<int> affected_;
     std::unordered_map<int, std::unordered_set<int>> user_sigma_;
 
 public:
@@ -24,16 +24,16 @@ public:
     void add(const Action& a) {
         if (user_sigma_.find(a.u) == user_sigma_.end()) {
             // if user u is a new user
-            affected_nodes_.insert(a.u);
+            affected_.insert(a.u);
             user_sigma_[a.u].insert(a.u);
         } else if (user_sigma_[a.u].find(a.v) == user_sigma_[a.u].end()) {
             // else if v is not included in user u's influence scope
-            affected_nodes_.insert(a.u);
+            affected_.insert(a.u);
             user_sigma_[a.u].insert(a.v);
         }
         if (user_sigma_.find(a.v) == user_sigma_.end()) {
             // if user v is a new user
-            affected_nodes_.insert(a.v);
+            affected_.insert(a.v);
             user_sigma_[a.v].insert(a.v);
         }
     }
@@ -42,7 +42,7 @@ public:
     // is need in BasicIT.
     void clear(const bool deep = false) {
         oracle_calls_ = 0;
-        affected_nodes_.clear();
+        affected_.clear();
         if (deep) user_sigma_.clear();
     }
 
