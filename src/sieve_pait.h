@@ -6,19 +6,22 @@
 #define INFLUENCERS_TRACKING_SIEVE_PAIT_H
 
 #include "candidate.h"
-#include "obj_fun.h"
+#include "obj_mgr.h"
 
+/**
+ * SievePAIT
+ */
+template <typename Fun>
 class SievePAIT {
 public:
     int num_samples_, budget_;  // n and k
-    double eps_, mx_gain_ = 0;  // epsilon and max gain
+    double eps_, mx_gain_;      // epsilon and max gain
+    ObjMgr<Fun> obj_mgr_;       // maintains n objective functions
 
-    const ObjMgr *obj_mgr_ptr_;
-
-    std::vector<Candidate> candidate_buf_;  // store the candidate
-
-    std::map<int, int> thi_pos_;   // theta_index->buf_position
-    std::stack<int> recycle_bin_;  // a vector of positions for recycling
+private:
+    std::vector<Candidate> candidate_buf_;  // store the candidates
+    std::map<int, int> thi_pos_;            // theta_index->buf_position
+    std::stack<int> recycle_bin_;           // a vector of positions for recycling
 
 private:
     // theta = (1+\epsilon)^i / (2k)
@@ -43,17 +46,16 @@ private:
     }
 
 public:
-    SievePAIT(const int num_samples, const int budget, const double eps,
-              const ObjMgr *obj_mgr_ptr)
-        : num_samples_(num_samples), budget_(budget), eps_(eps),
-          obj_mgr_ptr_(obj_mgr_ptr) {
+    SievePAIT(const int num_samples, const int budget, const double eps)
+        : num_samples_(num_samples), budget_(budget), eps_(eps), mx_gain_(0),
+          obj_mgr_(num_samples) {
         // |\Theta| = O(\epsilon^{-1}\log 2k)
         candidate_buf_.reserve((int)(std::log2(2 * budget_) / eps_));
     }
 
     SievePAIT(const SievePAIT &o)
         : num_samples_(o.num_samples_), budget_(o.budget_), eps_(o.eps_),
-          mx_gain_(o.mx_gain_), obj_mgr_ptr_(o.obj_mgr_ptr_),
+          mx_gain_(o.mx_gain_), obj_mgr_(o.obj_mgr_),
           candidate_buf_(o.candidate_buf_), thi_pos_(o.thi_pos_),
           recycle_bin_(o.recycle_bin_) {}
 
@@ -62,16 +64,16 @@ public:
         budget_ = o.budget_;
         eps_ = o.eps_;
         mx_gain_ = o.mx_gain_;
-        obj_mgr_ptr_ = o.obj_mgr_ptr_;
+        obj_mgr_ = o.obj_mgr_;
         candidate_buf_ = o.candidate_buf_;
         thi_pos_ = o.thi_pos_;
         recycle_bin_ = o.recycle_bin_;
         return *this;
     }
     // Process social action e and its I set
-    void update(const SocialAc &a, const ISet &iset);
+    void update(const Action &a, const ISet &iset);
 
-    double getResult();
+    double getResult() const;
     void updateThresholds();
 
     void clear() {
@@ -81,16 +83,11 @@ public:
         for (auto &ca : candidate_buf_) ca.clear();
     }
 
-    int getOracleCalls() {
-        int oracle_calls = 0;
-        // for (int i = 0; i < num_samples_; i++) {
-        //     oracle_calls += sam_graphs_[i]->getOracleCalls();
-        // }
-        return oracle_calls;
-    }
+    int getOracleCalls() const { return obj_mgr_.getOracleCalls(); }
 };
 
-void SievePAIT::addTheta(const int i) {
+template <typename Fun>
+void SievePAIT<Fun>::addTheta(const int i) {
     int pos;
     if (!recycle_bin_.empty()) {   // if recycle_bin has an unoccupied room
         pos = recycle_bin_.top();  // the last
@@ -103,7 +100,8 @@ void SievePAIT::addTheta(const int i) {
     thi_pos_[i] = pos;
 }
 
-void SievePAIT::delTheta(const int i) {
+template <typename Fun>
+void SievePAIT<Fun>::delTheta(const int i) {
     // get pos
     int pos = thi_pos_[i];
     candidate_buf_[pos].clear();
@@ -111,7 +109,8 @@ void SievePAIT::delTheta(const int i) {
     thi_pos_.erase(i);
 }
 
-void SievePAIT::updateThresholds() {
+template <typename Fun>
+void SievePAIT<Fun>::updateThresholds() {
     // the new_li may be the log( (1-eps)*mx_gain_) /log(1 + eps_)
     int new_li = (int)std::floor(std::log(mx_gain_) / std::log(1 + eps_)),
         new_ui =
@@ -129,13 +128,14 @@ void SievePAIT::updateThresholds() {
     for (int i = li; i <= new_ui; i++) addTheta(i);
 }
 
-void SievePAIT::update(const SocialAc &a, const ISet &is) {
-    // get affected nodes
-    std::vector<int> nodes;  // = sg_.getAffectedNodes();
+template <typename Fun>
+void SievePAIT<Fun>::update(const Action &a, const ISet &iset) {
+    obj_mgr_.update(a, iset);
+    std::vector<int> nodes = obj_mgr_.getVa();
 
     // filter nodes by thresholds
     for (auto u : nodes) {
-        double val = obj_mgr_ptr_->getVal(u);
+        double val = obj_mgr_.getVal(u);
         if (val > mx_gain_) {
             mx_gain_ = val;
             updateThresholds();
@@ -146,21 +146,22 @@ void SievePAIT::update(const SocialAc &a, const ISet &is) {
             auto &ca = getCandidate(i);  // definite cite may need to insert item
             if (!ca.isMember(u) && ca.size() < budget_) {
                 double threshold = getThreshold(i);
-                double gain = obj_mgr_ptr_->getGain(u, ca.getMembers());
+                double gain = obj_mgr_.getGain(u, ca.getMembers());
                 if (gain >= threshold) ca.insert(u);
             }
         }
     }
 };
 
-double SievePAIT::getResult() {
+template <typename Fun>
+double SievePAIT<Fun>::getResult() const {
     int i_mx = -100;  // theta-index
     double rwd_mx = 0;
     for (auto &pr : thi_pos_) {
         double rwd_sum = 0;
         int i = pr.first;           // theta index
         auto ca = getCandidate(i);  // get the theta to index
-        double rwd = obj_mgr_ptr_->getVal(ca.getMembers());
+        double rwd = obj_mgr_.getVal(ca.getMembers());
         if (rwd > rwd_mx) {
             rwd_mx = rwd;
             i_mx = i;
