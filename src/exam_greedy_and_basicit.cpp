@@ -13,7 +13,7 @@ DEFINE_string(obj, "output.txt", "objective file name");
 DEFINE_int32(n, 10, "number of samples");
 DEFINE_int32(B, 10, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
-DEFINE_double(lmd, .01, "decaying rate");
+DEFINE_double(lmd, .05, "decaying rate");
 DEFINE_int32(L, 50, "maximum lifetime");
 
 int main(int argc, char* argv[]){
@@ -37,7 +37,7 @@ int main(int argc, char* argv[]){
             temp.push_back(int(item));
         social_actions.emplace_back(std::make_pair(temp[1],temp[2]),temp[0],temp[3]);
         x++;
-        if(x==300)
+        if(x==1000)
             break;
     }
     int temp=1;
@@ -51,14 +51,14 @@ int main(int argc, char* argv[]){
         greedy.update(s,segs);
         std::cout<<temp<<" ";
         double greedy_basic=greedy.getResult();
-//        std::cout<<"greedy_basic "<<greedy_basic<<" ";
+        std::cout<<"greedy_basic "<<greedy_basic<<" ";
         int g_ocalls=greedy.statOracleCalls();
         greedy.next();
-        std::cout<<g_ocalls<<" ";
+//        std::cout<<g_ocalls<<" ";
         basic.update(s,segs);
 
         double basic_it=basic.getResult();
-//        std::cout<<"basic_it "<<basic_it<<std::endl;
+        std::cout<<"basic_it "<<basic_it<<std::endl;
         int b_ocalls=basic.statOracleCalls();
 
         basic.next();
@@ -68,7 +68,7 @@ int main(int argc, char* argv[]){
 
         temp++;
 
-        std::cout<<b_ocalls<<std::endl;
+//        std::cout<<b_ocalls<<std::endl;
     }
     double ritio=ritio_sums/x;
     std::cout<<ritio;
