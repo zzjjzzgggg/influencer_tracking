@@ -50,7 +50,7 @@ int main(int argc, char* argv[]){
         pait.update(s,is);
         double pait_mx=pait.getResult();
         std::cout<<temp<<" ";
-//        std::cout<<"sieve_pait"<<pait_mx<<"  ";
+        std::cout<<"sieve_pait"<<pait_mx<<"  ";
         int p_ocalls=pait.getOracleCalls();
 
         pait.clear();
@@ -58,10 +58,10 @@ int main(int argc, char* argv[]){
         greedy.update(s,is);
         double greedy_gain=greedy.getResult();
 
-//        std::cout<<"greedy:"<<greedy_gain<<std::endl;
+        std::cout<<"greedy:"<<greedy_gain<<std::endl;
         int g_ocalls=greedy.getOracleCalls();
 
-        std::cout<<" "<<g_ocalls<<std::endl;
+//        std::cout<<" "<<g_ocalls<<std::endl;
         greedy.clear();
         sum+=pait_mx/greedy_gain;
         rst.emplace_back(temp,pait_mx,greedy_gain);
