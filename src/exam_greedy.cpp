@@ -14,7 +14,11 @@ DEFINE_int32(n, 10, "number of samples");
 DEFINE_int32(B, 10, "budget");
 DEFINE_double(p, 0.6, "probability");
 
-int main(){
+int main(int argc, char* argv[]){
+    gflags::SetUsageMessage("usage:");
+    gflags::ParseCommandLineFlags(&argc, &argv, true);
+    osutils::Timer tm;
+
     GreedyAlg greedy{FLAGS_n,FLAGS_B};
     ISetGenerator isgen(FLAGS_n,FLAGS_p);
 
