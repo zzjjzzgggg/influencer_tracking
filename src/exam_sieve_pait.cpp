@@ -2,9 +2,10 @@
 // Created by weiwei on 2021/5/29.
 //
 
-//#include "subgraph.h"
 #include "sieve_pait.h"
 #include "iset_generator.h"
+#include "stackexchange_obj_fun.h"
+
 #include <gflags/gflags.h>
 
 DEFINE_string(dir, "", "working directory");
@@ -15,53 +16,39 @@ DEFINE_int32(B, 10, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
 DEFINE_double(p, 0.6, "probability");
 
-
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
     gflags::SetUsageMessage("usage:");
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     osutils::Timer tm;
 
-    SievePAIT pait(FLAGS_n,FLAGS_B,FLAGS_eps);
-    ISetGenerator isgen(FLAGS_n,FLAGS_p);
+    SievePAIT<StackExObjFun> sieve(FLAGS_n, FLAGS_B, FLAGS_eps);
 
-    SocialAcs social_actions;
+    ISetGenerator isgen(FLAGS_n, FLAGS_p);
 
-    //postid postuserid commentuserid timestamp
-    std::ifstream data(FLAGS_stream);
-    std::string oneline;
-    int x = 0;
-    while (getline(data, oneline)) {
-        std::istringstream read_str(oneline);
-        int item;
-        std::vector<int> temp;
-        while (read_str >> item)
-            temp.push_back(int(item));
-        social_actions.emplace_back(std::make_pair(temp[1],temp[2]),temp[0],temp[3]);
-        x++;
-        if(x==100)
-            break;
-    }
-    std::vector<std::tuple<int,double>> rst;
-    int temp=1;
-    std::ofstream out(FLAGS_obj);
-    for(auto &a:social_actions){
-        ISet is=isgen.getISet();
-        pait.update(a,is);
+    std::vector<std::tuple<int, double>> rst;
+    int temp = 1;
+    ioutils::TSVParser ss(FLAGS_stream);
+    while (ss.next()) {
+        int u = ss.get<int>(0), c = ss.get<int>(1), t = ss.get<int>(2);
+        Action a;  // TODO: create an social action using u,c,t,...
 
-        double pag_mx=pait.getResult();
-        int g_ocalls=pait.getOracleCalls();
+        ISet iset = isgen.getISet();
+        sieve.update(a, iset);
 
-        std::cout<<pag_mx<<std::endl;
-//        std::cout<<g_ocalls<<std::endl;
-        pait.clear();
-        rst.emplace_back(temp,pag_mx);
+        double val = sieve.getResult();
+        int num_calls = sieve.getOracleCalls();
+
+        std::cout << val << std::endl;
+        //        std::cout<<num_calls<<std::endl;
+        sieve.clear();
+        rst.emplace_back(temp, val);
     }
 
     std::string ofnm = osutils::join(
-            FLAGS_dir,
-            "pait_n{}b{}eps{}p{}.dat"_format(FLAGS_n, FLAGS_B,FLAGS_eps,FLAGS_p
-                                                 ));
+        FLAGS_dir,
+        "pait_n{}b{}eps{}p{}.dat"_format(FLAGS_n, FLAGS_B, FLAGS_eps, FLAGS_p));
     ioutils::saveTupleVec(rst, ofnm, "{}\t{}\n");
+
     gflags::ShutDownCommandLineFlags();
     return 0;
 }

@@ -25,37 +25,33 @@
 #include <sstream>
 #include <string>
 
-#include <mutex>
-#include <future>
-#include <thread>
+// #include <mutex>
+// #include <future>
+// #include <thread>
 
-#include <adv/LRUCache.h>
 #include <os/osutils.h>
 #include <io/ioutils.h>
 #include <adv/rngutils.h>
-#include <graph/graph.h>
+// #include <graph/graph.h>
 
 using namespace fmt::literals;
 
 using ISet = std::vector<int>;
 
-using namespace graph;
-
-
 typedef std::vector<std::pair<int, int>> IntPrV;
 
-typedef std::pair<int,int> UV;
-typedef std::tuple<UV,int,int> SocialAc;
+typedef std::pair<int, int> UV;
+typedef std::tuple<UV, int, int> SocialAc;
 typedef std::vector<SocialAc> SocialAcs;
 
-//struct SocialAc{
-//    int u;
-//    int v;
-//    int c;
-//    int timestamp;
-//};
+// represents a social action
+struct Action {
+    int u;
+    int v;
+    int c;
+    int t;
+};
 
+// std::vector<s_c> S
 
-//std::vector<s_c> S
-
-#endif //INFLUENCERS_TRACKING_STDAFX_H
+#endif  // INFLUENCERS_TRACKING_STDAFX_H
