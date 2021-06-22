@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
         FLAGS_dir,
         "pait_n{}b{}eps{}p{}.dat"_format(FLAGS_n, FLAGS_B, FLAGS_eps, FLAGS_p));
     ioutils::saveTupleVec(rst, ofnm, "{}\t{}\n");
-
+    printf("cost time %s\n", tm.getStr().c_str());
     gflags::ShutDownCommandLineFlags();
     return 0;
 }
