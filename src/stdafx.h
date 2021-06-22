@@ -38,12 +38,6 @@ using namespace fmt::literals;
 
 using ISet = std::vector<int>;
 
-typedef std::vector<std::pair<int, int>> IntPrV;
-
-typedef std::pair<int, int> UV;
-typedef std::tuple<UV, int, int> SocialAc;
-typedef std::vector<SocialAc> SocialAcs;
-
 // represents a social action
 struct Action {
     int u;
