@@ -24,7 +24,7 @@ message(STATUS "LIBRARIES " ${LIBRARIES})
 
 #add_executable(influencers_tracking exam_lifespan_generator.cpp)
 
-add_executable(influencers_tracking  exam_sieve_pait.cpp)
+#add_executable(influencers_tracking  exam_sieve_pait.cpp)
 #add_executable(influencers_tracking exam_greedy.cpp)
 #add_executable(influencers_tracking  exam_greedy_and_pait.cpp)
 #add_executable(influencers_tracking  exam_basic_it.cpp)
@@ -32,10 +32,8 @@ add_executable(influencers_tracking  exam_sieve_pait.cpp)
 #add_executable(influencers_tracking  exam_greedy_and_basicit.cpp)
 #add_executable(influencers_tracking exam_histit_seg.cpp)
 #add_executable(influencers_tracking exam_hist_and_basic.cpp)
-#add_executable(influencers_tracking exam_histit_red.cpp)
-#add_executable(influencers_tracking test.cpp)
+add_executable(influencers_tracking exam_histit_red.cpp)
 #add_executable(influencers_tracking exam_samples.cpp)
-#add_executable(influencers_tracking sample_users.cpp)
 
 
 target_link_libraries(influencers_tracking ${LIBRARIES})
