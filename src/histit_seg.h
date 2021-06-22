@@ -8,26 +8,30 @@
 #include "iset_segment.h"
 #include "sieve_pait.h"
 
+/**
+ * HistITSEG
+ */
+template <typename Fun>
 class HistITSEG{
 private:
     class Alg{
     private:
-        SievePAIT* sieve_ptr_;
+        SievePAIT<Fun>* sieve_ptr_;
     public:
         int l_;//instance index
         double val_=0;//current utility value
 
     public:
         Alg(const int l,const int num_samples,const int budget,const double eps):l_(l){
-            sieve_ptr_=new SievePAIT(num_samples,budget,eps);
+            sieve_ptr_=new SievePAIT<Fun>(num_samples,budget,eps);
         }
         Alg(const Alg& o) : l_(o.l_), val_(o.val_) {
-            sieve_ptr_ = new SievePAIT(*o.sieve_ptr_);
+            sieve_ptr_ = new SievePAIT<Fun>(*o.sieve_ptr_);
         }
 
         virtual ~Alg(){delete sieve_ptr_;}
 
-        inline void feed(const SocialAc &a, const ISet& is) {
+        inline void feed(const Action &a, const ISet& is) {
             sieve_ptr_->update(a, is);
             val_ = sieve_ptr_->getResult();
         }
@@ -49,17 +53,17 @@ public:
         for (auto it = algs_.begin(); it != algs_.end(); ++it) delete *it;
     }
 
+    void feed(const Action &a,const ISetSegments& segs);
 
-    void feed(const SocialAc &a,const ISetSegments& segs);
-
-    void feedSegment(const SocialAc &a, const ISetSegment& seg,
+    void feedSegment(const Action &a, const ISetSegment& seg,
                      typename std::list<Alg*>::iterator& it);
 
     double getResult() const { return algs_.front()->val_; }
     void next();
 };
 
-void HistITSEG::feed(const SocialAc &a, const ISetSegments& segs){
+template <typename Fun>
+void HistITSEG<Fun>::feed(const Action &a, const ISetSegments& segs){
 
     auto it=algs_.begin();
     for(auto& seg:segs.segments_){
@@ -70,7 +74,6 @@ void HistITSEG::feed(const SocialAc &a, const ISetSegments& segs){
         }
         if (algs_.back()->l_ < seg.end_-1){
             algs_.push_back(new Alg(seg.end_-1, num_samples_, budget_, eps_));
-
         }
         //Update instances belonging to this segment.
         feedSegment(a,seg,it);
@@ -96,16 +99,19 @@ void HistITSEG::feed(const SocialAc &a, const ISetSegments& segs){
 
 
 }
+
 // Update instances belonging to this segment.
-void HistITSEG::feedSegment(const SocialAc &a, const ISetSegment& seg,
-                            std::list<Alg*>::iterator& it) {
+template <typename Fun>
+void HistITSEG<Fun>::feedSegment(const Action &a, const ISetSegment& seg,
+                                 typename std::list<Alg*>::iterator& it) {
     while (it != algs_.end() && (*it)->l_ < seg.end_) {
         (*it)->feed(a, seg.is_);
         ++it;
     }
 }
 
-void HistITSEG::next() {
+template <typename Fun>
+void HistITSEG<Fun>::next() {
     // If head SievePAIT instance expires
     if (algs_.front()->l_ == 0) {
         delete algs_.front();
