@@ -8,11 +8,15 @@
 #include "iset_segment.h"
 #include "sieve_pait.h"
 
+/**
+ * HistITRED
+ */
+template <typename Fun>
 class HistITRED {
 private:
     class Alg {
     private:
-        SievePAIT* sieve_ptr_;
+        SievePAIT<Fun>* sieve_ptr_;
 
     public:
         int l_;                   // instance index
@@ -23,15 +27,15 @@ private:
         Alg(const int l, const int num_samples, const int budget,
             const double eps)
             : l_(l) {
-            sieve_ptr_ = new SievePAIT(num_samples, budget, eps);
+            sieve_ptr_ = new SievePAIT<Fun>(num_samples, budget, eps);
         }
         Alg(const Alg& o) : l_(o.l_), val_(o.val_) {
-            sieve_ptr_ = new SievePAIT(*o.sieve_ptr_);
+            sieve_ptr_ = new SievePAIT<Fun>(*o.sieve_ptr_);
         }
 
         virtual ~Alg() { delete sieve_ptr_; }
 
-        inline void feed(const SocialAc& a, const ISet& is) {
+        inline void feed(const Action& a, const ISet& is) {
             sieve_ptr_->update(a, is);
             val_ = sieve_ptr_->getResult();
         }
@@ -59,23 +63,26 @@ public:
 
     void newEndIfNeed(const int l);
 
-    void feed(const SocialAc& a, const ISetSegments& segs);
+    void feed(const Action& a, const ISetSegments& segs);
 
-    void feedSegment(const SocialAc& a, const ISetSegment& seg,
+    void feedSegment(const Action& a, const ISetSegment& seg,
                      typename std::list<Alg*>::iterator& it);
 
     double getResult() const { return algs_.front()->val_; }
     void next();
     void reduce();
-    void process(const SocialAc a, const int l, const int r,
+    void process(const Action& a, const int l, const int r,
                  const ISetSegment& seg);
 };
-void HistITRED::newEndIfNeed(const int l) {
+
+template <typename Fun>
+void HistITRED<Fun>::newEndIfNeed(const int l) {
     if (algs_.empty() || algs_.back()->l_ < l)
         algs_.push_back(new Alg(l, num_samples_, budget_, eps_));
 }
 
-void HistITRED::feed(const SocialAc & a, const ISetSegments& segs) {
+template <typename Fun>
+void HistITRED<Fun>::feed(const Action& a, const ISetSegments& segs) {
     auto it = algs_.begin();
     for (auto& seg : segs.segments_) {
         // create a new head instance if necessary
@@ -109,16 +116,19 @@ void HistITRED::feed(const SocialAc & a, const ISetSegments& segs) {
         }
     }
 }
+
 // Update instances belonging to this segment.
-void HistITRED::feedSegment(const SocialAc & a, const ISetSegment& seg,
-                            std::list<Alg*>::iterator& it) {
+template <typename Fun>
+void HistITRED<Fun>::feedSegment(const Action& a, const ISetSegment& seg,
+                            typename std::list<Alg*>::iterator& it) {
     while (it != algs_.end() && (*it)->l_ < seg.end_) {
         (*it)->feed(a, seg.is_);
         ++it;
     }
 }
 
-void HistITRED::next() {
+template <typename Fun>
+void HistITRED<Fun>::next() {
     // If head SievePAIT instance expires
     if (algs_.front()->l_ == 0) {
         delete algs_.front();
@@ -131,7 +141,8 @@ void HistITRED::next() {
     }
 }
 
-void HistITRED::reduce() {
+template <typename Fun>
+void HistITRED<Fun>::reduce() {
     auto i = algs_.begin();
     // for each i,find the largest j such that A(j) >= (1-eps)(A(i)+beta(j)).
     while (i != algs_.end()) {
