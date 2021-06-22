@@ -61,6 +61,7 @@ int main(int argc, char* argv[]){
             FLAGS_dir,
             "pait_and_greedy_n{}b{}p{}eps{}.dat"_format(FLAGS_n, FLAGS_B,FLAGS_p,FLAGS_eps));
     ioutils::saveTripletVec(rst, ofnm, "{}\t{}\t{}\n");
+    printf("cost time %s\n", tm.getStr().c_str());
     gflags::ShutDownCommandLineFlags();
     return 0;
 }
