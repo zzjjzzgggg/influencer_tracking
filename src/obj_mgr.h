@@ -37,7 +37,7 @@ public:
     // Ft(S)
     double getVal(const std::vector<int>& S) const {
         double val = 0;
-        for (auto& fun : fun_vec_) val += fun.getVal(S);
+        for (auto &fun : fun_vec_) val += fun.getVal(S);
         return val / fun_vec_.size();
     }
 
@@ -60,6 +60,12 @@ public:
         int calls = 0;
         for (auto& fun : fun_vec_) calls += fun.oracle_calls_;
         return calls;
+    }
+
+    void clear(const bool deep= false){
+        for (auto& fun : fun_vec_){
+            fun.clear(deep);
+        }
     }
 
 }; /* ObjMgr */
