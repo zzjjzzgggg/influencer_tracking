@@ -3,56 +3,45 @@
 //
 
 #include "histit_seg.h"
-#include "iset_segment.h"
 #include "lifespan_generator.h"
 #include <gflags/gflags.h>
+#include "stackexchange_obj_fun.h"
 
 DEFINE_string(dir, "", "working directory");
 DEFINE_string(stream, "comment_post.txt", "input streaming data file name");
-DEFINE_string(obj, "output.txt", "objective file name");
 DEFINE_int32(n, 10, "number of samples");
 DEFINE_int32(B, 10, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
 DEFINE_double(lmd, .01, "decaying rate");
 DEFINE_int32(L, 500, "maximum lifetime");
+DEFINE_int32(end,1000,"end time");
 
 int main(int argc, char* argv[]){
     gflags::SetUsageMessage("usage:");
     gflags::ParseCommandLineFlags(&argc, &argv, true);
+    osutils::Timer tm;
 
     LifespanGenerator lifegen(FLAGS_L,1-exp(-FLAGS_lmd));
-    HistITSEG hist(FLAGS_n,FLAGS_B,FLAGS_eps);
+    HistITSEG<StackExObjFun> hist(FLAGS_n,FLAGS_B,FLAGS_eps);
 
-    std::ifstream data(FLAGS_stream);
-    std::string oneline;
-    int x=0;
-
-    SocialAcs social_actions;
-    while(getline(data,oneline)){
-        std::istringstream read_str(oneline);
-        int item;
-        std::vector<int> temp;
-        while(read_str>>item)
-            temp.push_back(int(item));
-        social_actions.emplace_back(std::make_pair(temp[1],temp[2]),temp[0],temp[3]);
-        x++;
-        if(x==500)
-            break;
-    }
-
-    int temp=1;
+    ioutils::TSVParser ss(FLAGS_stream);
     std::vector<std::tuple<int,double>> rst;
-    for(auto &a:social_actions){
+    int t=0;
+    while(ss.next()){
+        ++t;
+        int c = ss.get<int>(0), u = ss.get<int>(1), v=ss.get<int>(2), t= ss.get<int>(3);
+        Action a{u,v,c,t};
+
         std::vector<int> lifespan=lifegen.getLifespans(FLAGS_n);
         ISetSegments segs(lifespan);
         hist.feed(a,segs);
-        std::cout<<temp<<" ";
-        double hist_mx=hist.getResult();
-        std::cout<<"hist"<<hist_mx<<std::endl;
+        double val=hist.getResult();
+        std::cout<<t<<" ";
+        std::cout<<"hist"<<val<<std::endl;
 
         hist.next();
-        rst.emplace_back(temp,hist_mx);
-        temp++;
+        rst.emplace_back(t,val);
+        if(t==FLAGS_end) break;
     }
     std::string ofnm = osutils::join(
             FLAGS_dir,
