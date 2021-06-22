@@ -3,74 +3,61 @@
 //
 
 #include "greedy_basic.h"
-#include "lifespan_generator.h"
 #include "basic_it.h"
+#include "lifespan_generator.h"
+#include "stackexchange_obj_fun.h"
 #include <gflags/gflags.h>
 
 DEFINE_string(dir, "", "working directory");
 DEFINE_string(stream, "comment_post.txt", "input streaming data file name");
-DEFINE_string(obj, "output.txt", "objective file name");
 DEFINE_int32(n, 10, "number of samples");
 DEFINE_int32(B, 10, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
 DEFINE_double(lmd, .05, "decaying rate");
 DEFINE_int32(L, 50, "maximum lifetime");
+DEFINE_int32(end,1000,"end time");
 
 int main(int argc, char* argv[]){
     gflags::SetUsageMessage("usage:");
     gflags::ParseCommandLineFlags(&argc, &argv, true);
+    osutils::Timer tm;
 
-    GreedyBasic greedy(FLAGS_L,FLAGS_B,FLAGS_n);
-    BasicIT basic(FLAGS_L,FLAGS_B,FLAGS_eps,FLAGS_n);
+    GreedyBasic<StackExObjFun> greedy(FLAGS_L,FLAGS_B,FLAGS_n);
+    BasicIT<StackExObjFun> basic(FLAGS_L,FLAGS_B,FLAGS_eps,FLAGS_n);
     LifespanGenerator lifegen(FLAGS_L,1-exp(-FLAGS_lmd));
 
-    std::ifstream data(FLAGS_stream);
-    std::string oneline;
-    int x=0;
-
-    SocialAcs social_actions;
-    while(getline(data,oneline)){
-        std::istringstream read_str(oneline);
-        int item;
-        std::vector<int> temp;
-        while(read_str>>item)
-            temp.push_back(int(item));
-        social_actions.emplace_back(std::make_pair(temp[1],temp[2]),temp[0],temp[3]);
-        x++;
-        if(x==1000)
-            break;
-    }
-    int temp=1;
+    ioutils::TSVParser ss(FLAGS_stream);
     std::vector<std::tuple<int,double,double>> rst;
+    int t=0;
     double ritio_sums=0;
-    int ocalls_ritio_sum=0;
-    double ocalls_ritio;
-    for(auto &s:social_actions){
+    while(ss.next()){
+        ++t;
+        int c = ss.get<int>(0), u = ss.get<int>(1), v=ss.get<int>(2), t= ss.get<int>(3);
+        Action a{u,v,c,t};
+
         std::vector<int> lifespan=lifegen.getLifespans(FLAGS_n);
         ISetSegments segs(lifespan);
-        greedy.update(s,segs);
-        std::cout<<temp<<" ";
-        double greedy_basic=greedy.getResult();
-        std::cout<<"greedy_basic "<<greedy_basic<<" ";
-        int g_ocalls=greedy.statOracleCalls();
+        greedy.update(a,segs);
+        std::cout<<t<<" ";
+        double greedy_val=greedy.getResult();
+        std::cout<<"greedy_basic "<<greedy_val<<" ";
+
         greedy.next();
 //        std::cout<<g_ocalls<<" ";
-        basic.update(s,segs);
+        basic.update(a,segs);
 
-        double basic_it=basic.getResult();
-        std::cout<<"basic_it "<<basic_it<<std::endl;
-        int b_ocalls=basic.statOracleCalls();
+        double basic_val=basic.getResult();
+        std::cout << "basic_val " << basic_val << std::endl;
 
         basic.next();
-        ritio_sums+=basic_it/greedy_basic;
+        ritio_sums+= basic_val / greedy_val;
 
-        rst.emplace_back(temp,basic_it,greedy_basic);
+        rst.emplace_back(t, basic_val, greedy_val);
 
-        temp++;
 
-//        std::cout<<b_ocalls<<std::endl;
+        if(t==FLAGS_end) break;
     }
-    double ritio=ritio_sums/x;
+    double ritio=ritio_sums/t;
     std::cout<<ritio;
 
     std::string ofnm = osutils::join(
