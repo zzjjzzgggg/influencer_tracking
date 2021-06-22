@@ -57,6 +57,7 @@ int main(int argc, char* argv[]){
             FLAGS_dir,
             "basic_and_hist_n{}b{}eps{}lmd{}L{}.dat"_format(FLAGS_n, FLAGS_B,FLAGS_eps,FLAGS_lmd,FLAGS_L));
     ioutils::saveTripletVec(rst, ofnm, "{}\t{}\t{}\n");
+    printf("cost time %s\n", tm.getStr().c_str());
     gflags::ShutDownCommandLineFlags();
     return 0;
 }
