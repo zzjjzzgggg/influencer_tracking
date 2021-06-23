@@ -3,7 +3,6 @@
 //
 
 #include "stackexchange_obj_fun.h"
-#include "samples.h"
 #include "obj_mgr.h"
 #include "iset_generator.h"
 
@@ -16,6 +15,16 @@ DEFINE_int32(i, 3, "experiment index");
 DEFINE_double(lmd, .01, "decaying rate");
 DEFINE_int32(k, 10, "number of picked users");
 DEFINE_int32(end, 1000, "end time");
+
+inline double getP(double lambda, int time, int ta) {
+    return exp(-lambda * (time - ta));
+}
+
+double getMSE(std::vector<double> fts_est_vec, double fts_true) {
+    double mse_sum = 0;
+    for (auto est : fts_est_vec) mse_sum += pow(est - fts_true, 2);
+    return mse_sum / fts_est_vec.size();
+}
 
 int main(int argc, char* argv[]) {
     gflags::SetUsageMessage("usage:");
@@ -39,7 +48,7 @@ int main(int argc, char* argv[]) {
     }
 
     for (auto& a : social_actions) {
-        ISet iset = gen.getISet(FLAGS_n, get_prob(FLAGS_lmd, FLAGS_end, a.t));
+        ISet iset = gen.getISet(FLAGS_n, getP(FLAGS_lmd, FLAGS_end, a.t));
         if (!iset.empty()) {
             obj.update(a, iset);
             user_set.insert(a.u);
@@ -63,14 +72,14 @@ int main(int argc, char* argv[]) {
             ObjMgr<StackExObjFun> objmgr(n);
 
             for (auto& a : social_actions) {
-                ISet iset = gen.getISet(n, get_prob(FLAGS_lmd, FLAGS_end, a.t));
+                ISet iset = gen.getISet(n, getP(FLAGS_lmd, FLAGS_end, a.t));
                 objmgr.update(a, iset);
             }
 
             double val = objmgr.getVal(picked_users);
             fts_est_vec.push_back(val);
         }
-        double mse = get_mse(fts_est_vec, fts_true);
+        double mse = getMSE(fts_est_vec, fts_true);
         double nrmse = sqrt(mse) / fts_true;
         rst.emplace_back(n, nrmse);
     }
