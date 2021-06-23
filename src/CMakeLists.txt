@@ -32,8 +32,8 @@ message(STATUS "LIBRARIES " ${LIBRARIES})
 #add_executable(influencers_tracking  exam_greedy_and_basicit.cpp)
 #add_executable(influencers_tracking exam_histit_seg.cpp)
 #add_executable(influencers_tracking exam_hist_and_basic.cpp)
-add_executable(influencers_tracking exam_histit_red.cpp)
-#add_executable(influencers_tracking exam_samples.cpp)
+#add_executable(influencers_tracking exam_histit_red.cpp)
+add_executable(influencers_tracking exam_samples.cpp)
 
 
 target_link_libraries(influencers_tracking ${LIBRARIES})
