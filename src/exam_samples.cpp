@@ -10,10 +10,9 @@
 DEFINE_string(dir, "", "working directory");
 DEFINE_string(stream, "comment_post.txt", "input streaming data file name");
 DEFINE_int32(n, 2000, "number of max samples");
-DEFINE_int32(i,3,"experiment index");
+DEFINE_int32(i,1,"experiment index");
 DEFINE_double(lmd, .01, "decaying rate");
 DEFINE_int32(k,10,"number of picked users");
-DEFINE_double(p, 0.6, "probability");
 DEFINE_int32(end,1000,"end time");
 
 
@@ -59,6 +58,7 @@ int main(int argc, char* argv[]){
     int r=500;
     std::vector<std::tuple<int,double>> rst;
     for(int i=10;i<=sample_size;i+=10){
+        std::cout<<i<<std::endl;
         std::vector<double> fts_set;
         for(int j=1;j<=r;j++){
             int temp=0;
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]){
 
     std::string ofnm = osutils::join(
             FLAGS_dir,
-            "samples_n{}lmd{}k{}i{}.dat"_format(FLAGS_n, FLAGS_lmd,FLAGS_k,FLAGS_i
+            "samples_n{}lmd{}k{}i{}fts_true{}.dat"_format(FLAGS_n, FLAGS_lmd,FLAGS_k,FLAGS_i,fts_true
             ));
     ioutils::saveTupleVec(rst, ofnm, "{}\t{}\n");
     printf("cost time %s\n", tm.getStr().c_str());
