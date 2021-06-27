@@ -9,7 +9,7 @@
 #include "stackexchange_obj_fun.h"
 
 DEFINE_string(dir, "", "working directory");
-DEFINE_string(stream, "comment_post.txt", "input streaming data file name");
+DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");
 DEFINE_int32(n, 10, "number of samples");
 DEFINE_int32(B, 10, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
@@ -20,6 +20,7 @@ DEFINE_int32(end,1000,"end time");
 int main(int argc, char* argv[]){
     gflags::SetUsageMessage("usage:");
     gflags::ParseCommandLineFlags(&argc, &argv, true);
+    osutils::Timer tm;
 
     BasicIT<StackExObjFun> basic(FLAGS_L,FLAGS_B,FLAGS_eps,FLAGS_n);
     HistITSEG<StackExObjFun> hist(FLAGS_n,FLAGS_B,FLAGS_eps);
@@ -47,6 +48,7 @@ int main(int argc, char* argv[]){
         double basic_val=basic.getResult();
         std::cout<<"basic"<<basic_val<<std::endl;
         basic.next();
+
 
         sum+= hist_val / basic_val;
         rst.emplace_back(t, basic_val, hist_val);
