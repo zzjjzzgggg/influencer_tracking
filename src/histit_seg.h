@@ -30,6 +30,7 @@ private:
         }
 
         virtual ~Alg(){delete sieve_ptr_;}
+        inline int getOracleCalls() { return sieve_ptr_->getOracleCalls(); }
 
         inline void feed(const Action &a, const ISet& is) {
             sieve_ptr_->update(a, is);
@@ -53,6 +54,8 @@ public:
         for (auto it = algs_.begin(); it != algs_.end(); ++it) delete *it;
     }
 
+    void newEndIfNeed(const int l);
+    int statOracleCalls();
     void feed(const Action &a,const ISetSegments& segs);
 
     void feedSegment(const Action &a, const ISetSegment& seg,
@@ -60,8 +63,6 @@ public:
 
     double getResult() const { return algs_.front()->val_; }
     void next();
-
-    void newEndIfNeed(const int l);
 };
 /**
    * Create a new instance at the tail if need.
@@ -109,6 +110,13 @@ void HistITSEG<Fun>::feedSegment(const Action &a, const ISetSegment& seg,
         (*it)->feed(a, seg.is_);
         ++it;
     }
+}
+template <typename Fun>
+int HistITRED<Fun>::statOracleCalls() {
+    int oracle_calls = 0;
+    for (auto it = algs_.begin(); it != algs_.end(); ++it)
+        oracle_calls += (*it)->getOracleCalls();
+    return oracle_calls;
 }
 
 template <typename Fun>
