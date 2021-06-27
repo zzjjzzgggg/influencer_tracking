@@ -3,33 +3,35 @@
 //
 
 #include "lifespan_generator.h"
-#include "iset_segment.h"
+#include <gflags/gflags.h>
 
-int main(){
-    int n=10;
-    int L=500;
-    int T=10;
-    double lmd=0.01;
-    LifespanGenerator lifegen(L,1-exp(-lmd));
-    std::vector<int> lifespan=lifegen.getLifespans(10);
-    ISetSegments segs(lifespan);
-    for(auto item:segs.segments_){
-        std::cout<<item.start_<<" "<<item.end_<<std::endl;
-        for(auto i:item.is_){
-            std::cout<<i<<" ";
-        }
-        std::cout<<std::endl;
+DEFINE_string(dir, "../../lifespans", "working directory");
+DEFINE_int32(n, 50, "number of samples");
+DEFINE_int32(L, 5000, "maximum lifetime");
+DEFINE_int32(T, 10000, "stream end time");
+DEFINE_double(lmd, .01, "decaying rate");
+DEFINE_bool(echo, false, "echo");
+
+int main(int argc, char* argv[]){
+    gflags::SetUsageMessage("usage:");
+    gflags::ParseCommandLineFlags(&argc, &argv, true);
+    osutils::Timer tm;
+
+    LifespanGenerator lifegen(FLAGS_L,1-exp(-FLAGS_lmd));
+
+    auto filename = osutils::join(
+            FLAGS_dir, "lmd{:g}n{}L{}.gz"_format(FLAGS_lmd, FLAGS_n,
+                                                 strutils::prettyNumber(FLAGS_L)));
+    auto pout = ioutils::getIOOut(filename);
+    int t = 0;
+    while (t++ < FLAGS_T) {
+        auto lifespans = lifegen.getLifespans(FLAGS_n);
+        pout->save(lifespans);
+        if (FLAGS_echo) ioutils::printVec(lifespans);
     }
-    for(auto item:lifespan){
-        std::cout<<item<<std::endl;
-    }
-//    int t=0;
-//    while(t++<T){
-//        auto lifespan=lifegen.getLifespans(n);
-//        for(auto item:lifespan){
-//            std::cout<<item<<" ";
-//        }
-//        std::cout<<std::endl;
-//    }
+
+    printf("Saved to %s.\n", filename.c_str());
+    printf("cost time %s\n", tm.getStr().c_str());
+    gflags::ShutDownCommandLineFlags();
     return 0;
 }
