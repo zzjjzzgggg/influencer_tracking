@@ -38,8 +38,6 @@ int main(int argc, char* argv[]) {
         double val = sieve.getResult();
         int num_calls = sieve.getOracleCalls();
 
-        std::cout << val << std::endl;
-        //        std::cout<<num_calls<<std::endl;
         sieve.clear();
         rst.emplace_back(t, val);
         if(t==FLAGS_end) break;
