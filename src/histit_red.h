@@ -17,7 +17,6 @@ private:
     class Alg {
     private:
         SievePAIT<Fun>* sieve_ptr_;
-
     public:
         int l_;                   // instance index
         double val_ = 0;          // current utility value
@@ -71,8 +70,6 @@ public:
     double getResult() const { return algs_.front()->val_; }
     void next();
     void reduce();
-    void process(const Action& a, const int l, const int r,
-                 const ISetSegment& seg);
 };
 
 template <typename Fun>
@@ -83,19 +80,12 @@ void HistITRED<Fun>::newEndIfNeed(const int l) {
 
 template <typename Fun>
 void HistITRED<Fun>::feed(const Action& a, const ISetSegments& segs) {
+    //create a new head instance if necessary
+    newEndIfNeed(segs.getMxIdx());
     auto it = algs_.begin();
     for (auto& seg : segs.segments_) {
-        // create a new head instance if necessary
-        if (algs_.empty()) {
-            algs_.push_back(new Alg(seg.end_ - 1, num_samples_, budget_, eps_));
-            it = algs_.begin();
-        }
-        if (algs_.back()->l_ < seg.end_ - 1) {
-            algs_.push_back(new Alg(seg.end_ - 1, num_samples_, budget_, eps_));
-        }
         // Update instances belonging to this segment.
         feedSegment(a, seg, it);
-
         auto pre = it;
         // if last updated alg.l_=l,continue
         if (it != algs_.begin()) {

@@ -60,24 +60,27 @@ public:
 
     double getResult() const { return algs_.front()->val_; }
     void next();
+
+    void newEndIfNeed(const int l);
 };
+/**
+   * Create a new instance at the tail if need.
+   * - "idx": the maximum position that an instance should exist.
+ */
+template <typename Fun>
+void HistITSEG<Fun>::newEndIfNeed(const int l) {
+    if (algs_.empty() || algs_.back()->l_ < l)
+        algs_.push_back(new Alg(l, num_samples_, budget_, eps_));
+}
 
 template <typename Fun>
 void HistITSEG<Fun>::feed(const Action &a, const ISetSegments& segs){
-
+    //create a new head instance if necessary
+    newEndIfNeed(segs.getMxIdx());
     auto it=algs_.begin();
     for(auto& seg:segs.segments_){
-        //create a new head instance if necessary
-        if(algs_.empty()) {
-            algs_.push_back(new Alg(seg.end_ - 1, num_samples_, budget_, eps_));
-            it = algs_.begin();
-        }
-        if (algs_.back()->l_ < seg.end_-1){
-            algs_.push_back(new Alg(seg.end_-1, num_samples_, budget_, eps_));
-        }
         //Update instances belonging to this segment.
         feedSegment(a,seg,it);
-
         auto pre=it;
         //if last updated alg.l_=l,continue
         if (it != algs_.begin()) {
@@ -96,8 +99,6 @@ void HistITSEG<Fun>::feed(const Action &a, const ISetSegments& segs){
             algs_.insert(it,alg);
         }
     }
-
-
 }
 
 // Update instances belonging to this segment.
