@@ -31,8 +31,8 @@ private:
         Alg(const Alg& o) : l_(o.l_), val_(o.val_) {
             sieve_ptr_ = new SievePAIT<Fun>(*o.sieve_ptr_);
         }
-
         virtual ~Alg() { delete sieve_ptr_; }
+        inline int getOracleCalls() { return sieve_ptr_->getOracleCalls(); }
 
         inline void feed(const Action& a, const ISet& is) {
             sieve_ptr_->update(a, is);
@@ -46,8 +46,7 @@ private:
     };
 
 private:
-    int num_samples_;
-    int budget_;
+    int num_samples_,budget_,del_calls_=0;
     double eps_;
 
     std::list<Alg*> algs_;
@@ -61,7 +60,7 @@ public:
     }
 
     void newEndIfNeed(const int l);
-
+    int statOracleCalls();
     void feed(const Action& a, const ISetSegments& segs);
 
     void feedSegment(const Action& a, const ISetSegment& seg,
@@ -116,9 +115,17 @@ void HistITRED<Fun>::feedSegment(const Action& a, const ISetSegment& seg,
         ++it;
     }
 }
-
+template <typename Fun>
+int HistITRED<Fun>::statOracleCalls() {
+    int oracle_calls = del_calls_;
+    for (auto it = algs_.begin(); it != algs_.end(); ++it)
+        oracle_calls += (*it)->getOracleCalls();
+    del_calls_ = 0;
+    return oracle_calls;
+}
 template <typename Fun>
 void HistITRED<Fun>::next() {
+    del_calls_=0;
     // If head SievePAIT instance expires
     if (algs_.front()->l_ == 0) {
         delete algs_.front();
@@ -150,6 +157,7 @@ void HistITRED<Fun>::reduce() {
 
         // (*i)->uncertainty_ = (*l)->uncertainty_;
         while (l != j) {
+            del_calls_ += (*l)->getOracleCalls();
             delete *l;
             ++l;
         }
