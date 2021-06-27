@@ -50,6 +50,9 @@ public:
         cur_ = (cur_ + 1) % L_;
     }
 
+    /**
+     * Get the cumulative number of oracle calls.
+     */
     int statOracleCalls() {
         int oracle_calls = 0;
         for (int i = 0; i < L_; i++) {
