@@ -121,6 +121,7 @@ void HistITRED<Fun>::feedSegment(const Action& a, const ISetSegment& seg,
 template <typename Fun>
 int HistITRED<Fun>::statOracleCalls() {
     int oracle_calls = del_calls_;
+    std::cout<<oracle_calls<<std::endl;
     for (auto it = algs_.begin(); it != algs_.end(); ++it)
         oracle_calls += (*it)->getOracleCalls();
     del_calls_ = 0;
@@ -128,7 +129,6 @@ int HistITRED<Fun>::statOracleCalls() {
 }
 template <typename Fun>
 void HistITRED<Fun>::next() {
-    del_calls_ = 0;
     // If head SievePAIT instance expires
     if (algs_.front()->l_ == 0) {
         delete algs_.front();
