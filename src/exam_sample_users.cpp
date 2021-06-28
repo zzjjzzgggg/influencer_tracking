@@ -7,7 +7,7 @@
 #include <gflags/gflags.h>
 
 DEFINE_string(dir, "", "working directory");
-DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");
+DEFINE_string(stream, "reddit.txt", "input streaming data file name");
 DEFINE_int32(i, 10, "experiment index");
 DEFINE_int32(k, 50, "number of picked users");
 DEFINE_int32(end, 1000, "end time");
@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
     std::vector<int> picked_users = rngutils::choose(pop, FLAGS_k, rng);
     std::unordered_set<int> users(picked_users.begin(),picked_users.end());
     std::string ofnm =
-            osutils::join(FLAGS_dir, "stex_i{}.txt"_format(
+            osutils::join(FLAGS_dir, "reddit_i{}.txt"_format(
                     FLAGS_i));
     ioutils::saveSet(users, ofnm, "{}\n");
 
