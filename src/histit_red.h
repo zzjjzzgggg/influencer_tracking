@@ -17,6 +17,7 @@ private:
     class Alg {
     private:
         SievePAIT<Fun>* sieve_ptr_;
+
     public:
         int l_;                   // instance index
         double val_ = 0;          // current utility value
@@ -46,14 +47,16 @@ private:
     };
 
 private:
-    int num_samples_,budget_,del_calls_=0;
-    double eps_;
+    int num_samples_, budget_, del_calls_ = 0;
+    double red_eps_, sieve_eps_;
 
     std::list<Alg*> algs_;
 
 public:
-    HistITRED(const int num_samples, const int budget, const double eps)
-        : num_samples_(num_samples), budget_(budget), eps_(eps) {}
+    HistITRED(const int num_samples, const int budget, const double red_eps,
+              const double sieve_eps)
+        : num_samples_(num_samples), budget_(budget), red_eps_(red_eps),
+          sieve_eps_(sieve_eps) {}
 
     virtual ~HistITRED() {
         for (auto it = algs_.begin(); it != algs_.end(); ++it) delete *it;
@@ -74,12 +77,12 @@ public:
 template <typename Fun>
 void HistITRED<Fun>::newEndIfNeed(const int l) {
     if (algs_.empty() || algs_.back()->l_ < l)
-        algs_.push_back(new Alg(l, num_samples_, budget_, eps_));
+        algs_.push_back(new Alg(l, num_samples_, budget_, sieve_eps_));
 }
 
 template <typename Fun>
 void HistITRED<Fun>::feed(const Action& a, const ISetSegments& segs) {
-    //create a new head instance if necessary
+    // create a new head instance if necessary
     newEndIfNeed(segs.getMxIdx());
     auto it = algs_.begin();
     for (auto& seg : segs.segments_) {
@@ -109,7 +112,7 @@ void HistITRED<Fun>::feed(const Action& a, const ISetSegments& segs) {
 // Update instances belonging to this segment.
 template <typename Fun>
 void HistITRED<Fun>::feedSegment(const Action& a, const ISetSegment& seg,
-                            typename std::list<Alg*>::iterator& it) {
+                                 typename std::list<Alg*>::iterator& it) {
     while (it != algs_.end() && (*it)->l_ < seg.end_) {
         (*it)->feed(a, seg.is_);
         ++it;
@@ -125,7 +128,7 @@ int HistITRED<Fun>::statOracleCalls() {
 }
 template <typename Fun>
 void HistITRED<Fun>::next() {
-    del_calls_=0;
+    del_calls_ = 0;
     // If head SievePAIT instance expires
     if (algs_.front()->l_ == 0) {
         delete algs_.front();
@@ -146,7 +149,7 @@ void HistITRED<Fun>::reduce() {
         auto j = i, l = i;
         if (++j == algs_.end()) break;
         // calculate the bound
-        double bound = (*i)->upper() * (1 - eps_);
+        double bound = (*i)->upper() * (1 - red_eps_);
         while (j != algs_.end() && (*j)->lower() >= bound) ++j;
         if (--j == i || ++l == j) {
             ++i;
@@ -162,7 +165,7 @@ void HistITRED<Fun>::reduce() {
             ++l;
         }
         // get the uncertainty of this interval
-        (*j)->uncertainty_ = (*i)->upper() * eps_;
+        (*j)->uncertainty_ = (*i)->upper() * red_eps_;
         algs_.erase(++i, j);
         i = j;
     }
