@@ -24,7 +24,7 @@ int main(int argc, char* argv[]){
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     osutils::Timer tm;
 
-    HistITRED<StackExObjFun> hist_red(FLAGS_n,FLAGS_B,FLAGS_sieve_eps,FLAGS_red_eps);
+    HistITRED<StackExObjFun> hist_red(FLAGS_n,FLAGS_B,FLAGS_red_eps,FLAGS_sieve_eps);
     std::string lifespan_fnm =
             osutils::join(FLAGS_dir, fmt::format(FLAGS_lifespans, FLAGS_lmd, FLAGS_n,
                                                  strutils::prettyNumber(FLAGS_L)));
