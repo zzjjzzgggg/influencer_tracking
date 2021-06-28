@@ -36,7 +36,7 @@ int main(int argc, char* argv[]){
     int t=0,ocalls=0;
     while (ss.next()){
         ++t;
-        int c = ss.get<int>(0), u = ss.get<int>(1), v=ss.get<int>(2), t= ss.get<int>(3);
+        int c = ss.get<int>(0), u = ss.get<int>(1), v=ss.get<int>(2);
         Action a{u,v,c,t};
 
         lifespans.clear();
@@ -55,6 +55,7 @@ int main(int argc, char* argv[]){
             FLAGS_dir,
             "basic_n{}b{}eps{}lmd{}L{}.dat"_format(FLAGS_n, FLAGS_B,FLAGS_eps,FLAGS_lmd,strutils::prettyNumber(FLAGS_L)));
     ioutils::saveTripletVec(rst, ofnm, "{}\t{}\t{}\n");
+    printf("cost time %s\n", tm.getStr().c_str());
     gflags::ShutDownCommandLineFlags();
     return 0;
 }
