@@ -36,8 +36,8 @@ int main(int argc, char* argv[]){
     int t=0,ocalls=0;
     while (ss.next()) {
         ++t;
-        int c = ss.get<int>(0), u = ss.get<int>(1), v=ss.get<int>(2), ta= ss.get<int>(3);
-        Action a{u,v,c,ta};
+        int c = ss.get<int>(0), u = ss.get<int>(1), v=ss.get<int>(2);
+        Action a{u,v,c,t};
 
         lifespans.clear();
         pin->load(lifespans);
