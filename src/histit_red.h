@@ -121,7 +121,6 @@ void HistITRED<Fun>::feedSegment(const Action& a, const ISetSegment& seg,
 template <typename Fun>
 int HistITRED<Fun>::statOracleCalls() {
     int oracle_calls = del_calls_;
-    std::cout<<oracle_calls<<std::endl;
     for (auto it = algs_.begin(); it != algs_.end(); ++it)
         oracle_calls += (*it)->getOracleCalls();
     del_calls_ = 0;
