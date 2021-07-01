@@ -47,7 +47,7 @@ private:
     };
 
 private:
-    int num_samples_, budget_, del_calls_ = 0;
+    int num_samples_, budget_;
     double red_eps_, sieve_eps_;
 
     std::list<Alg*> algs_;
@@ -120,10 +120,9 @@ void HistITRED<Fun>::feedSegment(const Action& a, const ISetSegment& seg,
 }
 template <typename Fun>
 int HistITRED<Fun>::statOracleCalls() {
-    int oracle_calls = del_calls_;
+    int oracle_calls = 0;
     for (auto it = algs_.begin(); it != algs_.end(); ++it)
         oracle_calls += (*it)->getOracleCalls();
-    del_calls_ = 0;
     return oracle_calls;
 }
 template <typename Fun>
@@ -159,7 +158,6 @@ void HistITRED<Fun>::reduce() {
 
         // (*i)->uncertainty_ = (*l)->uncertainty_;
         while (l != j) {
-            del_calls_ += (*l)->getOracleCalls();
             delete *l;
             ++l;
         }
