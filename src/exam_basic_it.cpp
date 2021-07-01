@@ -11,11 +11,11 @@ DEFINE_string(dir, "", "working directory");
 DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");
 DEFINE_string(lifespans, "../../lifespans/lmd{:g}n{}L{}.gz", "lifespans template");
 DEFINE_int32(n, 50, "number of samples");
-DEFINE_int32(B, 10, "budget");
-DEFINE_double(eps, 0.2, "epsilon");
+DEFINE_int32(B, 20, "budget");
+DEFINE_double(eps, 0.1, "epsilon");
 DEFINE_double(lmd, .01, "decaying rate");
 DEFINE_int32(L, 5000, "maximum lifetime");
-DEFINE_int32(end,1000,"end time");
+DEFINE_int32(end,5000,"end time");
 
 
 int main(int argc, char* argv[]){
