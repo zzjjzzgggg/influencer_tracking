@@ -62,6 +62,14 @@ public:
         return calls;
     }
 
+    std::unordered_set<int> getUsers()const{
+        std::unordered_set<int> users;
+        for(auto& fun:fun_vec_){
+            for(auto& u:fun.user_sigma_)
+                users.insert(u.first);
+        }
+        return std::unordered_set<int>(users.begin(),users.end());
+    }
     void clear(const bool deep= false){
         for (auto& fun : fun_vec_){
             fun.clear(deep);
