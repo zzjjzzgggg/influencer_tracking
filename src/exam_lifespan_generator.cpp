@@ -7,7 +7,7 @@
 
 DEFINE_string(dir, "../../lifespans", "working directory");
 DEFINE_int32(n, 50, "number of samples");
-DEFINE_int32(L, 1000000, "maximum lifetime");
+DEFINE_int32(L, 100, "maximum lifetime");
 DEFINE_int32(T, 10000, "stream end time");
 DEFINE_double(lmd, .01, "decaying rate");
 DEFINE_bool(echo, false, "echo");
