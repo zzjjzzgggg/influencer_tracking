@@ -18,24 +18,19 @@ set(LIBRARIES ${LIBRARIES} gflags ${CPPLIB_LIBRARIES})
 message(STATUS "LIBRARIES " ${LIBRARIES})
 
 
-
-#target_link_libraries(dyn_dgraph_mgr ${LIBRARIES})
-
-
-#add_executable(influencers_tracking exam_lifespan_generator.cpp)
-
 #add_executable(influencers_tracking  exam_sieve_pait.cpp)
-#add_executable(influencers_tracking exam_greedy.cpp)
 #add_executable(influencers_tracking  exam_greedy_and_pait.cpp)
 #add_executable(influencers_tracking  exam_basic_it.cpp)
-#add_executable(influencers_tracking exam_greedy_basic.cpp)
 #add_executable(influencers_tracking  exam_greedy_and_basicit.cpp)
 #add_executable(influencers_tracking exam_histit_seg.cpp)
 #add_executable(influencers_tracking exam_hist_and_basic.cpp)
-add_executable(influencers_tracking exam_histit_red.cpp)
+#add_executable(influencers_tracking exam_histit_red.cpp)
 #add_executable(influencers_tracking exam_samples.cpp)
 #add_executable(influencers_tracking exam_sample_users.cpp)
 #add_executable(influencers_tracking exam_basicit_histitred.cpp)
 #add_executable(influencers_tracking exam_lifespan_generator.cpp)
+#add_executable(influencers_tracking  exam_random.cpp)
+#add_executable(influencers_tracking exam_test.cpp)
+add_executable(influencers_tracking exam_greedy.cpp)
 
 target_link_libraries(influencers_tracking ${LIBRARIES})
