@@ -36,12 +36,14 @@ public:
     /**
      * Greedy on a set of elements, return final reward.
      */
-    double run() {
+    double run(std::unordered_set<int> users) {
         chosen_.clear();
         auto cmp = [](Elem& a, Elem& b) { return a.gain < b.gain; };
         std::priority_queue<Elem, std::vector<Elem>, decltype(cmp)> pq(cmp);
 
-        for (int u : obj_ptr_->getUsers()) pq.emplace(u);
+        for(int u:users){
+            pq.emplace(u);
+        }
 
         double rwd = 0;
         int t = 1;
