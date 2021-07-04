@@ -26,11 +26,7 @@ private:
 private:
     const ObjMgr<Fun>* obj_ptr_;
     int budget_;
-//    int num_samples_;
     std::vector<int> chosen_;
-
-private:
-
 
 public:
     GreedyAlg(const ObjMgr<Fun>* input, const int budget)
