@@ -15,7 +15,7 @@ DEFINE_int32(n, 50, "number of samples");
 DEFINE_int32(B, 10, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
 DEFINE_double(p, 0.6, "probability");
-DEFINE_int32(T,10000,"end time");
+DEFINE_int32(T,1000,"end time");
 
 int main(int argc, char* argv[]){
     gflags::SetUsageMessage("usage:");
@@ -31,6 +31,7 @@ int main(int argc, char* argv[]){
     int t=0;
     std::vector<std::tuple<int,double,double>> rst;
     double sum=0;
+    std::unordered_set<int> users;
     while(ss.next()){
         ++t;
         int c = ss.get<int>(0), u = ss.get<int>(1), v=ss.get<int>(2);
@@ -46,7 +47,11 @@ int main(int argc, char* argv[]){
         pait.clear();
 
         obj.update(a,iset);
-        double greedy_val=greedy.run();
+        if(users.find(u)==users.end())
+            users.insert(u);
+        if(users.find(v)==users.end())
+            users.insert(v);
+        double greedy_val=greedy.run(users);
         obj.clear();
 
         std::cout<<"greedy:"<<greedy_val<<std::endl;
