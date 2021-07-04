@@ -7,16 +7,16 @@
 #include <gflags/gflags.h>
 #include "stackexchange_obj_fun.h"
 
-DEFINE_string(dir, "../../data/basic_histred", "working directory");
+DEFINE_string(dir, "", "working directory");
 DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");
-DEFINE_string(lifespans, "../lifespans/lmd{:g}n{}L{}.gz", "lifespans template");
+DEFINE_string(lifespans, "../../lifespans/lmd{:g}n{}L{}.gz", "lifespans template");
 DEFINE_int32(n, 50, "number of samples");
 DEFINE_int32(B, 20, "budget");
 DEFINE_double(sieve_eps,0.1,"sievepait epsilon");
 DEFINE_double(red_eps, 0.1, "histit_red epsilon");
-DEFINE_double(lmd, .01, "decaying rate");
-DEFINE_int32(L, 100000, "maximum lifetime");
-DEFINE_int32(T,5000,"end time");
+DEFINE_double(lmd, 0.01, "decaying rate");
+DEFINE_int32(L, 1000000, "maximum lifetime");
+DEFINE_int32(T,1000,"end time");
 
 
 int main(int argc, char* argv[]){
