@@ -27,6 +27,7 @@ int main(int argc, char* argv[]){
     ioutils::TSVParser ss(FLAGS_stream);
     std::vector<std::tuple<int,double>> rst;
     int t=0;
+    std::unordered_set<int> users;
     while(ss.next()){
         ++t;
         int c = ss.get<int>(0), u = ss.get<int>(1), v=ss.get<int>(2), t= ss.get<int>(3);
@@ -34,7 +35,11 @@ int main(int argc, char* argv[]){
         ISet iset=isgen.getISet();
 
         obj.update(a,iset);
-        double val=greedy.run();
+        if(users.find(u)==users.end())
+            users.insert(u);
+        if(users.find(v)==users.end())
+            users.insert(v);
+        double val=greedy.run(users);
         obj.clear();
 
         rst.emplace_back(t,val);
