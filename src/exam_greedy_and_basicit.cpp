@@ -17,7 +17,7 @@ DEFINE_int32(B, 10, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
 DEFINE_double(lmd, .01, "decaying rate");
 DEFINE_int32(L, 100, "maximum lifetime");
-DEFINE_int32(T,10000,"end time");
+DEFINE_int32(T,1000,"end time");
 
 int main(int argc, char* argv[]){
     gflags::SetUsageMessage("usage:");
@@ -49,9 +49,9 @@ int main(int argc, char* argv[]){
         eval.add(a,segs);
         auto obj= eval.getObjMgr(FLAGS_n);
         GreedyAlg<StackExObjFun> greedy(&obj, FLAGS_B);
-
+        auto actions=eval.get_Actions();
         auto pop=eval.getPop();
-        double greedy_val=greedy.run(pop);
+        double greedy_val=greedy.run(pop,actions);
         eval.next();
 
         basic.update(a,segs);
