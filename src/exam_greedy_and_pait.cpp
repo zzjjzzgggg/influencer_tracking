@@ -12,7 +12,7 @@
 DEFINE_string(dir, "", "working directory");
 DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");
 DEFINE_int32(n, 50, "number of samples");
-DEFINE_int32(B, 10, "budget");
+DEFINE_int32(B, 20, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
 DEFINE_double(p, 0.6, "probability");
 DEFINE_int32(T,1000,"end time");
@@ -29,9 +29,11 @@ int main(int argc, char* argv[]){
 
     ioutils::TSVParser ss(FLAGS_stream);
     int t=0;
-    std::vector<std::tuple<int,double,double>> rst;
+    std::vector<std::tuple<int,int,int>> rst;
     double sum=0;
     std::unordered_set<int> users;
+    int greedy_ora=0;
+    int pait_ora=0;
     while(ss.next()){
         ++t;
         int c = ss.get<int>(0), u = ss.get<int>(1), v=ss.get<int>(2);
@@ -41,6 +43,7 @@ int main(int argc, char* argv[]){
         pait.update(a,iset);
 
         double pait_val=pait.getResult();
+        pait_ora+=pait.getOracleCalls();
         std::cout<<t<<" ";
         std::cout<<"sieve_pait"<<pait_val<<"  ";
 
@@ -52,12 +55,13 @@ int main(int argc, char* argv[]){
         if(users.find(v)==users.end())
             users.insert(v);
         double greedy_val=greedy.run(users);
+        greedy_ora+=greedy.getOracleCalls();
         obj.clear();
 
         std::cout<<"greedy:"<<greedy_val<<std::endl;
 
         sum+=pait_val/greedy_val;
-        rst.emplace_back(t,pait_val,greedy_val);
+        rst.emplace_back(t,pait_ora,greedy_ora);
         if(t==FLAGS_T) break;
     }
     std::cout<<sum/t<<std::endl;
