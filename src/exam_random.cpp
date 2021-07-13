@@ -12,8 +12,8 @@ DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");
 DEFINE_string(lifespans, "../../lifespans/lmd{:g}n{}L{}.gz", "lifespans template");
 DEFINE_int32(n, 50, "number of samples");
 DEFINE_int32(B, 20, "budget");
-DEFINE_double(lmd, .01, "decaying rate");
-DEFINE_int32(L, 100, "maximum lifetime");
+DEFINE_double(lmd, 0.002, "decaying rate");
+DEFINE_int32(L, 100000, "maximum lifetime");
 DEFINE_int32(T,1000,"end time");
 
 
@@ -44,22 +44,14 @@ int main(int argc, char* argv[]) {
         ISetSegments segs(lifespans);
 
         eval.add(a,segs);
-        auto pop = eval.getPop();
         auto obj_mgr=eval.getObjMgr(FLAGS_n);
 
-        std::map<int,Action> this_actions=eval.get_Actions();
+        auto users_set=eval.get_users();
+
         eval.next();
 
-        std::vector<int> users;
         double val;
-        for (auto& pr : pop) {
-            int u=this_actions[pr.first].u;
-            int v=this_actions[pr.first].v;
-            if(std::find(users.begin(),users.end(),u)==users.end())
-                users.push_back(u);
-            if(std::find(users.begin(),users.end(),v)==users.end())
-                users.push_back(v);
-        }
+        std::vector<int> users(users_set.begin(), users_set.end());
         if(users.size()>FLAGS_B){
             auto samples=rngutils::choose(users, FLAGS_B, rng);
             val=obj_mgr.getVal(samples);
