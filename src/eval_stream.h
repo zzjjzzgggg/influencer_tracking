@@ -42,19 +42,19 @@ public:
     }
 
     /**
-     * Get Actions
+     * Get current users
      */
-    std::map<int,Action> get_Actions(){
-        return std::map(this_action_.begin(),this_action_.end());
-    }
-
-    /**
-     * Get current ISets
-     */
-    std::unordered_map<int, ISet> getPop() const {
-        std::unordered_map<int, ISet> pop;
-        for (auto& pr : buf_[cur_]) pop[pr.first] = std::move(pr.second);
-        return pop;
+    std::unordered_set<int> get_users(){
+        std::unordered_set<int> users;
+        for(auto& pr:buf_[cur_]){
+            int u= this_action_[pr.first].u;
+            int v= this_action_[pr.first].v;
+            if(users.find(u)==users.end())
+                users.insert(u);
+            if(users.find(v)==users.end())
+                users.insert(v);
+        }
+        return users;
     }
 
 }; /* EvalStream */
