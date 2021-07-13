@@ -38,24 +38,12 @@ public:
      * Run Greedy Algorithm on data provided by ObjMgr.
      * Return reward.
      */
-    double run(const std::unordered_map<int, ISet>& isets,std::map<int,Action> this_action) {
-        chosen_.clear();
+    double run(std::unordered_set<int> users) {
         auto cmp = [](Elem& a, Elem& b) { return a.gain < b.gain; };
         std::priority_queue<Elem, std::vector<Elem>, decltype(cmp)> pq(cmp);
 
-        std::unordered_set<int> users;
-        for(auto item:isets){
-            int u=this_action[item.first].u;
-            int v=this_action[item.first].v;
-            if(users.find(u)==users.end()){
-                users.insert(u);
-                pq.emplace(u);
-            }
-            if(users.find(v)==users.end()){
-                users.insert(v);
-                pq.emplace(v);
-            }
-        }
+        for(auto& u:users)pq.emplace(u);
+
         double rwd = 0;
         int t = 1;
         while (!pq.empty() && t <= budget_) {
