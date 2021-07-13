@@ -13,9 +13,9 @@ DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");
 DEFINE_string(lifespans, "../../lifespans/lmd{:g}n{}L{}.gz", "lifespans template");
 DEFINE_int32(n, 50, "number of samples");
 DEFINE_int32(B, 20, "budget");
-DEFINE_double(lmd, 0.01, "decaying rate");
-DEFINE_int32(L, 1000000, "maximum lifetime");
-DEFINE_int32(T,1000,"end time");
+DEFINE_double(lmd, 0.002, "decaying rate");
+DEFINE_int32(L, 100000, "maximum lifetime");
+DEFINE_int32(T,20000,"end time");
 
 int main(int argc, char* argv[]) {
     gflags::SetUsageMessage("usage:");
@@ -45,11 +45,10 @@ int main(int argc, char* argv[]) {
         eval.add(a,segs);
         auto obj= eval.getObjMgr(FLAGS_n);
         GreedyAlg<StackExObjFun> greedy(&obj, FLAGS_B);
-        auto actions=eval.get_Actions();
-        auto pop=eval.getPop();
-        double val=greedy.run(pop,actions);
+
+        auto users=eval.get_users();
+        double val=greedy.run(users);
         ocalls+=greedy.getOracleCalls();
-        std::cout<<greedy.getOracleCalls()<<std::endl;
 
         eval.next();
 
