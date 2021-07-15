@@ -15,6 +15,7 @@ private:
     int L_, cur_ = 0;
     std::vector<std::vector<std::pair<int, ISet>>> buf_;  // action_index->iset
     std::map<int, Action> this_action_;                   // index->action
+
 public:
     EvalStream(const int L) : L_(L) { buf_.resize(L); }
 

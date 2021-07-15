@@ -35,9 +35,8 @@ int main(int argc, char* argv[]) {
     std::vector<std::tuple<int, double, int>> rst;
     int t = 0, ocalls = 0;
     while (ss.next()) {
-        ++t;
         int c = ss.get<int>(0), u = ss.get<int>(1), v = ss.get<int>(2);
-        Action a{u, v, c, t};
+        Action a{u, v, c, ++t};
 
         lifespans.clear();
         pin->load(lifespans);

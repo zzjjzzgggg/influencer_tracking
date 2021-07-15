@@ -22,6 +22,7 @@ public:
     ObjMgr() {}
     ObjMgr(const int n) { fun_vec_.resize(n); }
     ObjMgr(const ObjMgr& o) : fun_vec_(o.fun_vec_) {}
+
     // add a social action and its I-set to the objective function
     void update(const Action& a, const ISet& iset) {
         for (int i : iset) fun_vec_[i].add(a);
