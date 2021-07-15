@@ -7,7 +7,7 @@
 
 #include "obj_mgr.h"
 
-template<typename Fun>
+template <typename Fun>
 class GreedyAlg {
 private:
     class Elem {
@@ -18,7 +18,7 @@ private:
     public:
         Elem() : node(-1), t(-1), gain(-1) {}
         Elem(int v, int s = 0, double g = std::numeric_limits<double>::max())
-                : node(v), t(s), gain(g) {}
+            : node(v), t(s), gain(g) {}
 
         void echo() const { printf("i:%3d g:%.2e\n", t, gain); }
     };
@@ -30,7 +30,7 @@ private:
 
 public:
     GreedyAlg(const ObjMgr<Fun>* input, const int budget)
-            : obj_ptr_(input), budget_(budget) {
+        : obj_ptr_(input), budget_(budget) {
         chosen_.reserve(budget_);
     }
 
@@ -42,7 +42,7 @@ public:
         auto cmp = [](Elem& a, Elem& b) { return a.gain < b.gain; };
         std::priority_queue<Elem, std::vector<Elem>, decltype(cmp)> pq(cmp);
 
-        for(auto& u:users)pq.emplace(u);
+        for (auto& u : users) pq.emplace(u);
 
         double rwd = 0;
         int t = 1;
@@ -66,4 +66,4 @@ public:
 
 }; /* GreedyAlg */
 
-#endif //GREEDY_ALG_H
+#endif  // GREEDY_ALG_H

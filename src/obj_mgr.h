@@ -21,7 +21,7 @@ private:
 public:
     ObjMgr() {}
     ObjMgr(const int n) { fun_vec_.resize(n); }
-    ObjMgr(const ObjMgr &o):fun_vec_(o.fun_vec_){}
+    ObjMgr(const ObjMgr& o) : fun_vec_(o.fun_vec_) {}
     // add a social action and its I-set to the objective function
     void update(const Action& a, const ISet& iset) {
         for (int i : iset) fun_vec_[i].add(a);
@@ -37,7 +37,7 @@ public:
     // Ft(S)
     double getVal(const std::vector<int>& S) const {
         double val = 0;
-        for (auto &fun : fun_vec_) val += fun.getVal(S);
+        for (auto& fun : fun_vec_) val += fun.getVal(S);
         return val / fun_vec_.size();
     }
 
@@ -62,10 +62,8 @@ public:
         return calls;
     }
 
-    void clear(const bool deep= false){
-        for (auto& fun : fun_vec_){
-            fun.clear(deep);
-        }
+    void clear(const bool deep = false) {
+        for (auto& fun : fun_vec_) fun.clear(deep);
     }
 
 }; /* ObjMgr */
