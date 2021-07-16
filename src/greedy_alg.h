@@ -64,6 +64,28 @@ public:
 
     int getOracleCalls() const { return obj_ptr_->getOracleCalls(); }
 
+    double run_alg(std::unordered_set<int> users){
+        std::vector<int> S;
+        int mx_gain_u;
+        for(int i=0;i<budget_;i++){
+            double gain_mx=-100;
+            for(auto &u:users){
+                double gain=obj_ptr_->getGain(u,S);
+                if(gain>gain_mx){
+                    gain_mx=gain;
+                    mx_gain_u=u;
+                }
+            }
+            S.push_back(mx_gain_u);
+            users.erase(mx_gain_u);
+            if(users.empty()){
+                break;
+            }
+        }
+        double rwd_mx=obj_ptr_->getVal(S);
+        return  rwd_mx;
+    }
+
 }; /* GreedyAlg */
 
 #endif //GREEDY_ALG_H
