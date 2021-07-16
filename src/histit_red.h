@@ -23,6 +23,7 @@ private:
         double val_ = 0;          // current utility value
         double delta_ = 0;        // uncertainty of this instance
         double uncertainty_ = 0;  // uncertainty of this interval
+
     public:
         Alg(const int l, const int num_samples, const int budget,
             const double eps)
