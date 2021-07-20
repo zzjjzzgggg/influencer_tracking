@@ -13,7 +13,7 @@ DEFINE_int32(n, 2000, "number of max samples");
 DEFINE_int32(i, 1, "experiment index");
 DEFINE_double(lmd, .01, "decaying rate");
 DEFINE_int32(k, 50, "number of picked users");
-DEFINE_int32(end, 1000, "end time");
+DEFINE_int32(T, 1000, "end time");
 DEFINE_string(user,"stex_i1.txt","random picked users");
 
 inline double getP(double lambda, int time, int ta) {
@@ -45,11 +45,11 @@ int main(int argc, char* argv[]) {
         int c = ss.get<int>(0), u = ss.get<int>(1), v = ss.get<int>(2);
         Action a{u, v, c, t};
         social_actions.emplace_back(a);
-        if (++t == FLAGS_end) break;
+        if (++t == FLAGS_T) break;
     }
 
     for (auto& a : social_actions) {
-        ISet iset = gen.getISet(FLAGS_n, getP(FLAGS_lmd, FLAGS_end, a.t));
+        ISet iset = gen.getISet(FLAGS_n, getP(FLAGS_lmd, FLAGS_T, a.t));
         if (!iset.empty()) {
             obj.update(a, iset);
             user_set.insert(a.u);
@@ -75,19 +75,17 @@ int main(int argc, char* argv[]) {
 
     // the approximate true value
     double fts_true = obj.getVal(picked_users);
-    std::cout << fts_true << std::endl;
 
     int sample_size = 1000;
     int r = 500;
     std::vector<std::tuple<int, double>> rst;
     for (int n = 10; n <= sample_size; n += 10) {
-        std::cout<<n<<std::endl;
         std::vector<double> fts_est_vec;
         for (int j = 1; j <= r; j++) {
             ObjMgr<StackExObjFun> objmgr(n);
 
             for (auto& a : social_actions) {
-                ISet iset = gen.getISet(n, getP(FLAGS_lmd, FLAGS_end, a.t));
+                ISet iset = gen.getISet(n, getP(FLAGS_lmd, FLAGS_T, a.t));
                 objmgr.update(a, iset);
             }
 
@@ -100,8 +98,9 @@ int main(int argc, char* argv[]) {
     }
 
     std::string ofnm =
-        osutils::join(FLAGS_dir, "samples_n{}lmd{}k{}i{}fts_true{}.dat"_format(
-                                     FLAGS_n, FLAGS_lmd, FLAGS_k, FLAGS_i,fts_true));
+        osutils::join(FLAGS_dir, "samples_n{}lmd{}k{}i{}T{}fts_true{}.dat"_format(
+                                     FLAGS_n, FLAGS_lmd, FLAGS_k, FLAGS_i,
+                                    strutils::prettyNumber(FLAGS_T),fts_true));
     ioutils::saveTupleVec(rst, ofnm, "{}\t{}\n");
 
     printf("cost time %s\n", tm.getStr().c_str());
