@@ -25,8 +25,8 @@ int main(int argc, char* argv[]){
     ISetGenerator isgen(FLAGS_n,FLAGS_p);
 
     ioutils::TSVParser ss(FLAGS_stream);
-    std::vector<std::tuple<int,double>> rst;
-    int t=0;
+    std::vector<std::tuple<int,double,int>> rst;
+    int t=0,ocalls = 0;
     std::unordered_set<int> users;
     while(ss.next()){
         ++t;
@@ -40,16 +40,17 @@ int main(int argc, char* argv[]){
         if(users.find(v)==users.end())
             users.insert(v);
         double val=greedy.run(users);
+        ocalls+= greedy.getOracleCalls();
         obj.clear();
 
-        rst.emplace_back(t,val);
+        rst.emplace_back(t,val,ocalls);
         if(t==FLAGS_T) break;
     }
     std::string ofnm = osutils::join(
             FLAGS_dir,
-            "greedy_n{}b{}p{}T{}.dat"_format(FLAGS_n, FLAGS_B,
+            "simple_greedy_n{}b{}p{}T{}.dat"_format(FLAGS_n, FLAGS_B,
                     FLAGS_p,strutils::prettyNumber(FLAGS_T)));
-    ioutils::saveTupleVec(rst, ofnm, "{}\t{}\n");
+    ioutils::saveTripletVec(rst, ofnm, "{}\t{}\t{}\n");
     printf("cost time %s\n", tm.getStr().c_str());
     gflags::ShutDownCommandLineFlags();
     return 0;

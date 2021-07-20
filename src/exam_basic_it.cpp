@@ -13,9 +13,9 @@ DEFINE_string(lifespans, "../../lifespans/lmd{:g}n{}L{}.gz", "lifespans template
 DEFINE_int32(n, 50, "number of samples");
 DEFINE_int32(B, 20, "budget");
 DEFINE_double(eps, 0.1, "epsilon");
-DEFINE_double(lmd, .01, "decaying rate");
-DEFINE_int32(L, 5000, "maximum lifetime");
-DEFINE_int32(end,5000,"end time");
+DEFINE_double(lmd, 0.002, "decaying rate");
+DEFINE_int32(L, 100000, "maximum lifetime");
+DEFINE_int32(T,10,"end time");
 
 
 int main(int argc, char* argv[]){
@@ -49,11 +49,12 @@ int main(int argc, char* argv[]){
         ocalls+=basic.statOracleCalls();
         basic.next();
         rst.emplace_back(t,val,ocalls);
-        if(t==FLAGS_end) break;
+        if(t==FLAGS_T) break;
     }
     std::string ofnm = osutils::join(
             FLAGS_dir,
-            "basic_n{}b{}eps{}lmd{}L{}.dat"_format(FLAGS_n, FLAGS_B,FLAGS_eps,FLAGS_lmd,strutils::prettyNumber(FLAGS_L)));
+            "basic0_n{}b{}eps{}lmd{}L{}T{}.dat"_format(FLAGS_n, FLAGS_B,FLAGS_eps,FLAGS_lmd,
+                    strutils::prettyNumber(FLAGS_L),strutils::prettyNumber(FLAGS_T)));
     ioutils::saveTripletVec(rst, ofnm, "{}\t{}\t{}\n");
     printf("cost time %s\n", tm.getStr().c_str());
     gflags::ShutDownCommandLineFlags();

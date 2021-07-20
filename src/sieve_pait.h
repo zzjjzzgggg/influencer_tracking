@@ -161,7 +161,6 @@ double SievePAIT<Fun>::getResult() const {
     int i_mx = -100;  // theta-index
     double rwd_mx = 0;
     for (auto &pr : thi_pos_) {
-        double rwd_sum = 0;
         int i = pr.first;           // theta index
         auto ca = getCandidate(i);  // get the theta to index
         double rwd = obj_mgr_.getVal(ca.getMembers());

@@ -4,7 +4,6 @@
 
 #include "stackexchange_obj_fun.h"
 #include "greedy_alg.h"
-#include "iset_segment.h"
 #include <gflags/gflags.h>
 #include "eval_stream.h"
 
@@ -16,7 +15,7 @@ DEFINE_int32(n, 50, "number of samples");
 DEFINE_int32(B, 20, "budget");
 DEFINE_double(lmd, 0.002, "decaying rate");
 DEFINE_int32(L, 100000, "maximum lifetime");
-DEFINE_int32(T, 20000, "end time");
+DEFINE_int32(T, 100, "end time");
 
 int main(int argc, char* argv[]) {
     gflags::SetUsageMessage("usage:");
@@ -49,7 +48,6 @@ int main(int argc, char* argv[]) {
         auto users = eval.get_users();
         double val = greedy.run(users);
         ocalls += greedy.getOracleCalls();
-
         eval.next();
 
         rst.emplace_back(t, val, ocalls);

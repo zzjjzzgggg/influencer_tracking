@@ -20,8 +20,8 @@ public:
 
 public:
     StackExObjFun() {}
-    StackExObjFun(const StackExObjFun &o):oracle_calls_(o.oracle_calls_),affected_(o.affected_),
-                            user_sigma_(o.user_sigma_){}
+    StackExObjFun(const StackExObjFun &o):affected_(o.affected_),
+                            user_sigma_(o.user_sigma_){oracle_calls_=0;}
     void add(const Action& a) {
         if (user_sigma_.find(a.u) == user_sigma_.end()) {
             // if user u is a new user
@@ -72,7 +72,7 @@ public:
 
         std::unordered_set<int> scope;
 
-        // firstly, calculate scope = sgima(S)
+        // firstly, calculate scope = sigma(S)
         for (int u : S) {
             if (user_sigma_.find(u) != user_sigma_.end()) {
                 const auto& set = user_sigma_.at(u);

@@ -25,14 +25,10 @@
 #include <sstream>
 #include <string>
 
-// #include <mutex>
-// #include <future>
-// #include <thread>
-
 #include <os/osutils.h>
 #include <io/ioutils.h>
 #include <adv/rngutils.h>
-// #include <graph/graph.h>
+
 
 using namespace fmt::literals;
 
@@ -46,6 +42,5 @@ struct Action {
     int t;
 };
 
-// std::vector<s_c> S
 
 #endif  // INFLUENCERS_TRACKING_STDAFX_H

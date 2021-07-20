@@ -3,7 +3,6 @@
 //
 
 #include "histit_red.h"
-#include "lifespan_generator.h"
 #include <gflags/gflags.h>
 #include "stackexchange_obj_fun.h"
 
@@ -15,8 +14,8 @@ DEFINE_int32(B, 20, "budget");
 DEFINE_double(sieve_eps,0.1,"sievepait epsilon");
 DEFINE_double(red_eps, 0.1, "histit_red epsilon");
 DEFINE_double(lmd, 0.002, "decaying rate");
-DEFINE_int32(L, 100000, "maximum lifetime");
-DEFINE_int32(T,1000,"end time");
+DEFINE_int32(L, 1000, "maximum lifetime");
+DEFINE_int32(T,100,"end time");
 
 
 int main(int argc, char* argv[]){
@@ -47,7 +46,6 @@ int main(int argc, char* argv[]){
         hist_red.feed(a, segs);
         double val=hist_red.getResult();
         ocalls+=hist_red.statOracleCalls();
-
         hist_red.reduce();
         hist_red.next();
         rst.emplace_back(t,val,ocalls);

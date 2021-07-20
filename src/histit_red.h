@@ -34,7 +34,9 @@ private:
             sieve_ptr_ = new SievePAIT<Fun>(*o.sieve_ptr_);
         }
         virtual ~Alg() { delete sieve_ptr_; }
-        inline int getOracleCalls() { return sieve_ptr_->getOracleCalls(); }
+        inline int getOracleCalls() {
+            return sieve_ptr_->getOracleCalls();
+        }
 
         inline void feed(const Action& a, const ISet& is) {
             sieve_ptr_->update(a, is);
@@ -87,6 +89,7 @@ void HistITRED<Fun>::feed(const Action& a, const ISetSegments& segs) {
     newEndIfNeed(segs.getMxIdx());
     auto it = algs_.begin();
     for (auto& seg : segs.segments_) {
+//        std::cout<<seg.start_<<" "<<seg.end_<<std::endl;
         // Update instances belonging to this segment.
         feedSegment(a, seg, it);
         auto pre = it;

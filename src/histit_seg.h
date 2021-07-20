@@ -112,7 +112,7 @@ void HistITSEG<Fun>::feedSegment(const Action &a, const ISetSegment& seg,
     }
 }
 template <typename Fun>
-int HistITRED<Fun>::statOracleCalls() {
+int HistITSEG<Fun>::statOracleCalls() {
     int oracle_calls = 0;
     for (auto it = algs_.begin(); it != algs_.end(); ++it)
         oracle_calls += (*it)->getOracleCalls();

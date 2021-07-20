@@ -2,8 +2,8 @@
 // Created by weiwei on 2021/4/20.
 //
 
-#ifndef TEST_CMAKE_CANDIDATE_H
-#define TEST_CMAKE_CANDIDATE_H
+#ifndef CANDIDATE_H
+#define CANDIDATE_H
 
 #include "stdafx.h"
 //#include "obj_fun.h"
@@ -35,4 +35,4 @@ public:
 
 }; /* Candidate */
 
-#endif //TEST_CMAKE_CANDIDATE_H
+#endif //CANDIDATE_H

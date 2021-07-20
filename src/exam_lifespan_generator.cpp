@@ -2,14 +2,15 @@
 // Created by weiwei on 2021/5/5.
 //
 
+#include "iset_segment.h"
 #include "lifespan_generator.h"
 #include <gflags/gflags.h>
 
 DEFINE_string(dir, "../../lifespans", "working directory");
 DEFINE_int32(n, 50, "number of samples");
-DEFINE_int32(L, 100000, "maximum lifetime");
-DEFINE_int32(T, 50000, "stream end time");
-DEFINE_double(lmd, 0.0001, "decaying rate");
+DEFINE_int32(L, 1000, "maximum lifetime");
+DEFINE_int32(T, 5000, "stream end time");
+DEFINE_double(lmd, 0.002, "decaying rate");
 DEFINE_bool(echo, false, "echo");
 
 int main(int argc, char* argv[]){

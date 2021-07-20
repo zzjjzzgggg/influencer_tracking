@@ -28,12 +28,9 @@ int main(int argc, char* argv[]){
     ISetGenerator isgen(FLAGS_n,FLAGS_p);
 
     ioutils::TSVParser ss(FLAGS_stream);
-    int t=0;
-    std::vector<std::tuple<int,int,int>> rst;
-    double sum=0;
+    int t=0,greedy_ora=0,pait_ora=0;
+    std::vector<std::tuple<int,double,int,double,int>> rst;
     std::unordered_set<int> users;
-    int greedy_ora=0;
-    int pait_ora=0;
     while(ss.next()){
         ++t;
         int c = ss.get<int>(0), u = ss.get<int>(1), v=ss.get<int>(2);
@@ -44,8 +41,6 @@ int main(int argc, char* argv[]){
 
         double pait_val=pait.getResult();
         pait_ora+=pait.getOracleCalls();
-        std::cout<<t<<" ";
-        std::cout<<"sieve_pait"<<pait_val<<"  ";
 
         pait.clear();
 
@@ -54,22 +49,19 @@ int main(int argc, char* argv[]){
             users.insert(u);
         if(users.find(v)==users.end())
             users.insert(v);
+
         double greedy_val=greedy.run(users);
         greedy_ora+=greedy.getOracleCalls();
         obj.clear();
 
-        std::cout<<"greedy:"<<greedy_val<<std::endl;
-
-        sum+=pait_val/greedy_val;
-        rst.emplace_back(t,pait_ora,greedy_ora);
+        rst.emplace_back(t,pait_val,pait_ora,greedy_val,greedy_ora);
         if(t==FLAGS_T) break;
     }
-    std::cout<<sum/t<<std::endl;
     std::string ofnm = osutils::join(
             FLAGS_dir,
             "pait_and_greedy_n{}b{}p{}eps{}.dat"_format(FLAGS_n, FLAGS_B,FLAGS_p,
                     FLAGS_eps, strutils::prettyNumber(FLAGS_T)));
-    ioutils::saveTripletVec(rst, ofnm, "{}\t{}\t{}\n");
+    ioutils::saveTupleVec(rst, ofnm, "{}\t{}\t{}\t{}\t{}\n");
     printf("cost time %s\n", tm.getStr().c_str());
     gflags::ShutDownCommandLineFlags();
     return 0;
