@@ -39,13 +39,14 @@ public:
      * Return reward.
      */
     double run(std::unordered_set<int> users) {
+        chosen_.clear();
         auto cmp = [](Elem& a, Elem& b) { return a.gain < b.gain; };
         std::priority_queue<Elem, std::vector<Elem>, decltype(cmp)> pq(cmp);
 
         for (auto& u : users) pq.emplace(u);
-
         double rwd = 0;
         int t = 1;
+
         while (!pq.empty() && t <= budget_) {
             Elem e = pq.top();
             pq.pop();
@@ -64,6 +65,7 @@ public:
 
     int getOracleCalls() const { return obj_ptr_->getOracleCalls(); }
 
+    //another greedy algorithm
     double run_alg(std::unordered_set<int> users){
         std::vector<int> S;
         int mx_gain_u;
