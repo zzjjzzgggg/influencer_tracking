@@ -75,6 +75,7 @@ public:
     double getResult() const { return algs_.front()->val_; }
     void next();
     void reduce();
+    int size()const {return algs_.size();}
 };
 
 template <typename Fun>
@@ -101,7 +102,8 @@ void HistITRED<Fun>::feed(const Action& a, const ISetSegments& segs) {
         }
 
         // create new alg from successor
-        if (it == algs_.begin() || (*pre)->l_ < (seg.end_ - 1)) {
+        if(it==algs_.begin()||(*it)->lower()<(1-red_eps_)*(*pre)->upper()){
+       // if (it == algs_.begin() || (*pre)->l_ < (seg.end_ - 1)) {
             // create alg_l based on its successor
             Alg* alg = new Alg(*(*it));
             alg->l_ = seg.end_ - 1;
@@ -117,10 +119,18 @@ void HistITRED<Fun>::feed(const Action& a, const ISetSegments& segs) {
 template <typename Fun>
 void HistITRED<Fun>::feedSegment(const Action& a, const ISetSegment& seg,
                                  typename std::list<Alg*>::iterator& it) {
+//    while (it != algs_.end() && (*it)->l_ < seg.end_) {
+//        (*it)->feed(a, seg.is_);
+//        ++it;
+//    }
+    auto job = [a, &seg](Alg* alg) { alg->feed(a, seg.is_); };
+    std::vector<std::future<void>> futures;
     while (it != algs_.end() && (*it)->l_ < seg.end_) {
-        (*it)->feed(a, seg.is_);
+        futures.push_back(std::async(std::launch::async, job, *it));
         ++it;
     }
+    for (auto& future : futures) future.get();
+
 }
 template <typename Fun>
 int HistITRED<Fun>::statOracleCalls() {
