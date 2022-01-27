@@ -55,6 +55,19 @@ public:
         return users;
     }
 
+    /**
+     * Get current locations
+     */
+    std::unordered_set<int> get_locs() {
+        std::unordered_set<int> locations;
+        for (auto& pr : buf_[cur_]) {
+            auto a = this_action_[pr.first];
+            locations.insert(a.u);
+        }
+        return locations;
+    }
+
+
 }; /* EvalStream */
 
 #endif  // EVAL_STREAM_H
