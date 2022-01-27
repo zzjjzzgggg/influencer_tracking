@@ -27,7 +27,6 @@ private:
     const ObjMgr<Fun>* obj_ptr_;
     int budget_;
     std::vector<int> chosen_;
-
 public:
     GreedyAlg(const ObjMgr<Fun>* input, const int budget)
         : obj_ptr_(input), budget_(budget) {
@@ -46,7 +45,6 @@ public:
         for (auto& u : users) pq.emplace(u);
         double rwd = 0;
         int t = 1;
-
         while (!pq.empty() && t <= budget_) {
             Elem e = pq.top();
             pq.pop();
@@ -63,9 +61,9 @@ public:
         return rwd;
     }
 
-    int getOracleCalls() const { return obj_ptr_->getOracleCalls(); }
+    int getOracleCalls() const {return obj_ptr_->getOracleCalls(); }
 
-    //another greedy algorithm
+    //another greedy algorithm without optimization
     double run_alg(std::unordered_set<int> users){
         std::vector<int> S;
         int mx_gain_u;
