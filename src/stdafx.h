@@ -24,6 +24,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <future>
 
 #include <os/osutils.h>
 #include <io/ioutils.h>
