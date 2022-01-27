@@ -5,7 +5,8 @@
 #include "basic_it.h"
 #include "lifespan_generator.h"
 #include <gflags/gflags.h>
-#include "stackexchange_obj_fun.h"
+//#include "stackexchange_obj_fun.h"
+#include "checkin_obj_fun.h"
 
 DEFINE_string(dir, "", "working directory");
 DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");
@@ -23,7 +24,8 @@ int main(int argc, char* argv[]){
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     osutils::Timer tm;
 
-    BasicIT<StackExObjFun> basic(FLAGS_L,FLAGS_B,FLAGS_eps,FLAGS_n);
+    BasicIT<CheckinObjFun> basic(FLAGS_L,FLAGS_B,FLAGS_eps,FLAGS_n);
+//    BasicIT<StackExObjFun> basic(FLAGS_L,FLAGS_B,FLAGS_eps,FLAGS_n);
 
     std::string lifespan_fnm =
             osutils::join(FLAGS_dir, fmt::format(FLAGS_lifespans, FLAGS_lmd, FLAGS_n,
@@ -44,7 +46,6 @@ int main(int argc, char* argv[]){
         ISetSegments segs(lifespans);
 
         basic.update(a,segs);
-
         double val=basic.getResult();
         ocalls+=basic.statOracleCalls();
         basic.next();
@@ -53,7 +54,7 @@ int main(int argc, char* argv[]){
     }
     std::string ofnm = osutils::join(
             FLAGS_dir,
-            "basic0_n{}b{}eps{}lmd{}L{}T{}.dat"_format(FLAGS_n, FLAGS_B,FLAGS_eps,FLAGS_lmd,
+            "basic_n{}b{}eps{}lmd{}L{}T{}.dat"_format(FLAGS_n, FLAGS_B,FLAGS_eps,FLAGS_lmd,
                     strutils::prettyNumber(FLAGS_L),strutils::prettyNumber(FLAGS_T)));
     ioutils::saveTripletVec(rst, ofnm, "{}\t{}\t{}\n");
     printf("cost time %s\n", tm.getStr().c_str());
