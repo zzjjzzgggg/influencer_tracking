@@ -4,7 +4,8 @@
 
 #include "iset_segment.h"
 #include "eval_stream.h"
-#include "stackexchange_obj_fun.h"
+//#include "stackexchange_obj_fun.h"
+#include "checkin_obj_fun.h"
 #include <gflags/gflags.h>
 
 DEFINE_string(dir, "", "working directory");
@@ -23,7 +24,8 @@ int main(int argc, char* argv[]) {
     osutils::Timer tm;
 
     rngutils::default_rng rng;
-    EvalStream<StackExObjFun> eval(FLAGS_L);
+//    EvalStream<StackExObjFun> eval(FLAGS_L);
+    EvalStream<CheckinObjFun> eval(FLAGS_L);
 
     std::string lifespan_fnm =
             osutils::join(FLAGS_dir, fmt::format(FLAGS_lifespans, FLAGS_lmd, FLAGS_n,
@@ -46,8 +48,10 @@ int main(int argc, char* argv[]) {
         eval.add(a,segs);
         auto obj_mgr=eval.getObjMgr(FLAGS_n);
 
-        auto users_set=eval.get_users();
+//        auto users_set=eval.get_users();
 
+        //get locations
+        auto users_set=eval.get_locs();
         eval.next();
 
         double val;
