@@ -119,10 +119,6 @@ void HistITRED<Fun>::feed(const Action& a, const ISetSegments& segs) {
 template <typename Fun>
 void HistITRED<Fun>::feedSegment(const Action& a, const ISetSegment& seg,
                                  typename std::list<Alg*>::iterator& it) {
-//    while (it != algs_.end() && (*it)->l_ < seg.end_) {
-//        (*it)->feed(a, seg.is_);
-//        ++it;
-//    }
     auto job = [a, &seg](Alg* alg) { alg->feed(a, seg.is_); };
     std::vector<std::future<void>> futures;
     while (it != algs_.end() && (*it)->l_ < seg.end_) {
@@ -130,7 +126,6 @@ void HistITRED<Fun>::feedSegment(const Action& a, const ISetSegment& seg,
         ++it;
     }
     for (auto& future : futures) future.get();
-
 }
 template <typename Fun>
 int HistITRED<Fun>::statOracleCalls() {
