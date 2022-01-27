@@ -2,19 +2,20 @@
 // Created by weiwei on 2021/6/7.
 //
 
-#include "stackexchange_obj_fun.h"
+#include "checkin_obj_fun.h"
+//#include "stackexchange_obj_fun.h"
 #include "obj_mgr.h"
 #include "iset_generator.h"
 #include <gflags/gflags.h>
 
-DEFINE_string(dir, "stex_lmd", "working directory");
-DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");
+DEFINE_string(dir, "../../data/sample/stackoverflow", "working directory");
+DEFINE_string(stream, "stackoverflow.txt", "input streaming data file name");
 DEFINE_int32(n, 2000, "number of max samples");
 DEFINE_int32(i, 1, "experiment index");
 DEFINE_double(lmd, .01, "decaying rate");
 DEFINE_int32(k, 50, "number of picked users");
 DEFINE_int32(T, 1000, "end time");
-DEFINE_string(user,"stex_i1.txt","random picked users");
+DEFINE_string(user,"stoverflow_i1.txt","random picked users");
 
 inline double getP(double lambda, int time, int ta) {
     return exp(-lambda * (time - ta));
@@ -33,7 +34,8 @@ int main(int argc, char* argv[]) {
 
     rngutils::default_rng rng;
 
-    ObjMgr<StackExObjFun> obj(FLAGS_n);
+    ObjMgr<CheckinObjFun> obj(FLAGS_n);
+//    ObjMgr<StackExObjFun> obj(FLAGS_n);
     ISetGenerator gen;
 
     int t = 0;
@@ -53,9 +55,10 @@ int main(int argc, char* argv[]) {
         if (!iset.empty()) {
             obj.update(a, iset);
             user_set.insert(a.u);
-            user_set.insert(a.v);
+//            user_set.insert(a.v);
         }
     }
+
 
      /**
       * get the user for sample experiment
@@ -82,7 +85,8 @@ int main(int argc, char* argv[]) {
     for (int n = 10; n <= sample_size; n += 10) {
         std::vector<double> fts_est_vec;
         for (int j = 1; j <= r; j++) {
-            ObjMgr<StackExObjFun> objmgr(n);
+//            ObjMgr<StackExObjFun> objmgr(n);
+            ObjMgr<CheckinObjFun> objmgr(n);
 
             for (auto& a : social_actions) {
                 ISet iset = gen.getISet(n, getP(FLAGS_lmd, FLAGS_T, a.t));
