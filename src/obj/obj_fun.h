@@ -6,7 +6,7 @@
 #ifndef __OBJ_FUN_H__
 #define __OBJ_FUN_H__
 
-#include "stdafx.h"
+#include "../stdafx.h"
 
 class ObjFun {
 public:

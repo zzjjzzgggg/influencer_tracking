@@ -5,7 +5,7 @@
 #include "histit_seg.h"
 #include "basic_it.h"
 #include "lifespan_generator.h"
-#include "stackexchange_obj_fun.h"
+#include "obj/stackexchange_obj_fun.h"
 
 #include <gflags/gflags.h>
 

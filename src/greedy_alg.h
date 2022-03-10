@@ -5,7 +5,7 @@
 #ifndef GREEDY_ALG_H
 #define GREEDY_ALG_H
 
-#include "obj_mgr.h"
+#include "obj/obj_mgr.h"
 
 template <typename Fun>
 class GreedyAlg {

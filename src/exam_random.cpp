@@ -4,8 +4,8 @@
 
 #include "iset_segment.h"
 #include "eval_stream.h"
-//#include "stackexchange_obj_fun.h"
-#include "checkin_obj_fun.h"
+//#include "obj/stackexchange_obj_fun.h"
+#include "obj/checkin_obj_fun.h"
 #include <gflags/gflags.h>
 
 DEFINE_string(dir, "", "working directory");

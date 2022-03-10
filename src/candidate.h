@@ -6,14 +6,13 @@
 #define CANDIDATE_H
 
 #include "stdafx.h"
-//#include "obj_fun.h"
+
 /**
  * The candidate items corresponding to a threshold.
  */
-
 class Candidate {
 public:
-    std::unordered_set<int> S_;            // S_theta
+    std::unordered_set<int> S_;  // S_theta
 public:
     Candidate() {}
 
@@ -21,18 +20,13 @@ public:
 
     inline int size() const { return S_.size(); }
 
-    void clear() {
-        S_.clear();
-    }
-    void insert(const int e){
-        S_.insert(e);
-    }
+    void clear() { S_.clear(); }
+    void insert(const int e) { S_.insert(e); }
 
     std::vector<int> getMembers() const {
         return std::vector<int>(S_.begin(), S_.end());
     }
 
-
 }; /* Candidate */
 
-#endif //CANDIDATE_H
+#endif  // CANDIDATE_H

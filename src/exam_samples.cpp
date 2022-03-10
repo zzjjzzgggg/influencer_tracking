@@ -2,9 +2,9 @@
 // Created by weiwei on 2021/6/7.
 //
 
-#include "checkin_obj_fun.h"
-//#include "stackexchange_obj_fun.h"
-#include "obj_mgr.h"
+#include "obj/checkin_obj_fun.h"
+//#include "obj/stackexchange_obj_fun.h"
+#include "obj/obj_mgr.h"
 #include "iset_generator.h"
 #include <gflags/gflags.h>
 

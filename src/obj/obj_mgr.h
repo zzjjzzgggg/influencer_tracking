@@ -6,7 +6,7 @@
 #ifndef __OBJ_MGR_H__
 #define __OBJ_MGR_H__
 
-#include "stdafx.h"
+#include "../stdafx.h"
 
 /**
  * ObjMgr maintains a collection of ObjFun objects and each ObjFun object is an

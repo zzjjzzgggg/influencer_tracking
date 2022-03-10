@@ -5,8 +5,8 @@
 #include "iset_generator.h"
 #include "simple_greedy.h"
 #include <gflags/gflags.h>
-#include "stackexchange_obj_fun.h"
-#include "obj_mgr.h"
+#include "obj/stackexchange_obj_fun.h"
+#include "obj/obj_mgr.h"
 
 DEFINE_string(dir, "", "working directory");
 DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");

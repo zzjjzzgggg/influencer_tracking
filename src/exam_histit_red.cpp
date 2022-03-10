@@ -4,8 +4,8 @@
 
 #include "histit_red.h"
 #include <gflags/gflags.h>
-//#include "stackexchange_obj_fun.h"
-#include "checkin_obj_fun.h"
+//#include "obj/stackexchange_obj_fun.h"
+#include "obj/checkin_obj_fun.h"
 
 DEFINE_string(dir, "", "working directory");
 DEFINE_string(stream, "brightkite.txt", "input streaming data file name");

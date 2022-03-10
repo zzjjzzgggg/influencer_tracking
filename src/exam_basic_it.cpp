@@ -5,8 +5,8 @@
 #include "basic_it.h"
 #include "lifespan_generator.h"
 #include <gflags/gflags.h>
-//#include "stackexchange_obj_fun.h"
-#include "checkin_obj_fun.h"
+//#include "obj/stackexchange_obj_fun.h"
+#include "obj/checkin_obj_fun.h"
 
 DEFINE_string(dir, "", "working directory");
 DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");

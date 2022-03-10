@@ -7,7 +7,7 @@
 
 #include "stdafx.h"
 #include "iset_segment.h"
-#include "obj_mgr.h"
+#include "obj/obj_mgr.h"
 
 template <typename Fun>
 class EvalStream {
@@ -66,7 +66,6 @@ public:
         }
         return locations;
     }
-
 
 }; /* EvalStream */
 

@@ -4,7 +4,7 @@
 
 #include "sieve_pait.h"
 #include "iset_generator.h"
-#include "stackexchange_obj_fun.h"
+#include "obj/stackexchange_obj_fun.h"
 #include <gflags/gflags.h>
 
 DEFINE_string(dir, "", "working directory");

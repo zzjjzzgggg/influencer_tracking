@@ -4,7 +4,7 @@
 
 #include "histit_seg.h"
 #include <gflags/gflags.h>
-#include "stackexchange_obj_fun.h"
+#include "obj/stackexchange_obj_fun.h"
 
 DEFINE_string(dir, "", "working directory");
 DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");

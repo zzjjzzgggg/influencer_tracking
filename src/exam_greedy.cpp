@@ -2,8 +2,8 @@
 // Created by weiwei on 2021/7/1.
 //
 
-//#include "stackexchange_obj_fun.h"
-#include "checkin_obj_fun.h"
+//#include "obj/stackexchange_obj_fun.h"
+#include "obj/checkin_obj_fun.h"
 #include "greedy_alg.h"
 #include <gflags/gflags.h>
 #include "eval_stream.h"

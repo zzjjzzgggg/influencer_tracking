@@ -6,7 +6,7 @@
 #define INFLUENCERS_TRACKING_SIEVE_PAIT_H
 
 #include "candidate.h"
-#include "obj_mgr.h"
+#include "obj/obj_mgr.h"
 
 /**
  * SievePAIT
