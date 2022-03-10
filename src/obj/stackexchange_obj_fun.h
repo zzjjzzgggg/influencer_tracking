@@ -20,8 +20,12 @@ public:
 
 public:
     StackExObjFun() {}
-    StackExObjFun(const StackExObjFun &o):affected_(o.affected_),
-                            user_sigma_(o.user_sigma_){oracle_calls_=0;}
+    StackExObjFun(const StackExObjFun& o)
+        : affected_(o.affected_), user_sigma_(o.user_sigma_) {
+        oracle_calls_ = 0;
+    }
+
+    // a.u influence a.v
     void add(const Action& a) {
         if (user_sigma_.find(a.u) == user_sigma_.end()) {
             // if user u is a new user
