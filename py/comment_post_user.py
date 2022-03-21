@@ -14,7 +14,8 @@ with open('user.txt','r') as f:
 print("user data read")
 
 with open('comment_0312.txt','r') as f2, open("result_0312_v3.txt",'w') as fw:
-    for comment in f2:
+    for i, comment in enumerate(f2):
+        if i%10000 == 0: print(i)
         items = comment.rstrip().split('\t')
         postid, commentuser, mention_name =items[0], items[1], items[2]
         userid = user[mention_name] if mention_name in user else None
