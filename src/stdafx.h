@@ -29,7 +29,7 @@
 #include <os/osutils.h>
 #include <io/ioutils.h>
 #include <adv/rngutils.h>
-
+#include <graph/graph.h>
 
 using namespace fmt::literals;
 
