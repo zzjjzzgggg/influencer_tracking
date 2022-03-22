@@ -62,7 +62,7 @@ void GraphObjFun::BFS(const int u, std::unordered_set<int>& nodes) const {
 //find the nodes are reachable from set S
 void GraphObjFun::BFS(const std::vector<int>& S, std::unordered_set<int>& nodes) const {
     for(int u:S){
-        if(dg_.isNode(u)&&(nodes.find(u)!=nodes.end())){
+        if(dg_.isNode(u)&&(nodes.find(u)==nodes.end())){
             nodes.insert(u);
             std::queue<int> q;
             q.push(u);
@@ -146,7 +146,7 @@ double GraphObjFun::getVal(const std::vector<int> &S) const {
 
     std::unordered_set<int> scope;
     BFS(S,scope);
-
+//    std::cout<<scope.size()<<std::endl;
     return scope.size();
 }
 
