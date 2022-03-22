@@ -22,7 +22,6 @@ public:
     }
 
     void add(const Action& a);
-
     void clear(const bool deep=false){
         affected_.clear();
         oracle_calls_=0;
@@ -30,6 +29,8 @@ public:
             dg_.clear();
         }
     }
+    void BFS(const int u,std::unordered_set<int>& nodes) const;
+    void BFS(const std::vector<int>& S,std::unordered_set<int>& nodes) const;
     void revBFS(const int u);
     double getVal(const int u)const;
     double getVal(const std::vector<int>& S) const;
@@ -37,6 +38,50 @@ public:
 
 }; /* GraphObjFun */
 
+//find the nodes are reachable from node u
+void GraphObjFun::BFS(const int u, std::unordered_set<int>& nodes) const {
+    if(dg_.isNode(u)){
+        std::queue<int> q;
+        q.push(u);
+        nodes.insert(u);
+        while (!q.empty()){
+            int u=q.front();
+            q.pop();
+            const auto& nd=dg_[u];
+            for(auto ni=nd.beginOutNbr();ni!=nd.endOutNbr();ni++){
+                int cu=nd.getNbrID(ni);
+                if(nodes.find(cu)==nodes.end()){
+                    nodes.insert(cu);
+                    q.push(cu);
+                }
+            }
+        }
+    }
+}
+
+//find the nodes are reachable from set S
+void GraphObjFun::BFS(const std::vector<int>& S, std::unordered_set<int>& nodes) const {
+    for(int u:S){
+        if(dg_.isNode(u)&&(nodes.find(u)!=nodes.end())){
+            nodes.insert(u);
+            std::queue<int> q;
+            q.push(u);
+            while (!q.empty()){
+                int u=q.front();
+                q.pop();
+                const auto& nd=dg_[u];
+                for(auto ni=nd.beginOutNbr();ni!=nd.endOutNbr();ni++){
+                    int cu=nd.getNbrID(ni);
+                    if(nodes.find(cu)==nodes.end()){
+                        nodes.insert(cu);
+                        nodes.insert(cu);
+                        q.push(cu);
+                    }
+                }
+            }
+        }
+    }
+}
 
 //isNode function from cpplib/graph,need test
 void GraphObjFun::add(const Action &a) {
@@ -90,30 +135,18 @@ void GraphObjFun::revBFS(const int u) {
     }
 }
 
-
 double GraphObjFun::getVal(const int u) const {
     std::unordered_set<int> scope;
-    std::unordered_set<int> visited;
+    BFS(u,scope);
+    return scope.size();
+}
 
-    if(dg_.isNode(u)){
-        std::queue<int> q;
-        q.push(u);
-        scope.insert(u);
-        visited.insert(u);
-        while (!q.empty()){
-            int u=q.front();
-            q.pop();
-            const auto& nd=dg_[u];
-            for(auto ni=nd.beginOutNbr();ni!=nd.endOutNbr();ni++){
-                int cu=nd.getNbrID(ni);
-                if(visited.find(cu)==visited.end()){
-                    visited.insert(cu);
-                    scope.insert(cu);
-                    q.push(cu);
-                }
-            }
-        }
-    }
+double GraphObjFun::getVal(const std::vector<int> &S) const {
+    if(S.size()==0)return 0;
+
+    std::unordered_set<int> scope;
+    BFS(S,scope);
+
     return scope.size();
 }
 
@@ -125,80 +158,11 @@ double GraphObjFun::getGain(const int v, const std::vector<int> &S) const {
     if(S.size()==0){
         return getVal(v);
     }
-
     std::unordered_set<int> scope;
-    std::unordered_set<int> visited;
-    for(int u:S){
-        scope.insert(u);
-        if(dg_.isNode(u)&&(visited.find(u)!=visited.end())){
-            std::queue<int> q;
-            q.push(u);
-            visited.insert(u);
-            while (!q.empty()){
-                int v=q.front();
-                q.pop();
-                const auto& nd=dg_[u];
-                for(auto ni=nd.beginOutNbr();ni!=nd.endOutNbr();ni++){
-                    int cu=nd.getNbrID(ni);
-                    if(visited.find(cu)==visited.end()){
-                        visited.insert(cu);
-                        scope.insert(cu);
-                        q.push(cu);
-                    }
-                }
-            }
-        }
-    }
+    BFS(S,scope);
     int val=scope.size();
-    std::queue<int> q;
-    q.push(v);
-    visited.insert(v);
-    while (!q.empty()){
-        int u=q.front();
-        q.pop();
-        const auto& nd=dg_[u];
-        for(auto ni=nd.beginOutNbr();ni!=nd.endOutNbr();ni++){
-            int cu=nd.getNbrID(ni);
-            if(visited.find(cu)==visited.end()){
-                visited.insert(cu);
-                scope.insert(cu);
-                q.push(cu);
-            }
-        }
-    }
+    BFS(v,scope);
     return scope.size()-val;
 }
-
-double GraphObjFun::getVal(const std::vector<int> &S) const {
-    if(S.size()==0)return 0;
-
-    std::unordered_set<int> scope;
-    std::unordered_set<int> visited;
-
-    //use bfs
-    for(int u:S){
-        scope.insert(u);
-        if(dg_.isNode(u)&&(visited.find(u)!=visited.end())){
-            std::queue<int> q;
-            q.push(u);
-            visited.insert(u);
-            while (!q.empty()){
-                int u=q.front();
-                q.pop();
-                const auto& nd=dg_[u];
-                for(auto ni=nd.beginOutNbr();ni!=nd.endOutNbr();ni++){
-                    int cu=nd.getNbrID(ni);
-                    if(visited.find(cu)==visited.end()){
-                        visited.insert(cu);
-                        scope.insert(cu);
-                        q.push(cu);
-                    }
-                }
-            }
-        }
-    }
-    return scope.size();
-}
-
 
 #endif /* __GRAPH_OBJ_FUN_H__ */
