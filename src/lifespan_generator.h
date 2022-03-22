@@ -1,5 +1,5 @@
 //
-// Created by weiwei on 2021/5/5.
+// Created by zhangwei on 2021/5/5.
 //
 
 #ifndef INFLUENCERS_TRACKING_LIFESPAN_GENERATOR_H

@@ -1,5 +1,5 @@
 //
-// Created by weiwei on 2021/7/1.
+// Created by zhangwei on 2021/7/1.
 //
 
 #ifndef GREEDY_ALG_H
@@ -63,7 +63,9 @@ public:
 
     int getOracleCalls() const {return obj_ptr_->getOracleCalls(); }
 
-    //another greedy algorithm without optimization
+    /**
+     * another greedy algorithm without optimization
+     */
     double run_alg(std::unordered_set<int> users){
         std::vector<int> S;
         int mx_gain_u;

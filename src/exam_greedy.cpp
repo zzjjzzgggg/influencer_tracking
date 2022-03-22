@@ -1,9 +1,9 @@
 //
-// Created by weiwei on 2021/7/1.
+// Created by zhangwei on 2021/7/1.
 //
 
-//#include "obj/stackexchange_obj_fun.h"
 #include "obj/checkin_obj_fun.h"
+//#include "obj/stackexchange_obj_fun.h"
 #include "greedy_alg.h"
 #include <gflags/gflags.h>
 #include "eval_stream.h"
@@ -16,7 +16,7 @@ DEFINE_int32(n, 50, "number of samples");
 DEFINE_int32(B, 20, "budget");
 DEFINE_double(lmd, 0.002, "decaying rate");
 DEFINE_int32(L, 100000, "maximum lifetime");
-DEFINE_int32(T, 101, "end time");
+DEFINE_int32(T, 100, "end time");
 
 int main(int argc, char* argv[]) {
     gflags::SetUsageMessage("usage:");

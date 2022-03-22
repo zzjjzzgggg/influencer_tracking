@@ -1,5 +1,5 @@
 //
-// Created by weiwei on 2021/5/30.
+// Created by zhangwei on 2021/5/30.
 //
 
 #include "simple_greedy.h"
@@ -59,7 +59,7 @@ int main(int argc, char* argv[]){
     }
     std::string ofnm = osutils::join(
             FLAGS_dir,
-            "pait_and_greedy_n{}b{}p{}eps{}.dat"_format(FLAGS_n, FLAGS_B,FLAGS_p,
+            "pait_and_greedy_n{}b{}p{}eps{}T{}.dat"_format(FLAGS_n, FLAGS_B,FLAGS_p,
                     FLAGS_eps, strutils::prettyNumber(FLAGS_T)));
     ioutils::saveTupleVec(rst, ofnm, "{}\t{}\t{}\t{}\t{}\n");
     printf("cost time %s\n", tm.getStr().c_str());

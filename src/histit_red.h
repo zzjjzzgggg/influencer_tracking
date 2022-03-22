@@ -1,5 +1,5 @@
 //
-// Created by weiwei on 2021/6/6.
+// Created by zhangwei on 2021/6/6.
 //
 
 #ifndef INFLUENCERS_TRACKING_HISTIT_RED_H
@@ -90,7 +90,6 @@ void HistITRED<Fun>::feed(const Action& a, const ISetSegments& segs) {
     newEndIfNeed(segs.getMxIdx());
     auto it = algs_.begin();
     for (auto& seg : segs.segments_) {
-//        std::cout<<seg.start_<<" "<<seg.end_<<std::endl;
         // Update instances belonging to this segment.
         feedSegment(a, seg, it);
         auto pre = it;
@@ -103,7 +102,6 @@ void HistITRED<Fun>::feed(const Action& a, const ISetSegments& segs) {
 
         // create new alg from successor
         if(it==algs_.begin()||(*it)->lower()<(1-red_eps_)*(*pre)->upper()){
-       // if (it == algs_.begin() || (*pre)->l_ < (seg.end_ - 1)) {
             // create alg_l based on its successor
             Alg* alg = new Alg(*(*it));
             alg->l_ = seg.end_ - 1;

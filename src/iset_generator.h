@@ -1,5 +1,5 @@
 //
-// Created by weiwei on 2021/4/18.
+// Created by zhangwei on 2021/4/18.
 //
 
 #ifndef INFLUENCERS_TRACKING_ISET_GENERATOR_H

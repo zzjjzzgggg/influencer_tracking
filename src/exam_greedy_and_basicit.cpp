@@ -1,10 +1,11 @@
 //
-// Created by weiwei on 2021/6/3.
+// Created by zhangwei on 2021/6/3.
 //
 
 #include "greedy_alg.h"
 #include "basic_it.h"
-#include "obj/stackexchange_obj_fun.h"
+//#include "obj/stackexchange_obj_fun.h"
+#include "obj/graph_obj_fun.h"
 #include <gflags/gflags.h>
 #include "eval_stream.h"
 
@@ -23,8 +24,8 @@ int main(int argc, char* argv[]){
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     osutils::Timer tm;
 
-    EvalStream<StackExObjFun> eval(FLAGS_L);
-    BasicIT<StackExObjFun> basic(FLAGS_L,FLAGS_B,FLAGS_eps,FLAGS_n);
+    EvalStream<GraphObjFun> eval(FLAGS_L);
+    BasicIT<GraphObjFun> basic(FLAGS_L,FLAGS_B,FLAGS_eps,FLAGS_n);
 
     std::string lifespan_fnm =
             osutils::join(FLAGS_dir, fmt::format(FLAGS_lifespans, FLAGS_lmd, FLAGS_n,
@@ -46,7 +47,7 @@ int main(int argc, char* argv[]){
 
         eval.add(a,segs);
         auto obj= eval.getObjMgr(FLAGS_n);
-        GreedyAlg<StackExObjFun> greedy(&obj, FLAGS_B);
+        GreedyAlg<GraphObjFun> greedy(&obj, FLAGS_B);
 
         auto users=eval.get_users();
         double greedy_val=greedy.run(users);

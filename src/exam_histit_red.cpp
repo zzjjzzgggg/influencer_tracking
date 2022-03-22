@@ -1,11 +1,11 @@
 //
-// Created by weiwei on 2021/6/6.
+// Created by zhangwei on 2021/6/6.
 //
 
 #include "histit_red.h"
 #include <gflags/gflags.h>
 //#include "obj/stackexchange_obj_fun.h"
-#include "obj/checkin_obj_fun.h"
+#include "obj/graph_obj_fun.h"
 
 DEFINE_string(dir, "", "working directory");
 DEFINE_string(stream, "brightkite.txt", "input streaming data file name");
@@ -16,7 +16,7 @@ DEFINE_double(sieve_eps,0.1,"sievepait epsilon");
 DEFINE_double(red_eps, 0.1, "histit_red epsilon");
 DEFINE_double(lmd, 0.002, "decaying rate");
 DEFINE_int32(L, 100000, "maximum lifetime");
-DEFINE_int32(T,101,"end time");
+DEFINE_int32(T,100,"end time");
 
 
 int main(int argc, char* argv[]){
@@ -24,7 +24,7 @@ int main(int argc, char* argv[]){
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     osutils::Timer tm;
 
-    HistITRED<CheckinObjFun> hist_red(FLAGS_n,FLAGS_B,FLAGS_red_eps,FLAGS_sieve_eps);
+    HistITRED<GraphObjFun> hist_red(FLAGS_n,FLAGS_B,FLAGS_red_eps,FLAGS_sieve_eps);
 
 //    HistITRED<StackExObjFun> hist_red(FLAGS_n,FLAGS_B,FLAGS_red_eps,FLAGS_sieve_eps);
     std::string lifespan_fnm =

@@ -1,5 +1,5 @@
 //
-// Created by weiwei on 2021/6/3.
+// Created by zhangwei on 2021/6/3.
 //
 
 #ifndef INFLUENCERS_TRACKING_HISTIT_SEG_H
@@ -106,10 +106,13 @@ void HistITSEG<Fun>::feed(const Action &a, const ISetSegments& segs){
 template <typename Fun>
 void HistITSEG<Fun>::feedSegment(const Action &a, const ISetSegment& seg,
                                  typename std::list<Alg*>::iterator& it) {
+    auto job = [a, &seg](Alg* alg) { alg->feed(a, seg.is_); };
+    std::vector<std::future<void>> futures;
     while (it != algs_.end() && (*it)->l_ < seg.end_) {
-        (*it)->feed(a, seg.is_);
+        futures.push_back(std::async(std::launch::async, job, *it));
         ++it;
     }
+    for (auto& future : futures) future.get();
 }
 template <typename Fun>
 int HistITSEG<Fun>::statOracleCalls() {
