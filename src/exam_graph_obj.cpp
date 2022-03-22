@@ -12,18 +12,18 @@ int main(int argc,char* argv[]){
 
     GraphObjFun graphObjFun;
 
-    ioutils::TSVParser ss("test.txt");
+    ioutils::TSVParser ss("test_graph.txt");
 
-    int t=0;
+    int t=0,ocalls=0;
     while(ss.next()){
         ++t;
         int c = ss.get<int>(0), u = ss.get<int>(1), v=ss.get<int>(2);
         Action a{u,v,c,t};
 
         graphObjFun.add(a);
-
-
+        graphObjFun.clear();
     }
+
 
     printf("cost time %s\n", tm.getStr().c_str());
     gflags::ShutDownCommandLineFlags();
