@@ -9,7 +9,7 @@
 #include "eval_stream.h"
 
 DEFINE_string(dir, "", "working directory");
-DEFINE_string(stream, "brightkite.txt", "input streaming data file name");
+DEFINE_string(stream, "reddit.txt", "input streaming data file name");
 DEFINE_string(lifespans, "../../lifespans/lmd{:g}n{}L{}.gz",
               "lifespans template");
 DEFINE_int32(n, 50, "number of samples");
