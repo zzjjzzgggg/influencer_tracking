@@ -27,7 +27,7 @@ int main(int argc,char* argv[]){
     SimpleGreedy<GraphObjFun> greedy(&obj, FLAGS_B);
     ISetGenerator isgen(FLAGS_n, FLAGS_p);
 
-    ioutils::TSVParser ss("stackexchange.txt");
+    ioutils::TSVParser ss("test_graph.txt");
 
     int t=0,greedy_ora=0,pait_ora=0;
     GraphObjFun graphObjFun;

@@ -59,13 +59,13 @@ void GraphObjFun::BFS(const int u, std::unordered_set<int>& nodes) const {
     }
 }
 
-//find the nodes are reachable from set S
+//find the nodes are reachable from node set S
 void GraphObjFun::BFS(const std::vector<int>& S, std::unordered_set<int>& nodes) const {
     for(int u:S){
         if(dg_.isNode(u)&&(nodes.find(u)==nodes.end())){
-            nodes.insert(u);
             std::queue<int> q;
             q.push(u);
+            nodes.insert(u);
             while (!q.empty()){
                 int u=q.front();
                 q.pop();
@@ -73,7 +73,6 @@ void GraphObjFun::BFS(const std::vector<int>& S, std::unordered_set<int>& nodes)
                 for(auto ni=nd.beginOutNbr();ni!=nd.endOutNbr();ni++){
                     int cu=nd.getNbrID(ni);
                     if(nodes.find(cu)==nodes.end()){
-                        nodes.insert(cu);
                         nodes.insert(cu);
                         q.push(cu);
                     }
@@ -83,7 +82,6 @@ void GraphObjFun::BFS(const std::vector<int>& S, std::unordered_set<int>& nodes)
     }
 }
 
-//isNode function from cpplib/graph,need test
 void GraphObjFun::add(const Action &a) {
     int u=a.u;
     int v=a.v;
@@ -96,11 +94,13 @@ void GraphObjFun::add(const Action &a) {
         if(!u_exist&&!v_exist){ //both u and v are new
             affected_.insert(u);
             affected_.insert(v);
-        }else if(u_exist){ //v is new
+        }else if(u_exist&&!v_exist){ //v is new
             affected_.insert(v);
-            revBFS(u);//start BFS from node u
-        }else if(v_exist) { //u is new
+            revBFS(u);//start reverse BFS from node u
+        }else if(!u_exist&&v_exist) { //u is new
             affected_.insert(u);
+        }else{//both u and v exist
+            revBFS(u);
         }
     }
 }
@@ -143,10 +143,8 @@ double GraphObjFun::getVal(const int u) const {
 
 double GraphObjFun::getVal(const std::vector<int> &S) const {
     if(S.size()==0)return 0;
-
     std::unordered_set<int> scope;
     BFS(S,scope);
-//    std::cout<<scope.size()<<std::endl;
     return scope.size();
 }
 
