@@ -35,7 +35,6 @@ public:
     double getVal(const std::vector<int>& S) const;
     double getGain(const int v, const std::vector<int>& S) const ;
 
-
 }; /* GraphObjFun */
 
 
@@ -46,14 +45,16 @@ void GraphObjFun::add(const Action &a) {
 
     //omit self-loop and edge already in DAG
     if(u!=v&&!dg_.isEdge(u,v)){
+        bool u_exist=dg_.isNode(u);
+        bool v_exist=dg_.isNode(v);
         dg_.addEdge(u,v);
-        if(!dg_.isNode(u)&&!dg_.isNode(v)){ //both u and v are new
+        if(!u_exist&&!v_exist){ //both u and v are new
             affected_.insert(u);
             affected_.insert(v);
-        }else if(dg_.isNode(u)){ //v is new
+        }else if(u_exist){ //v is new
             affected_.insert(v);
             revBFS(u);//start BFS from node u
-        }else if(dg_.isNode(v)) { //u is new
+        }else if(v_exist) { //u is new
             affected_.insert(u);
         }
     }
@@ -68,16 +69,19 @@ void GraphObjFun::revBFS(const int u) {
 
     int flag=0;
     while(!q.empty()){
-        flag++;
-        int cv=q.front();
-        q.pop();
-        const auto& nd=dg_[u];
-        for(auto ni=nd.beginInNbr();ni!=nd.endInNbr();ni++){
-            int cu=nd.getNbrID(ni);
-            if(visited.find(cu)==visited.end()){
-                visited.insert(cu);
-                affected_.insert(cu);
-                q.push(cu);
+        int n=q.size();
+        flag++;//flag for exit BFS
+        for(int i=0;i<n;i++){
+            int u=q.front();
+            q.pop();
+            const auto& nd=dg_[u];
+            for(auto ni=nd.beginInNbr();ni!=nd.endInNbr();ni++){
+                int cu=nd.getNbrID(ni);
+                if(visited.find(cu)==visited.end()){
+                    visited.insert(cu);
+                    affected_.insert(cu);
+                    q.push(cu);
+                }
             }
         }
         if(flag==bfs_depth_){
@@ -86,12 +90,15 @@ void GraphObjFun::revBFS(const int u) {
     }
 }
 
+
 double GraphObjFun::getVal(const int u) const {
     std::unordered_set<int> scope;
     std::unordered_set<int> visited;
-    if(dg_.isNode(u)&&(visited.find(u)!=visited.end())){
+
+    if(dg_.isNode(u)){
         std::queue<int> q;
         q.push(u);
+        scope.insert(u);
         visited.insert(u);
         while (!q.empty()){
             int u=q.front();
@@ -114,7 +121,6 @@ double GraphObjFun::getGain(const int v, const std::vector<int> &S) const {
     if(!dg_.isNode(v)){
         return 0;
     }
-
     ++oracle_calls_;
     if(S.size()==0){
         return getVal(v);
@@ -176,9 +182,8 @@ double GraphObjFun::getVal(const std::vector<int> &S) const {
             std::queue<int> q;
             q.push(u);
             visited.insert(u);
-
             while (!q.empty()){
-                int v=q.front();
+                int u=q.front();
                 q.pop();
                 const auto& nd=dg_[u];
                 for(auto ni=nd.beginOutNbr();ni!=nd.endOutNbr();ni++){
