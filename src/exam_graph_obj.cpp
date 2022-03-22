@@ -7,14 +7,15 @@
 #include "iset_generator.h"
 #include "sieve_pait.h"
 #include "simple_greedy.h"
+#include "obj/obj_mgr.h"
 
 DEFINE_string(dir, "", "working directory");
 DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");
-DEFINE_int32(n, 10, "number of samples");
-DEFINE_int32(B, 10, "budget");
+DEFINE_int32(n, 50, "number of samples");
+DEFINE_int32(B, 20, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
 DEFINE_double(p, 0.6, "probability");
-DEFINE_int32(T,10000,"end time");
+DEFINE_int32(T,1000,"end time");
 
 
 int main(int argc,char* argv[]){
@@ -27,7 +28,7 @@ int main(int argc,char* argv[]){
     SimpleGreedy<GraphObjFun> greedy(&obj, FLAGS_B);
     ISetGenerator isgen(FLAGS_n, FLAGS_p);
 
-    ioutils::TSVParser ss("test_graph.txt");
+    ioutils::TSVParser ss(FLAGS_stream);
 
     int t=0,greedy_ora=0,pait_ora=0;
     GraphObjFun graphObjFun;
