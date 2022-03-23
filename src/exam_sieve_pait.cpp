@@ -7,13 +7,13 @@
 #include "obj/stackexchange_obj_fun.h"
 #include <gflags/gflags.h>
 
-DEFINE_string(dir, "", "working directory");
+DEFINE_string(dir, "../../result/sieve_pait", "working directory");
 DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");
 DEFINE_int32(n, 10, "number of samples");
 DEFINE_int32(B, 10, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
 DEFINE_double(p, 0.6, "probability");
-DEFINE_int32(T,1000,"end time");
+DEFINE_int32(T,100,"end time");
 
 
 int main(int argc, char* argv[]) {

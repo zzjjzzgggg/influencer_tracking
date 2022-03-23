@@ -30,6 +30,7 @@
 #include <io/ioutils.h>
 #include <adv/rngutils.h>
 #include <graph/graph.h>
+#include <adv/LRUCache.h>
 
 using namespace fmt::literals;
 using namespace graph;

@@ -5,9 +5,9 @@
 #include "histit_red.h"
 #include <gflags/gflags.h>
 //#include "obj/stackexchange_obj_fun.h"
-#include "obj/graph_obj_fun.h"
+#include "obj/graph_obj_fun2.h"
 
-DEFINE_string(dir, "", "working directory");
+DEFINE_string(dir, "../../result/hist_red", "working directory");
 DEFINE_string(stream, "reddit.txt", "input streaming data file name");
 DEFINE_string(lifespans, "../../lifespans/lmd{:g}n{}L{}.gz", "lifespans template");
 DEFINE_int32(n, 50, "number of samples");
@@ -58,7 +58,7 @@ int main(int argc, char* argv[]){
     }
     std::string ofnm = osutils::join(
             FLAGS_dir,
-            "histred_n{}b{}sieve_eps{}red_eps{}lmd{:g}L{}T{}.dat"_format(FLAGS_n,
+            "histred1_n{}b{}sieve_eps{}red_eps{}lmd{:g}L{}T{}.dat"_format(FLAGS_n,
                     FLAGS_B,FLAGS_sieve_eps,FLAGS_red_eps,FLAGS_lmd,
                     strutils::prettyNumber(FLAGS_L),strutils::prettyNumber(FLAGS_T)));
     ioutils::saveTupleVec(rst, ofnm, "{}\t{}\t{}\t{}\n");

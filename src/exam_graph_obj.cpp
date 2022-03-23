@@ -15,7 +15,7 @@ DEFINE_int32(n, 50, "number of samples");
 DEFINE_int32(B, 20, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
 DEFINE_double(p, 0.6, "probability");
-DEFINE_int32(T,1000,"end time");
+DEFINE_int32(T,100,"end time");
 
 
 int main(int argc,char* argv[]){
