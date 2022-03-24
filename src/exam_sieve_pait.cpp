@@ -4,16 +4,16 @@
 
 #include "sieve_pait.h"
 #include "iset_generator.h"
-#include "obj/stackexchange_obj_fun.h"
+#include "obj/graph_obj_fun.h"
 #include <gflags/gflags.h>
 
 DEFINE_string(dir, "../../result/sieve_pait", "working directory");
-DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");
-DEFINE_int32(n, 10, "number of samples");
-DEFINE_int32(B, 10, "budget");
+DEFINE_string(stream, "test_reddit_comment_tree.txt", "input streaming data file name");
+DEFINE_int32(n, 50, "number of samples");
+DEFINE_int32(B, 20, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
 DEFINE_double(p, 0.6, "probability");
-DEFINE_int32(T,100,"end time");
+DEFINE_int32(T,20,"end time");
 
 
 int main(int argc, char* argv[]) {
@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     osutils::Timer tm;
 
-    SievePAIT<StackExObjFun> sieve(FLAGS_n, FLAGS_B, FLAGS_eps);
+    SievePAIT<GraphObjFun,TAction> sieve(FLAGS_n, FLAGS_B, FLAGS_eps);
     ISetGenerator isgen(FLAGS_n, FLAGS_p);
 
     std::vector<std::tuple<int, double,int>> rst;
@@ -29,8 +29,8 @@ int main(int argc, char* argv[]) {
     int t=0,ocalls=0;
     while (ss.next()) {
         ++t;
-        int c = ss.get<int>(0), u = ss.get<int>(1), v=ss.get<int>(2);
-        Action a{u,v,c,t};
+        int c = ss.get<int>(0), u = ss.get<int>(1), v1=ss.get<int>(2),v2=ss.get<int>(3);
+        TAction a{u,v1,v2,c,t};
 
         ISet iset = isgen.getISet();
         sieve.update(a, iset);

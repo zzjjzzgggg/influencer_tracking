@@ -5,18 +5,18 @@
 #include "histit_seg.h"
 #include "basic_it.h"
 #include "lifespan_generator.h"
-#include "obj/stackexchange_obj_fun.h"
+#include "obj/graph_obj_fun.h"
 
 #include <gflags/gflags.h>
 
-DEFINE_string(dir, "", "working directory");
-DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");
+DEFINE_string(dir, "../../result/hist_and_basic", "working directory");
+DEFINE_string(stream, "test_reddit_comment_tree.txt", "input streaming data file name");
 DEFINE_string(lifespans, "../../lifespans/lmd{:g}n{}L{}.gz", "lifespans template");
 DEFINE_int32(n, 50, "number of samples");
 DEFINE_int32(B, 20, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
 DEFINE_double(lmd, 0.002, "decaying rate");
-DEFINE_int32(L, 1000, "maximum lifetime");
+DEFINE_int32(L, 100000, "maximum lifetime");
 DEFINE_int32(T, 10, "end time");
 
 int main(int argc, char* argv[]) {
@@ -24,8 +24,8 @@ int main(int argc, char* argv[]) {
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     osutils::Timer tm;
 
-    BasicIT<StackExObjFun> basic(FLAGS_L, FLAGS_B, FLAGS_eps, FLAGS_n);
-    HistITSEG<StackExObjFun> hist(FLAGS_n, FLAGS_B, FLAGS_eps);
+    BasicIT<GraphObjFun,TAction> basic(FLAGS_L, FLAGS_B, FLAGS_eps, FLAGS_n);
+    HistITSEG<GraphObjFun,TAction> hist(FLAGS_n, FLAGS_B, FLAGS_eps);
 
     std::string lifespan_fnm =
             osutils::join(FLAGS_dir, fmt::format(FLAGS_lifespans, FLAGS_lmd, FLAGS_n,
@@ -38,8 +38,8 @@ int main(int argc, char* argv[]) {
     int t = 0;
     while (ss.next()) {
         ++t;
-        int c = ss.get<int>(0), u = ss.get<int>(1), v = ss.get<int>(2);
-        Action a{u, v, c, t};
+        int c = ss.get<int>(0), u = ss.get<int>(1), v1=ss.get<int>(2),v2=ss.get<int>(3);
+        TAction a{u,v1,v2,c,t};
 
         lifespans.clear();
         pin->load(lifespans);

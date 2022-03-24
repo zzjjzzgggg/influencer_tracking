@@ -2,14 +2,14 @@
 // Created by zhangwei on 2021/7/1.
 //
 
-#include "obj/checkin_obj_fun.h"
+#include "obj/graph_obj_fun.h"
 //#include "obj/stackexchange_obj_fun.h"
 #include "greedy_alg.h"
 #include <gflags/gflags.h>
 #include "eval_stream.h"
 
-DEFINE_string(dir, "", "working directory");
-DEFINE_string(stream, "reddit.txt", "input streaming data file name");
+DEFINE_string(dir, "../../result/greedy", "working directory");
+DEFINE_string(stream, "test_reddit_comment_tree.txt", "input streaming data file name");
 DEFINE_string(lifespans, "../../lifespans/lmd{:g}n{}L{}.gz",
               "lifespans template");
 DEFINE_int32(n, 50, "number of samples");
@@ -24,9 +24,11 @@ int main(int argc, char* argv[]) {
     osutils::Timer tm;
 
     /*** next line code is used for stackoverflow data ***/
-//    EvalStream<StackExObjFun> eval(FLAGS_L);
+//    EvalStream<StackExObjFun,Action> eval(FLAGS_L);
     /*** next line code is used for check in data ***/
-    EvalStream<CheckinObjFun> eval(FLAGS_L);
+//    EvalStream<CheckinObjFun,Action> eval(FLAGS_L);
+
+    EvalStream<GraphObjFun,TAction> eval(FLAGS_L);
 
     std::string lifespan_fnm =
         osutils::join(FLAGS_dir, fmt::format(FLAGS_lifespans, FLAGS_lmd, FLAGS_n,
@@ -40,8 +42,9 @@ int main(int argc, char* argv[]) {
     int t = 0, ocalls = 0;
     /*** notes: we need change some code for different data ***/
     while (ss.next()) {
-        int c = ss.get<int>(0), u = ss.get<int>(1), v = ss.get<int>(2);
-        Action a{u, v, c, ++t};
+        ++t;
+        int c = ss.get<int>(0), u = ss.get<int>(1), v1=ss.get<int>(2),v2=ss.get<int>(3);
+        TAction a{u,v1,v2,c,t};
 
         lifespans.clear();
         pin->load(lifespans);
@@ -49,14 +52,14 @@ int main(int argc, char* argv[]) {
 
         eval.add(a, segs);
         auto obj = eval.getObjMgr(FLAGS_n);
-        GreedyAlg<CheckinObjFun> greedy(&obj, FLAGS_B);
+        GreedyAlg<GraphObjFun,TAction> greedy(&obj, FLAGS_B);
 
-        auto locations = eval.get_locs();
+        auto users=eval.get_users();
 
         /*** next line code is used for getting user num ***/
-        //user_num.emplace_back(t,users.size());
+//        user_num.emplace_back(t,users.size());
 
-        double val = greedy.run(locations);
+        double val = greedy.run(users);
         ocalls += greedy.getOracleCalls();
         eval.next();
 

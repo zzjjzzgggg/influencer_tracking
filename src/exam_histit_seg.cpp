@@ -4,10 +4,10 @@
 
 #include "histit_seg.h"
 #include <gflags/gflags.h>
-#include "obj/stackexchange_obj_fun.h"
+#include "obj/graph_obj_fun.h"
 
-DEFINE_string(dir, "", "working directory");
-DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");
+DEFINE_string(dir, "../../result/histit_seg", "working directory");
+DEFINE_string(stream, "test_reddit_comment_tree.txt", "input streaming data file name");
 DEFINE_string(lifespans, "../../lifespans/lmd{:g}n{}L{}.gz", "lifespans template");
 DEFINE_int32(n, 50, "number of samples");
 DEFINE_int32(B, 20, "budget");
@@ -21,7 +21,7 @@ int main(int argc, char* argv[]){
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     osutils::Timer tm;
 
-    HistITSEG<StackExObjFun> hist(FLAGS_n,FLAGS_B,FLAGS_eps);
+    HistITSEG<GraphObjFun,TAction> hist(FLAGS_n,FLAGS_B,FLAGS_eps);
     std::string lifespan_fnm =
             osutils::join(FLAGS_dir, fmt::format(FLAGS_lifespans, FLAGS_lmd, FLAGS_n,
                                                  strutils::prettyNumber(FLAGS_L)));
@@ -33,8 +33,8 @@ int main(int argc, char* argv[]){
     int t=0,ocalls=0;
     while(ss.next()){
         ++t;
-        int c = ss.get<int>(0), u = ss.get<int>(1), v=ss.get<int>(2);
-        Action a{u,v,c,t};
+        int c = ss.get<int>(0), u = ss.get<int>(1), v1=ss.get<int>(2),v2=ss.get<int>(3);
+        TAction a{u,v1,v2,c,t};
 
         lifespans.clear();
         pin->load(lifespans);

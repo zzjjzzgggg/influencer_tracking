@@ -4,12 +4,11 @@
 
 #include "iset_segment.h"
 #include "eval_stream.h"
-//#include "obj/stackexchange_obj_fun.h"
-#include "obj/checkin_obj_fun.h"
 #include <gflags/gflags.h>
+#include "obj/graph_obj_fun.h"
 
-DEFINE_string(dir, "", "working directory");
-DEFINE_string(stream, "stackexchange.txt", "input streaming data file name");
+DEFINE_string(dir, "../../result/random", "working directory");
+DEFINE_string(stream, "test_reddit_comment_tree.txt", "input streaming data file name");
 DEFINE_string(lifespans, "../../lifespans/lmd{:g}n{}L{}.gz", "lifespans template");
 DEFINE_int32(n, 50, "number of samples");
 DEFINE_int32(B, 20, "budget");
@@ -24,8 +23,7 @@ int main(int argc, char* argv[]) {
     osutils::Timer tm;
 
     rngutils::default_rng rng;
-//    EvalStream<StackExObjFun> eval(FLAGS_L);
-    EvalStream<CheckinObjFun> eval(FLAGS_L);
+    EvalStream<GraphObjFun,TAction> eval(FLAGS_L);
 
     std::string lifespan_fnm =
             osutils::join(FLAGS_dir, fmt::format(FLAGS_lifespans, FLAGS_lmd, FLAGS_n,
@@ -38,8 +36,8 @@ int main(int argc, char* argv[]) {
     int t = 0;
     while (ss.next()) {
         ++t;
-        int c = ss.get<int>(0), u = ss.get<int>(1), v = ss.get<int>(2);
-        Action a{u, v, c, t};
+        int c = ss.get<int>(0), u = ss.get<int>(1), v1 = ss.get<int>(2),v2=ss.get<int>(3);
+        TAction a{u, v1, v2,c, t};
 
         lifespans.clear();
         pin->load(lifespans);
@@ -48,10 +46,11 @@ int main(int argc, char* argv[]) {
         eval.add(a,segs);
         auto obj_mgr=eval.getObjMgr(FLAGS_n);
 
-//        auto users_set=eval.get_users();
+        auto users_set=eval.get_users();
 
         //get locations
-        auto users_set=eval.get_locs();
+//        auto users_set=eval.get_locs();
+
         eval.next();
 
         double val;
