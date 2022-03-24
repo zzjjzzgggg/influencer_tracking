@@ -11,28 +11,28 @@
 /**
  * HistITSEG
  */
-template <typename Fun>
+template <typename Fun,typename InputData>
 class HistITSEG{
 private:
     class Alg{
     private:
-        SievePAIT<Fun>* sieve_ptr_;
+        SievePAIT<Fun,InputData>* sieve_ptr_;
     public:
         int l_;//instance index
         double val_=0;//current utility value
 
     public:
         Alg(const int l,const int num_samples,const int budget,const double eps):l_(l){
-            sieve_ptr_=new SievePAIT<Fun>(num_samples,budget,eps);
+            sieve_ptr_=new SievePAIT<Fun,InputData>(num_samples,budget,eps);
         }
         Alg(const Alg& o) : l_(o.l_), val_(o.val_) {
-            sieve_ptr_ = new SievePAIT<Fun>(*o.sieve_ptr_);
+            sieve_ptr_ = new SievePAIT<Fun,InputData>(*o.sieve_ptr_);
         }
 
         virtual ~Alg(){delete sieve_ptr_;}
         inline int getOracleCalls() { return sieve_ptr_->getOracleCalls(); }
 
-        inline void feed(const Action &a, const ISet& is) {
+        inline void feed(const InputData &a, const ISet& is) {
             sieve_ptr_->update(a, is);
             val_ = sieve_ptr_->getResult();
         }
@@ -56,9 +56,9 @@ public:
 
     void newEndIfNeed(const int l);
     int statOracleCalls();
-    void feed(const Action &a,const ISetSegments& segs);
+    void feed(const InputData &a,const ISetSegments& segs);
 
-    void feedSegment(const Action &a, const ISetSegment& seg,
+    void feedSegment(const InputData &a, const ISetSegment& seg,
                      typename std::list<Alg*>::iterator& it);
 
     double getResult() const { return algs_.front()->val_; }
@@ -68,14 +68,14 @@ public:
    * Create a new instance at the tail if need.
    * - "idx": the maximum position that an instance should exist.
  */
-template <typename Fun>
-void HistITSEG<Fun>::newEndIfNeed(const int l) {
+template <typename Fun,typename InputData>
+void HistITSEG<Fun,InputData>::newEndIfNeed(const int l) {
     if (algs_.empty() || algs_.back()->l_ < l)
         algs_.push_back(new Alg(l, num_samples_, budget_, eps_));
 }
 
-template <typename Fun>
-void HistITSEG<Fun>::feed(const Action &a, const ISetSegments& segs){
+template <typename Fun,typename InputData>
+void HistITSEG<Fun,InputData>::feed(const InputData &a, const ISetSegments& segs){
     //create a new head instance if necessary
     newEndIfNeed(segs.getMxIdx());
     auto it=algs_.begin();
@@ -103,8 +103,8 @@ void HistITSEG<Fun>::feed(const Action &a, const ISetSegments& segs){
 }
 
 // Update instances belonging to this segment.
-template <typename Fun>
-void HistITSEG<Fun>::feedSegment(const Action &a, const ISetSegment& seg,
+template <typename Fun,typename InputData>
+void HistITSEG<Fun,InputData>::feedSegment(const InputData &a, const ISetSegment& seg,
                                  typename std::list<Alg*>::iterator& it) {
     auto job = [a, &seg](Alg* alg) { alg->feed(a, seg.is_); };
     std::vector<std::future<void>> futures;
@@ -114,16 +114,16 @@ void HistITSEG<Fun>::feedSegment(const Action &a, const ISetSegment& seg,
     }
     for (auto& future : futures) future.get();
 }
-template <typename Fun>
-int HistITSEG<Fun>::statOracleCalls() {
+template <typename Fun,typename InputData>
+int HistITSEG<Fun,InputData>::statOracleCalls() {
     int oracle_calls = 0;
     for (auto it = algs_.begin(); it != algs_.end(); ++it)
         oracle_calls += (*it)->getOracleCalls();
     return oracle_calls;
 }
 
-template <typename Fun>
-void HistITSEG<Fun>::next() {
+template <typename Fun,typename InputData>
+void HistITSEG<Fun,InputData>::next() {
     // If head SievePAIT instance expires
     if (algs_.front()->l_ == 0) {
         delete algs_.front();
