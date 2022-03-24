@@ -21,7 +21,8 @@ public:
         oracle_calls_ = 0;
     }
 
-    void add(const Action& a);
+    void add(const TAction& a);
+    void addEdge(const int u,const int v);
     void clear(const bool deep = false) {
         affected_.clear();
         oracle_calls_ = 0;
@@ -34,9 +35,15 @@ public:
 
 }; /* GraphObjFun */
 
-void GraphObjFun::add(const Action& a) {
-    int u = a.u, v = a.v;
+void GraphObjFun::add(const TAction& a) {
+    int u=a.u;
+    int v1=a.v1;
+    int v2=a.v2;
+    addEdge(u,v1);
+    addEdge(v1,v2);
+}
 
+void GraphObjFun::addEdge(const int u, const int v) {
     // omit self-loop and edge already in the graph
     if (u == v || graph_.isEdge(u, v)) return;
 
@@ -68,6 +75,7 @@ void GraphObjFun::add(const Action& a) {
 }
 
 double GraphObjFun::getVal(const int u) const {
+    if(!graph_.isNode(u))return 0;
     graph::DirBFS<graph::dir::DGraph> bfs(graph_);
     bfs.doBFS(u, bfs_depth_);
     return bfs.getBFSTreeSize();
@@ -81,6 +89,7 @@ double GraphObjFun::getVal(const std::vector<int>& S) const {
 }
 
 double GraphObjFun::getGain(const int v, const std::vector<int>& S) const {
+    if(!graph_.isNode(v))return 0;
     ++oracle_calls_;
     if (S.size() == 0) return getVal(v);
 
