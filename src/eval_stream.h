@@ -9,17 +9,17 @@
 #include "iset_segment.h"
 #include "obj/obj_mgr.h"
 
-template <typename Fun>
+template <typename Fun,typename InputData>
 class EvalStream {
 private:
     int L_, cur_ = 0;
     std::vector<std::vector<std::pair<int, ISet>>> buf_;  // action_index->iset
-    std::map<int, Action> this_action_;                   // index->action
+    std::map<int, InputData> this_action_;                   // index->action
 
 public:
     EvalStream(const int L) : L_(L) { buf_.resize(L); }
 
-    void add(const Action& a, const ISetSegments& segs) {
+    void add(const InputData& a, const ISetSegments& segs) {
         for (auto& seg : segs.segments_)
             for (int i = seg.start_; i < seg.end_; ++i) {
                 buf_[(cur_ + i) % L_].emplace_back(a.t, seg.is_);
@@ -35,8 +35,8 @@ public:
     /**
      * Use current actions update ObjMgr
      */
-    const ObjMgr<Fun> getObjMgr(int n) {
-        ObjMgr<Fun> obj_mgr_(n);
+    const ObjMgr<Fun,InputData> getObjMgr(int n) {
+        ObjMgr<Fun,InputData> obj_mgr_(n);
         for (auto& pr : buf_[cur_])
             obj_mgr_.update(this_action_[pr.first], pr.second);
         return obj_mgr_;
@@ -50,7 +50,8 @@ public:
         for (auto& pr : buf_[cur_]) {
             auto a = this_action_[pr.first];
             users.insert(a.u);
-            users.insert(a.v);
+            users.insert(a.v1);
+            users.insert(a.v2);
         }
         return users;
     }
