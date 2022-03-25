@@ -7,7 +7,7 @@
 
 #include "obj/obj_mgr.h"
 
-template<typename Fun,typename InputData>
+template<typename Fun>
 class SimpleGreedy {
 private:
     class Elem {
@@ -22,13 +22,13 @@ private:
     };
 
 private:
-    const ObjMgr<Fun,InputData>* obj_ptr_;
+    const ObjMgr<Fun>* obj_ptr_;
     int budget_;
 
     std::vector<int> chosen_;
 
 public:
-    SimpleGreedy(const ObjMgr<Fun,InputData>* input, const int budget)
+    SimpleGreedy(const ObjMgr<Fun>* input, const int budget)
             : obj_ptr_(input), budget_(budget) {
         chosen_.reserve(budget_);
     }

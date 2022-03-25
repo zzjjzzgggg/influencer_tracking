@@ -13,7 +13,7 @@
  * objective function built on a data stream sample. These ObjFun objects
  * together define the surrogate objective function Ft in the paper.
  */
-template <typename Fun,typename InputData>
+template <typename Fun>
 class ObjMgr {
 private:
     std::vector<Fun> fun_vec_;
@@ -24,10 +24,8 @@ public:
     ObjMgr(const ObjMgr& o) : fun_vec_(o.fun_vec_) {}
 
     // add a social action and its I-set to the objective function
-    void update(const InputData& a, const ISet& iset) {
-        for(int i:iset){
-            fun_vec_[i].add(a);
-        }
+    void update(const Action& a, const ISet& iset) {
+        for(int i : iset) fun_vec_[i].add(a);
     }
 
     // Ft(u)

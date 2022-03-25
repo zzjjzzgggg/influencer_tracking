@@ -11,12 +11,12 @@
 /**
  * SievePAIT
  */
-template <typename Fun,typename InputData>
+template <typename Fun>
 class SievePAIT {
 public:
     int num_samples_, budget_;  // n and k
     double eps_, mx_gain_;      // epsilon and max gain
-    ObjMgr<Fun,InputData> obj_mgr_;       // maintains n objective functions
+    ObjMgr<Fun> obj_mgr_;       // maintains n objective functions
 
 private:
     std::vector<Candidate> candidate_buf_;  // store the candidates
@@ -71,7 +71,7 @@ public:
         return *this;
     }
     // Process social action e and its I set
-    void update(const InputData &a, const ISet &iset);
+    void update(const Action &a, const ISet &iset);
 
     double getResult() const;
     void updateThresholds();
@@ -89,8 +89,8 @@ public:
     int getOracleCalls() const { return obj_mgr_.getOracleCalls(); }
 };
 
-template <typename Fun,typename InputData>
-void SievePAIT<Fun,InputData>::addTheta(const int i) {
+template <typename Fun>
+void SievePAIT<Fun>::addTheta(const int i) {
     int pos;
     if (!recycle_bin_.empty()) {   // if recycle_bin has an unoccupied room
         pos = recycle_bin_.top();  // the last
@@ -103,8 +103,8 @@ void SievePAIT<Fun,InputData>::addTheta(const int i) {
     thi_pos_[i] = pos;
 }
 
-template <typename Fun,typename InputData>
-void SievePAIT<Fun,InputData>::delTheta(const int i) {
+template <typename Fun>
+void SievePAIT<Fun>::delTheta(const int i) {
     // get pos
     int pos = thi_pos_[i];
     candidate_buf_[pos].clear();
@@ -112,8 +112,8 @@ void SievePAIT<Fun,InputData>::delTheta(const int i) {
     thi_pos_.erase(i);
 }
 
-template <typename Fun,typename InputData>
-void SievePAIT<Fun,InputData>::updateThresholds() {
+template <typename Fun>
+void SievePAIT<Fun>::updateThresholds() {
     // the new_li may be the log( (1-eps)*mx_gain_) /log(1 + eps_)
     int new_li = (int)std::floor(std::log(mx_gain_) / std::log(1 + eps_)),
         new_ui =
@@ -131,8 +131,8 @@ void SievePAIT<Fun,InputData>::updateThresholds() {
     for (int i = li; i <= new_ui; i++) addTheta(i);
 }
 
-template <typename Fun,typename InputData>
-void SievePAIT<Fun,InputData>::update(const InputData &a, const ISet &iset) {
+template <typename Fun>
+void SievePAIT<Fun>::update(const Action &a, const ISet &iset) {
     obj_mgr_.update(a, iset);
     std::vector<int> nodes = obj_mgr_.getVa();
 
@@ -156,8 +156,8 @@ void SievePAIT<Fun,InputData>::update(const InputData &a, const ISet &iset) {
     }
 };
 
-template <typename Fun,typename InputData>
-double SievePAIT<Fun,InputData>::getResult() const {
+template <typename Fun>
+double SievePAIT<Fun>::getResult() const {
     int i_mx = -100;  // theta-index
     double rwd_mx = 0;
     for (auto &pr : thi_pos_) {

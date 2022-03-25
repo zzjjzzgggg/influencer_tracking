@@ -11,12 +11,12 @@
 /**
  * HistITRED
  */
-template <typename Fun,typename InputData>
+template <typename Fun>
 class HistITRED {
 private:
     class Alg {
     private:
-        SievePAIT<Fun,InputData>* sieve_ptr_;
+        SievePAIT<Fun>* sieve_ptr_;
 
     public:
         int l_;                   // instance index
@@ -28,17 +28,17 @@ private:
         Alg(const int l, const int num_samples, const int budget,
             const double eps)
             : l_(l) {
-            sieve_ptr_ = new SievePAIT<Fun,InputData>(num_samples, budget, eps);
+            sieve_ptr_ = new SievePAIT<Fun>(num_samples, budget, eps);
         }
         Alg(const Alg& o) : l_(o.l_), val_(o.val_) {
-            sieve_ptr_ = new SievePAIT<Fun,InputData>(*o.sieve_ptr_);
+            sieve_ptr_ = new SievePAIT<Fun>(*o.sieve_ptr_);
         }
         virtual ~Alg() { delete sieve_ptr_; }
         inline int getOracleCalls() {
             return sieve_ptr_->getOracleCalls();
         }
 
-        inline void feed(const InputData& a, const ISet& is) {
+        inline void feed(const Action& a, const ISet& is) {
             sieve_ptr_->update(a, is);
             val_ = sieve_ptr_->getResult();
         }
@@ -67,9 +67,9 @@ public:
 
     void newEndIfNeed(const int l);
     int statOracleCalls();
-    void feed(const InputData& a, const ISetSegments& segs);
+    void feed(const Action& a, const ISetSegments& segs);
 
-    void feedSegment(const InputData& a, const ISetSegment& seg,
+    void feedSegment(const Action& a, const ISetSegment& seg,
                      typename std::list<Alg*>::iterator& it);
 
     double getResult() const { return algs_.front()->val_; }
@@ -78,14 +78,14 @@ public:
     int size()const {return algs_.size();}
 };
 
-template <typename Fun,typename InputData>
-void HistITRED<Fun,InputData>::newEndIfNeed(const int l) {
+template <typename Fun>
+void HistITRED<Fun>::newEndIfNeed(const int l) {
     if (algs_.empty() || algs_.back()->l_ < l)
         algs_.push_back(new Alg(l, num_samples_, budget_, sieve_eps_));
 }
 
-template <typename Fun,typename InputData>
-void HistITRED<Fun,InputData>::feed(const InputData& a, const ISetSegments& segs) {
+template <typename Fun>
+void HistITRED<Fun>::feed(const Action& a, const ISetSegments& segs) {
     // create a new head instance if necessary
     newEndIfNeed(segs.getMxIdx());
     auto it = algs_.begin();
@@ -114,8 +114,8 @@ void HistITRED<Fun,InputData>::feed(const InputData& a, const ISetSegments& segs
 }
 
 // Update instances belonging to this segment.
-template <typename Fun,typename InputData>
-void HistITRED<Fun,InputData>::feedSegment(const InputData& a, const ISetSegment& seg,
+template <typename Fun>
+void HistITRED<Fun>::feedSegment(const Action& a, const ISetSegment& seg,
                                  typename std::list<Alg*>::iterator& it) {
     auto job = [a, &seg](Alg* alg) { alg->feed(a, seg.is_); };
     std::vector<std::future<void>> futures;
@@ -125,15 +125,15 @@ void HistITRED<Fun,InputData>::feedSegment(const InputData& a, const ISetSegment
     }
     for (auto& future : futures) future.get();
 }
-template <typename Fun,typename InputData>
-int HistITRED<Fun,InputData>::statOracleCalls() {
+template <typename Fun>
+int HistITRED<Fun>::statOracleCalls() {
     int oracle_calls = 0;
     for (auto it = algs_.begin(); it != algs_.end(); ++it)
         oracle_calls += (*it)->getOracleCalls();
     return oracle_calls;
 }
-template <typename Fun,typename InputData>
-void HistITRED<Fun,InputData>::next() {
+template <typename Fun>
+void HistITRED<Fun>::next() {
     // If head SievePAIT instance expires
     if (algs_.front()->l_ == 0) {
         delete algs_.front();
@@ -146,8 +146,8 @@ void HistITRED<Fun,InputData>::next() {
     }
 }
 
-template <typename Fun,typename InputData>
-void HistITRED<Fun,InputData>::reduce() {
+template <typename Fun>
+void HistITRED<Fun>::reduce() {
     auto i = algs_.begin();
     // for each i,find the largest j such that A(j) >= (1-eps)(A(i)+beta(j)).
     while (i != algs_.end()) {

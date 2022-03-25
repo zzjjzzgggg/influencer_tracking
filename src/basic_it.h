@@ -12,11 +12,11 @@
 /**
  * BasicIT
  */
-template <typename Fun,typename InputData>
+template <typename Fun>
 class BasicIT {
 private:
     int L_, cur_ = 0;
-    std::vector<SievePAIT<Fun,InputData>*> sieve_ptrs_;
+    std::vector<SievePAIT<Fun>*> sieve_ptrs_;
 
 public:
     BasicIT(const int L, const int budget, const double eps,
@@ -24,7 +24,7 @@ public:
         : L_(L) {
         sieve_ptrs_.resize(L);
         for (int l = 0; l < L_; l++) {
-            sieve_ptrs_[l] = new SievePAIT<Fun,InputData>(num_samples, budget, eps);
+            sieve_ptrs_[l] = new SievePAIT<Fun>(num_samples, budget, eps);
         }
     }
 
@@ -34,7 +34,7 @@ public:
         }
     }
 
-    void update(const InputData &a, const ISetSegments& segs) {
+    void update(const Action &a, const ISetSegments& segs) {
         for (auto& seg : segs.segments_)
             for (int i = seg.start_; i < seg.end_; ++i)
                 sieve_ptrs_[(i + cur_) % L_]->update(a, seg.is_);
