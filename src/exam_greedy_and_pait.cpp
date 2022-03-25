@@ -10,7 +10,7 @@
 #include "obj/obj_mgr.h"
 
 DEFINE_string(dir, "../../result/greedy_and_pait", "working directory");
-DEFINE_string(stream, "test_reddit_comment_tree.txt", "input streaming data file name");
+DEFINE_string(stream, "reddit.txt", "input streaming data file name");
 DEFINE_int32(n, 50, "number of samples");
 DEFINE_int32(B, 20, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
@@ -22,9 +22,9 @@ int main(int argc, char* argv[]){
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     osutils::Timer tm;
 
-    SievePAIT<GraphObjFun,TAction> pait(FLAGS_n,FLAGS_B,FLAGS_eps);
-    ObjMgr<GraphObjFun,TAction> obj(FLAGS_n);
-    SimpleGreedy<GraphObjFun,TAction> greedy(&obj, FLAGS_B);
+    SievePAIT<GraphObjFun> pait(FLAGS_n,FLAGS_B,FLAGS_eps);
+    ObjMgr<GraphObjFun> obj(FLAGS_n);
+    SimpleGreedy<GraphObjFun> greedy(&obj, FLAGS_B);
     ISetGenerator isgen(FLAGS_n,FLAGS_p);
 
     ioutils::TSVParser ss(FLAGS_stream);
@@ -33,8 +33,8 @@ int main(int argc, char* argv[]){
     std::unordered_set<int> users;
     while(ss.next()){
         ++t;
-        int c = ss.get<int>(0), u = ss.get<int>(1), v1=ss.get<int>(2),v2=ss.get<int>(3);
-        TAction a{u,v1,v2,c,t};
+        int c = ss.get<int>(0), u = ss.get<int>(1), v=ss.get<int>(2);
+        Action a{u,v,c,t};
 
         ISet iset=isgen.getISet();
         pait.update(a,iset);
@@ -47,10 +47,8 @@ int main(int argc, char* argv[]){
         obj.update(a,iset);
         if(users.find(u)==users.end())
             users.insert(u);
-        if(users.find(v1)==users.end())
-            users.insert(v1);
-        if(users.find(v2)==users.end())
-            users.insert(v2);
+        if(users.find(v)==users.end())
+            users.insert(v);
 
         double greedy_val=greedy.run(users);
         greedy_ora+=greedy.getOracleCalls();

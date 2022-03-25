@@ -9,7 +9,7 @@
 #include "eval_stream.h"
 
 DEFINE_string(dir, "../../result/greedy", "working directory");
-DEFINE_string(stream, "test_reddit_comment_tree.txt", "input streaming data file name");
+DEFINE_string(stream, "reddit.txt", "input streaming data file name");
 DEFINE_string(lifespans, "../../lifespans/lmd{:g}n{}L{}.gz",
               "lifespans template");
 DEFINE_int32(n, 50, "number of samples");
@@ -24,11 +24,11 @@ int main(int argc, char* argv[]) {
     osutils::Timer tm;
 
     /*** next line code is used for stackoverflow data ***/
-//    EvalStream<StackExObjFun,Action> eval(FLAGS_L);
+//    EvalStream<StackExObjFun> eval(FLAGS_L);
     /*** next line code is used for check in data ***/
-//    EvalStream<CheckinObjFun,Action> eval(FLAGS_L);
+//    EvalStream<CheckinObjFun> eval(FLAGS_L);
 
-    EvalStream<GraphObjFun,TAction> eval(FLAGS_L);
+    EvalStream<GraphObjFun> eval(FLAGS_L);
 
     std::string lifespan_fnm =
         osutils::join(FLAGS_dir, fmt::format(FLAGS_lifespans, FLAGS_lmd, FLAGS_n,
@@ -43,8 +43,8 @@ int main(int argc, char* argv[]) {
     /*** notes: we need change some code for different data ***/
     while (ss.next()) {
         ++t;
-        int c = ss.get<int>(0), u = ss.get<int>(1), v1=ss.get<int>(2),v2=ss.get<int>(3);
-        TAction a{u,v1,v2,c,t};
+        int c = ss.get<int>(0), u = ss.get<int>(1), v = ss.get<int>(2);
+        Action a{u, v, c, t};
 
         lifespans.clear();
         pin->load(lifespans);
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
 
         eval.add(a, segs);
         auto obj = eval.getObjMgr(FLAGS_n);
-        GreedyAlg<GraphObjFun,TAction> greedy(&obj, FLAGS_B);
+        GreedyAlg<GraphObjFun> greedy(&obj, FLAGS_B);
 
         auto users=eval.get_users();
 

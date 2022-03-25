@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 
     rngutils::default_rng rng;
 
-    ObjMgr<CheckinObjFun,Action> obj(FLAGS_n);
+    ObjMgr<CheckinObjFun> obj(FLAGS_n);
 //    ObjMgr<StackExObjFun> obj(FLAGS_n);
     ISetGenerator gen;
 
@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
         std::vector<double> fts_est_vec;
         for (int j = 1; j <= r; j++) {
 //            ObjMgr<StackExObjFun,Action> objmgr(n);
-            ObjMgr<CheckinObjFun,Action> objmgr(n);
+            ObjMgr<CheckinObjFun> objmgr(n);
 
             for (auto& a : social_actions) {
                 ISet iset = gen.getISet(n, getP(FLAGS_lmd, FLAGS_T, a.t));
