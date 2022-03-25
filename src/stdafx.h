@@ -45,13 +45,4 @@ struct Action {
     int t;
 };
 
-//represents a social action,data for comment tree
-struct TAction{
-    int u;
-    int v1;
-    int v2;
-    int c;
-    int t;
-};
-
 #endif  // INFLUENCERS_TRACKING_STDAFX_H
