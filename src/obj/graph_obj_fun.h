@@ -21,8 +21,7 @@ public:
         oracle_calls_ = 0;
     }
 
-    void add(const TAction& a);
-    void addEdge(const int u, const int v);
+    void add(const Action& a);
     void clear(const bool deep = false) {
         affected_.clear();
         oracle_calls_ = 0;
@@ -35,15 +34,9 @@ public:
 
 }; /* GraphObjFun */
 
-void GraphObjFun::add(const TAction& a) {
-    int u = a.u;
-    int v1 = a.v1;
-    int v2 = a.v2;
-    addEdge(u, v1);
-    addEdge(v1, v2);
-}
+void GraphObjFun::add(const Action& a) {
+    int u=a.u,v=a.v;
 
-void GraphObjFun::addEdge(const int u, const int v) {
     // omit self-loop and edge already in the graph
     if (u == v || graph_.isEdge(u, v)) return;
 
@@ -70,8 +63,14 @@ void GraphObjFun::addEdge(const int u, const int v) {
 
     // perform a reverse BFS from node u for (bfs_depth_ - 1) hops.
     graph::DirBFS<graph::dir::DGraph> bfs(graph_);
+
+    bool exist_vu=graph_.isEdge(v,u);
+    if(exist_vu)
+        bfs.nd_to_hop_[v]=-1;
     bfs.doRevBFS(u, bfs_depth_ - 1);
     for (auto it : bfs.nd_to_hop_) affected_.insert(it.first);
+    if(exist_vu)
+        affected_.erase(v);
 }
 
 double GraphObjFun::getVal(const int u) const {
