@@ -74,6 +74,9 @@ public:
     void update(const Action &a, const ISet &iset);
 
     double getResult() const;
+
+    bool updateMaxGain(const std::vector<int>& nodes);
+
     void updateThresholds();
 
     void clear(const bool deep = false) {
@@ -132,18 +135,28 @@ void SievePAIT<Fun>::updateThresholds() {
 }
 
 template <typename Fun>
-void SievePAIT<Fun>::update(const Action &a, const ISet &iset) {
-    obj_mgr_.update(a, iset);
-    std::vector<int> nodes = obj_mgr_.getVa();
-
-    // filter nodes by thresholds
+bool SievePAIT<Fun>::updateMaxGain(const std::vector<int> &nodes) {
+    bool is_changed=false;
     for (auto u : nodes) {
         double val = obj_mgr_.getVal(u);
         if (val > mx_gain_) {
             mx_gain_ = val;
-            updateThresholds();
+            is_changed = true;
         }
+    }
+    return is_changed;
+}
 
+template <typename Fun>
+void SievePAIT<Fun>::update(const Action &a, const ISet &iset) {
+    obj_mgr_.update(a, iset);
+    std::vector<int> nodes = obj_mgr_.getVa();
+
+    if(nodes.empty()) return;
+    if(updateMaxGain(nodes)) updateThresholds();
+
+    // filter nodes by thresholds
+    for (auto u : nodes) {
         for (auto &pr : thi_pos_) {
             int i = pr.first;            // theta-index
             auto &ca = getCandidate(i);  // definite cite may need to insert item
