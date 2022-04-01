@@ -66,8 +66,9 @@ void GraphObjFun::add(const Action& a) {
 
     bool exist_vu=graph_.isEdge(v,u);
     if(exist_vu)
-        bfs.nd_to_hop_[v]=-1;
-    bfs.doRevBFS(u, bfs_depth_ - 1);
+        bfs.doRevBFS(u,v,bfs_depth_-1);
+    else
+        bfs.doRevBFS(u,-1,bfs_depth_-1);
     for (auto it : bfs.nd_to_hop_) affected_.insert(it.first);
     if(exist_vu)
         affected_.erase(v);
