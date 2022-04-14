@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
 
         eval.add(a, segs);
         auto obj_mgr = eval.getObjMgr(FLAGS_n);
-        auto users_set = eval.get_users();
+        auto users_set = eval.getNodes();
 
         eval.next();
 

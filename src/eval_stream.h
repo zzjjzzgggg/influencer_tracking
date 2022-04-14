@@ -40,25 +40,17 @@ public:
     }
 
     /**
-     * Get current users
+     * Get current active nodes. If both=false, only return the nodes from this
+     * first field of Action, which is usefull to hanle check-in data.
      */
-    std::unordered_set<int> get_users() {
+    std::unordered_set<int> getNodes(const bool both = true) {
         std::unordered_set<int> users;
         for (auto& pr : buf_[cur_]) {
             auto a = pr.first;
             users.insert(a.u);
-            users.insert(a.v);
+            if (both) users.insert(a.v);
         }
         return users;
-    }
-
-    /**
-     * Get current locations
-     */
-    std::unordered_set<int> get_locs() {
-        std::unordered_set<int> locations;
-        for (auto& pr : buf_[cur_]) locations.insert(pr.first.u);
-        return locations;
     }
 
 }; /* EvalStream */
