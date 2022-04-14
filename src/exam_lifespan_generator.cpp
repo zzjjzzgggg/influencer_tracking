@@ -2,7 +2,6 @@
 // Created by zhangwei on 2021/5/5.
 //
 
-#include "io/ioutils.h"
 #include "iset_segment.h"
 #include "lifespan_generator.h"
 #include <gflags/gflags.h>
@@ -14,16 +13,16 @@ DEFINE_int32(T, 50000, "stream end time");
 DEFINE_double(lmd, 0.005, "decaying rate");
 DEFINE_bool(echo, false, "echo");
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
     gflags::SetUsageMessage("usage:");
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     osutils::Timer tm;
 
-    LifespanGenerator lifegen(FLAGS_L,1-exp(-FLAGS_lmd));
+    LifespanGenerator lifegen(FLAGS_L, 1 - exp(-FLAGS_lmd));
 
     auto filename = osutils::join(
-            FLAGS_dir, "lmd{:g}n{}L{}.gz"_format(FLAGS_lmd, FLAGS_n,
-                                                 strutils::prettyNumber(FLAGS_L)));
+        FLAGS_dir, "lmd{:g}n{}L{}.gz"_format(FLAGS_lmd, FLAGS_n,
+                                             strutils::prettyNumber(FLAGS_L)));
     auto pout = ioutils::getIOOut(filename);
     int t = 0;
     while (t++ < FLAGS_T) {
