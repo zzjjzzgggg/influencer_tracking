@@ -36,13 +36,12 @@ int main(int argc, char* argv[]) {
     ioutils::TSVParser ss(FLAGS_stream);
 
     std::vector<std::tuple<int, double, int>> rst;
-    std::vector<std::tuple<int, int>> user_num;
+    // std::vector<std::tuple<int, int>> user_num;
     int t = 0, ocalls = 0;
     /*** notes: we need change some code for different data ***/
-    while (ss.next()) {
-        ++t;
+    while (ss.next() && (t++ < FLAGS_T)) {
         int u = ss.get<int>(1), v = ss.get<int>(2);
-        Action a{u, v, t};
+        Action a{u, v};
 
         lifespans.clear();
         pin->load(lifespans);
@@ -55,14 +54,13 @@ int main(int argc, char* argv[]) {
         auto users = eval.getNodes();
         //        auto users=eval.getNodes(false);
         /*** next line code is used for getting user num ***/
-        user_num.emplace_back(t, users.size());
+        // user_num.emplace_back(t, users.size());
 
         double val = greedy.run(users);
         ocalls += greedy.getOracleCalls();
         eval.next();
 
         rst.emplace_back(t, val, ocalls);
-        if (t == FLAGS_T) break;
     }
     std::string ofnm = osutils::join(
         FLAGS_dir,
@@ -70,12 +68,6 @@ int main(int argc, char* argv[]) {
                                                 strutils::prettyNumber(FLAGS_L),
                                                 strutils::prettyNumber(FLAGS_T)));
     ioutils::saveTripletVec(rst, ofnm, "{}\t{}\t{}\n");
-
-    /*    std::string ofnm1=osutils::join(FLAGS_dir,
-                                          "greedy_usernum1_lmd{:g}n{}k{}L{}T{}.dat"_format(FLAGS_lmd,
-       FLAGS_n, FLAGS_B, strutils::prettyNumber(FLAGS_L),
-                                                                                  strutils::prettyNumber(FLAGS_T)));
-        ioutils::saveTupleVec(user_num, ofnm1, "{}\t{}\n");*/
 
     printf("cost time %s\n", tm.getStr().c_str());
     gflags::ShutDownCommandLineFlags();

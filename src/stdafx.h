@@ -41,7 +41,6 @@ using ISet = std::vector<int>;
 struct Action {
     int u;
     int v;
-    int t;
 };
 
 #endif  // INFLUENCERS_TRACKING_STDAFX_H
