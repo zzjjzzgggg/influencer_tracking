@@ -12,7 +12,7 @@
 
 DEFINE_string(graph, "", "input graph");
 DEFINE_int32(budget, 10, "budget");
-DEFINE_int32(end_tm, 10000, "end time");
+DEFINE_int32(T, 10000, "end time");
 DEFINE_int32(L, 10000, "maximum lifetime");
 DEFINE_int32(beta, 32, "beta");
 
@@ -32,17 +32,15 @@ int main(int argc, char *argv[]) {
     printf("\t%-12s\n", "time");
     int t = 0;
     ioutils::TSVParser ss(FLAGS_graph);
-    while (ss.next()) {
-        int u = ss.get<int>(0), v = ss.get<int>(1), l = ss.get<int>(2);
-        dim.addEdge(u, v, l);
-        ++t;
+    while (ss.next() && (t++ < FLAGS_T)) {
+        int u = ss.get<int>(1), v = ss.get<int>(2);
+        dim.addEdge(u, v, t);
 
         seeds = dim.infmax(FLAGS_budget);
 
         printf("\t%-12d\r", t);
         fflush(stdout);
 
-        if (t == FLAGS_end_tm) break;
         dim.next();
     }
     printf("\n");

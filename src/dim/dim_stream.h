@@ -9,18 +9,15 @@
 #include "../stdafx.h"
 #include "dim.hpp"
 
-struct hashpr {
-    size_t operator()(const IntPr& edge) const {
-        return (std::hash<int>()(edge.first) << 32) |
-               std::hash<int>()(edge.second);
-    }
+struct Edge {
+    int u, v;
 };
 
 template <class InputMgr>
 class DIMStream {
 private:
     int L_, cur_ = 0;
-    std::vector<IntPrV> edge_buf_;
+    std::vector<Edge> edge_buf_;
 
     // edge -> number of interactions
     std::unordered_map<IntPr, int, hashpr> edge_num_;
@@ -51,7 +48,7 @@ public:
         edge_buf_.resize(L);
     }
 
-    void addEdge(const int u, const int v, const int l) {
+    void addEdge(const int u, const int v, const int t) {
         edge_buf_[(cur_ + l - 1) % L_].emplace_back(u, v);
         if (!exists(u) && !exists(v)) {  // both u and v are new
             dim_.insert(u);
