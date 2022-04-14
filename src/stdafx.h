@@ -41,7 +41,6 @@ using ISet = std::vector<int>;
 struct Action {
     int u;
     int v;
-    int c;
     int t;
 };
 
