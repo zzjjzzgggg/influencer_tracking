@@ -41,8 +41,8 @@ int main(int argc, char* argv[]) {
     /*** notes: we need change some code for different data ***/
     while (ss.next()) {
         ++t;
-        int c = ss.get<int>(0), u = ss.get<int>(1), v = ss.get<int>(2);
-        Action a{u, v, c, t};
+        int u = ss.get<int>(1), v = ss.get<int>(2);
+        Action a{u, v, t};
 
         lifespans.clear();
         pin->load(lifespans);
