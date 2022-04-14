@@ -16,7 +16,6 @@ struct hashpr {
     }
 };
 
-
 template <class InputMgr>
 class DIMStream {
 private:
