@@ -13,7 +13,7 @@ DEFINE_int32(n, 50, "number of samples");
 DEFINE_int32(B, 20, "budget");
 DEFINE_double(eps, 0.2, "epsilon");
 DEFINE_double(p, 0.6, "probability");
-DEFINE_int32(T,20,"end time");
+DEFINE_int32(T,1000,"end time");
 
 
 int main(int argc, char* argv[]) {
@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
 
     std::string ofnm = osutils::join(
         FLAGS_dir,
-        "pait_n{}b{}eps{}p{}T{}.dat"_format(FLAGS_n, FLAGS_B, FLAGS_eps, FLAGS_p,
+        "pait1_n{}b{}eps{}p{}T{}.dat"_format(FLAGS_n, FLAGS_B, FLAGS_eps, FLAGS_p,
                                             strutils::prettyNumber(FLAGS_T)));
     ioutils::saveTripletVec(rst, ofnm, "{}\t{}\t{}\n");
     printf("cost time %s\n", tm.getStr().c_str());

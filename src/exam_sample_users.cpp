@@ -4,7 +4,7 @@
 
 
 //#include "obj/stackexchange_obj_fun.h"
-#include "obj/checkin_obj_fun.h"
+#include "obj/graph_obj_fun.h"
 #include <gflags/gflags.h>
 
 DEFINE_string(dir, "", "working directory");
@@ -32,14 +32,16 @@ int main(int argc, char* argv[]) {
     }
     for(auto& a:social_actions){
         /*** for check in data,we just use the "u" for sample ***/
+
+        /*** for graph data,we use both "u" and "v" for sample ***/
         user_set.insert(a.u);
-//        user_set.insert(a.v);
+        user_set.insert(a.v);
     }
     std::vector<int> pop(user_set.begin(), user_set.end());
     std::vector<int> picked_users = rngutils::choose(pop, FLAGS_k, rng);
     std::unordered_set<int> users(picked_users.begin(),picked_users.end());
     std::string ofnm =
-            osutils::join(FLAGS_dir, "brightkite_i{}.txt"_format(
+            osutils::join(FLAGS_dir, "weibo_i{}.txt"_format(
                     FLAGS_i));
     ioutils::saveSet(users, ofnm, "{}\n");
 

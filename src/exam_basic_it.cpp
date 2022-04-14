@@ -6,6 +6,7 @@
 #include "lifespan_generator.h"
 #include <gflags/gflags.h>
 #include "obj/graph_obj_fun.h"
+//#include "obj/checkin_obj_fun.h"
 
 DEFINE_string(dir, "../../result/basic_it", "working directory");
 DEFINE_string(stream, "reddit.txt", "input streaming data file name");

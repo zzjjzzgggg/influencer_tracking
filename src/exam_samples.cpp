@@ -2,13 +2,13 @@
 // Created by zhangwei on 2021/6/7.
 //
 
-#include "obj/checkin_obj_fun.h"
-//#include "obj/stackexchange_obj_fun.h"
+//#include "obj/checkin_obj_fun.h"
+#include "obj/graph_obj_fun.h"
 #include "obj/obj_mgr.h"
 #include "iset_generator.h"
 #include <gflags/gflags.h>
 
-DEFINE_string(dir, "../../data/sample/stackoverflow", "working directory");
+DEFINE_string(dir, "../../data/0401/reddit", "working directory");
 DEFINE_string(stream, "stackoverflow.txt", "input streaming data file name");
 DEFINE_int32(n, 2000, "number of max samples");
 DEFINE_int32(i, 1, "experiment index");
@@ -34,8 +34,8 @@ int main(int argc, char* argv[]) {
 
     rngutils::default_rng rng;
 
-    ObjMgr<CheckinObjFun> obj(FLAGS_n);
-//    ObjMgr<StackExObjFun> obj(FLAGS_n);
+//    ObjMgr<CheckinObjFun> obj(FLAGS_n);
+    ObjMgr<GraphObjFun> obj(FLAGS_n);
     ISetGenerator gen;
 
     int t = 0;
@@ -55,14 +55,14 @@ int main(int argc, char* argv[]) {
         if (!iset.empty()) {
             obj.update(a, iset);
             user_set.insert(a.u);
-//            user_set.insert(a.v);
+            user_set.insert(a.v);
         }
     }
-
 
      /**
       * get the user for sample experiment
       */
+
 //    std::vector<int> pop(user_set.begin(), user_set.end());
 //    std::vector<int> picked_users = rngutils::choose(pop, FLAGS_k, rng);
 
@@ -85,8 +85,8 @@ int main(int argc, char* argv[]) {
     for (int n = 10; n <= sample_size; n += 10) {
         std::vector<double> fts_est_vec;
         for (int j = 1; j <= r; j++) {
-//            ObjMgr<StackExObjFun,Action> objmgr(n);
-            ObjMgr<CheckinObjFun> objmgr(n);
+            ObjMgr<GraphObjFun> objmgr(n);
+//            ObjMgr<CheckinObjFun> objmgr(n);
 
             for (auto& a : social_actions) {
                 ISet iset = gen.getISet(n, getP(FLAGS_lmd, FLAGS_T, a.t));

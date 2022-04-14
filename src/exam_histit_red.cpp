@@ -4,11 +4,11 @@
 
 #include "histit_red.h"
 #include <gflags/gflags.h>
-//#include "obj/stackexchange_obj_fun.h"
+//#include "obj/checkin_obj_fun.h"
 #include "obj/graph_obj_fun.h"
 
 DEFINE_string(dir, "../../result/hist_red", "working directory");
-DEFINE_string(stream, "reddit.txt", "input streaming data file name");
+DEFINE_string(stream, "weibo.txt", "input streaming data file name");
 DEFINE_string(lifespans, "../../lifespans/lmd{:g}n{}L{}.gz", "lifespans template");
 DEFINE_int32(n, 50, "number of samples");
 DEFINE_int32(B, 20, "budget");

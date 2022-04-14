@@ -3,7 +3,7 @@
 //
 
 #include "obj/graph_obj_fun.h"
-//#include "obj/stackexchange_obj_fun.h"
+//#include "obj/checkin_obj_fun.h"
 #include "greedy_alg.h"
 #include <gflags/gflags.h>
 #include "eval_stream.h"
@@ -23,8 +23,6 @@ int main(int argc, char* argv[]) {
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     osutils::Timer tm;
 
-    /*** next line code is used for stackoverflow data ***/
-//    EvalStream<StackExObjFun> eval(FLAGS_L);
     /*** next line code is used for check in data ***/
 //    EvalStream<CheckinObjFun> eval(FLAGS_L);
 
@@ -55,9 +53,9 @@ int main(int argc, char* argv[]) {
         GreedyAlg<GraphObjFun> greedy(&obj, FLAGS_B);
 
         auto users=eval.get_users();
-
+//        auto users=eval.get_locs();
         /*** next line code is used for getting user num ***/
-//        user_num.emplace_back(t,users.size());
+        user_num.emplace_back(t,users.size());
 
         double val = greedy.run(users);
         ocalls += greedy.getOracleCalls();
@@ -73,12 +71,10 @@ int main(int argc, char* argv[]) {
                                                 strutils::prettyNumber(FLAGS_T)));
     ioutils::saveTripletVec(rst, ofnm, "{}\t{}\t{}\n");
 
-    /**
-     *
-     * get user num
-     * /
+
+
 /*    std::string ofnm1=osutils::join(FLAGS_dir,
-                                      "greedy_usernum_lmd{:g}n{}k{}L{}T{}.dat"_format(FLAGS_lmd, FLAGS_n, FLAGS_B,
+                                      "greedy_usernum1_lmd{:g}n{}k{}L{}T{}.dat"_format(FLAGS_lmd, FLAGS_n, FLAGS_B,
                                                                               strutils::prettyNumber(FLAGS_L),
                                                                               strutils::prettyNumber(FLAGS_T)));
     ioutils::saveTupleVec(user_num, ofnm1, "{}\t{}\n");*/

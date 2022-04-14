@@ -10,7 +10,7 @@
 #include "obj/obj_mgr.h"
 
 DEFINE_string(dir, "../../result/greedy_and_pait", "working directory");
-DEFINE_string(stream, "reddit.txt", "input streaming data file name");
+DEFINE_string(stream, "stackoverflow_0325.txt", "input streaming data file name");
 DEFINE_int32(n, 50, "number of samples");
 DEFINE_int32(B, 20, "budget");
 DEFINE_double(eps, 0.2, "epsilon");

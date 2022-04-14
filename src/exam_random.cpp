@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
 
         auto users_set=eval.get_users();
 
-        //get locations
+//        get locations
 //        auto users_set=eval.get_locs();
 
         eval.next();
