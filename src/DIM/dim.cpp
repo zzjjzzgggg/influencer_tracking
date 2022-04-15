@@ -17,7 +17,7 @@ void DIM::set_beta(int _beta) {
 
 void DIM::insert(int v) {
     if (V.count(v)) {
-        printf(WARN "vertex %d was found." DEF, v);
+        // printf(WARN "vertex %d was found." DEF, v);
         return;
     } else {
         ideg[v] = 0;
