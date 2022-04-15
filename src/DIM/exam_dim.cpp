@@ -48,6 +48,7 @@ int main(int argc, char *argv[]) {
         double val = obj.getVal(dim.solveIM(FLAGS_B));
 
         printf("\t%-12d\t%-12.2f\r", t, val);
+        if (t % 1000 == 0) printf("\n");
         fflush(stdout);
 
         dim.next();

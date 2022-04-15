@@ -38,12 +38,15 @@ int main(int argc, char* argv[]) {
     }
 
     std::vector<int> lifespans;
-    ioutils::TSVParser ss(osutils::join(FLAGS_dir, FLAGS_stream));
 
     std::vector<std::tuple<int, double, int>> rst;
     // std::vector<std::tuple<int, int>> user_num;
     int t = 0, ocalls = 0;
     /*** notes: we need change some code for different data ***/
+
+    printf("\t%-12s%-14s%-12s%-12s\n", "step", "val", "costs", "|users|");
+
+    ioutils::TSVParser ss(osutils::join(FLAGS_dir, FLAGS_stream));
     while (ss.next() && t++ < FLAGS_T) {
         Action a{ss.get<int>(0), ss.get<int>(1)};
 
@@ -65,6 +68,7 @@ int main(int argc, char* argv[]) {
         rst.emplace_back(t, val, ocalls);
 
         printf("\t%-12d%-12.2f%-12d%-12lu\r", t, val, ocalls, users.size());
+        if (t % 1000 == 0) printf("\n");
         fflush(stdout);
 
         eval.next();

@@ -38,6 +38,8 @@ int main(int argc, char* argv[]) {
     std::vector<int> lifespans;
     std::vector<std::tuple<int, double, int, int>> rst;
 
+    printf("\t%-12s%-14s%-12s%-12s\n", "step", "val", "costs", "algs");
+
     ioutils::TSVParser ss(osutils::join(FLAGS_dir, FLAGS_stream));
     while (ss.next() && t++ < FLAGS_T) {
         Action a{ss.get<int>(0), ss.get<int>(1)};
@@ -53,6 +55,7 @@ int main(int argc, char* argv[]) {
         rst.emplace_back(t, val, ocalls, num_algs);
 
         printf("\t%-12d%-12.2f%-12d%-12d\r", t, val, ocalls, num_algs);
+        if (t % 1000 == 0) printf("\n");
         fflush(stdout);
 
         hist_red.reduce();
