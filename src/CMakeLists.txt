@@ -1,22 +1,3 @@
-cmake_minimum_required(VERSION 3.16)
-project(influencers_tracking)
-
-set(CMAKE_CXX_STANDARD 17)
-set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} $ENV{GIT_REPO}/cmake)
-
-find_package(Threads REQUIRED)
-find_package(gflags REQUIRED)
-find_package(CPPLIB REQUIRED)
-
-add_definitions(${CPPLIB_DEFINITIONS})
-include_directories(${CPPLIB_INCLUDE_DIRS})
-
-
-set(LIBRARIES ${LIBRARIES} gflags ${CPPLIB_LIBRARIES})
-
-message(STATUS "LIBRARIES " ${LIBRARIES})
-
 add_executable(simple_greedy exam_simple_greedy.cpp)
 target_link_libraries(simple_greedy ${LIBRARIES})
 
@@ -26,8 +7,18 @@ target_link_libraries(sieve_pait ${LIBRARIES})
 add_executable(greedy_and_pait exam_greedy_and_pait.cpp)
 target_link_libraries(greedy_and_pait ${LIBRARIES})
 
-add_executable(greedy_alg exam_greedy.cpp)
-target_link_libraries(greedy_alg ${LIBRARIES})
+
+
+
+set(EXE exam_greedy)
+add_executable(${EXE} ${EXE}.cpp)
+target_link_libraries(${EXE} ${LIBRARIES})
+
+set(EXE exam_hist)
+add_executable(${EXE} exam_hist.cpp)
+target_link_libraries(${EXE} ${LIBRARIES})
+
+
 
 add_executable(basic_it exam_basic_it.cpp)
 target_link_libraries(basic_it ${LIBRARIES})
@@ -37,9 +28,6 @@ target_link_libraries(greedy_and_basic ${LIBRARIES})
 
 add_executable(histit_seg exam_histit_seg.cpp)
 target_link_libraries(histit_seg ${LIBRARIES})
-
-add_executable(histit_red exam_histit_red.cpp)
-target_link_libraries(histit_red ${LIBRARIES})
 
 add_executable(hist_and_basic exam_hist_and_basic.cpp)
 target_link_libraries(hist_and_basic ${LIBRARIES})
@@ -55,5 +43,3 @@ target_link_libraries(sample_user ${LIBRARIES})
 
 add_executable(sample exam_samples.cpp)
 target_link_libraries(sample ${LIBRARIES})
-
-
