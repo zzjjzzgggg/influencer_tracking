@@ -34,9 +34,7 @@ private:
             sieve_ptr_ = new SievePAIT<Fun>(*o.sieve_ptr_);
         }
         virtual ~Alg() { delete sieve_ptr_; }
-        inline int getOracleCalls() {
-            return sieve_ptr_->getOracleCalls();
-        }
+        inline int getOracleCalls() { return sieve_ptr_->getOracleCalls(); }
 
         inline void feed(const Action& a, const ISet& is) {
             sieve_ptr_->update(a, is);
@@ -75,7 +73,7 @@ public:
     double getResult() const { return algs_.front()->val_; }
     void next();
     void reduce();
-    int size()const {return algs_.size();}
+    int size() const { return algs_.size(); }
 };
 
 template <typename Fun>
@@ -101,7 +99,8 @@ void HistITRED<Fun>::feed(const Action& a, const ISetSegments& segs) {
         }
 
         // create new alg from successor
-        if(it==algs_.begin()||(*it)->lower()<(1-red_eps_)*(*pre)->upper()){
+        if (it == algs_.begin() ||
+            (*it)->lower() < (1 - red_eps_) * (*pre)->upper()) {
             // create alg_l based on its successor
             Alg* alg = new Alg(*(*it));
             alg->l_ = seg.end_ - 1;
@@ -125,6 +124,7 @@ void HistITRED<Fun>::feedSegment(const Action& a, const ISetSegment& seg,
     }
     for (auto& future : futures) future.get();
 }
+
 template <typename Fun>
 int HistITRED<Fun>::statOracleCalls() {
     int oracle_calls = 0;
@@ -132,6 +132,7 @@ int HistITRED<Fun>::statOracleCalls() {
         oracle_calls += (*it)->getOracleCalls();
     return oracle_calls;
 }
+
 template <typename Fun>
 void HistITRED<Fun>::next() {
     // If head SievePAIT instance expires
