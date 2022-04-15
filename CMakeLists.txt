@@ -34,4 +34,4 @@ set(LIBRARIES ${LIBRARIES} gflags ${CPPLIB_LIBRARIES})
 # MESSAGE(STATUS "LIBRARIES: " ${LIBRARIES})
 
 add_subdirectory(src)
-
+add_subdirectory(src/DIM)

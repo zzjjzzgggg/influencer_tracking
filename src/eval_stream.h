@@ -11,12 +11,12 @@
 
 class EvalStream {
 protected:
-    int L_, cur_ = 0;
+    int L_, n_, cur_ = 0;
     // buf_ stores the I-sets of active social actions at each time step
     std::vector<std::vector<std::pair<Action, ISet>>> buf_;
 
 public:
-    EvalStream(const int L) : L_(L) { buf_.resize(L); }
+    EvalStream(const int L, const int n) : L_(L), n_(n) { buf_.resize(L); }
 
     void add(const Action& a, const ISetSegments& segs) {
         for (auto& seg : segs.segments_)
@@ -33,8 +33,8 @@ public:
      * Use current actions update ObjMgr
      */
     template <typename Fun>
-    const ObjMgr<Fun> getObjMgr(int n) {
-        ObjMgr<Fun> obj_mgr(n);
+    const ObjMgr<Fun> getObjMgr() {
+        ObjMgr<Fun> obj_mgr(n_);
         for (auto& pr : buf_[cur_]) obj_mgr.update(pr.first, pr.second);
         return obj_mgr;
     }

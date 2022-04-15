@@ -195,8 +195,7 @@ void DIM::_change(int u, int v, double p) {
 
     vector<ULL> ats(index[v].begin(), index[v].end());
     for (ULL at : ats) {
-        auto jt =
-            lower_bound(hs[at].x.begin(), hs[at].x.end(), make_pair(v, u));
+        auto jt = lower_bound(hs[at].x.begin(), hs[at].x.end(), make_pair(v, u));
         bool uv1 = jt != hs[at].x.end() && jt->first == v && jt->second == u;
         bool uv2 = rng.gen_double() < p;
         // Case 1: dead -> live
@@ -360,8 +359,7 @@ bool DIM::_erase_node(ULL at, int vv) {
 }
 
 bool DIM::_erase_edge(ULL at, int uu, int vv) {
-    if (binary_search(hs[at].par.begin(), hs[at].par.end(),
-                      make_pair(vv, uu))) {
+    if (binary_search(hs[at].par.begin(), hs[at].par.end(), make_pair(vv, uu))) {
     } else {
         // (uu, vv) is not in T
         // Removal of (uu, vv) does not affect T
@@ -567,8 +565,10 @@ vector<int> DIM::infmax(int k) {
         Q.push(make_tuple(degs[v], v, 0));
     }
 
+    int budget = std::min(k, (int)V.size());
+
     vector<int> S;
-    for (int iter = 0; iter < k;) {
+    for (int iter = 0; iter < budget;) {
         auto e = Q.top();
         Q.pop();
         int v = get<1>(e), tick = get<2>(e);
@@ -654,4 +654,19 @@ inline double DIM::Xorshift::gen_double() {
     unsigned int a = ((unsigned int)gen_int()) >> 5,
                  b = ((unsigned int)gen_int()) >> 6;
     return (a * 67108864.0 + b) * (1.0 / (1LL << 53));
+}
+std::tuple<std::vector<Edge>, std::vector<Edge>, std::vector<Edge>>
+DIM::cmp_edges(const std::map<Edge, double> &new_edges) {
+    std::vector<Edge> edges_del, edges_new, edges_update;
+    for (auto pr : ps) {
+        if (!new_edges.count(pr.first))
+            edges_del.push_back(pr.first);
+        else if (pr.second != new_edges.at(pr.first))
+            edges_update.push_back(pr.first);
+    }
+    for (auto pr : new_edges) {
+        if (!ps.count(pr.first)) edges_new.push_back(pr.first);
+    }
+    return std::tuple<std::vector<Edge>, std::vector<Edge>, std::vector<Edge>>(
+        edges_del, edges_new, edges_update);
 }

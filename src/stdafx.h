@@ -36,6 +36,7 @@ using namespace fmt::literals;
 using namespace graph;
 
 using ISet = std::vector<int>;
+using Edge = std::pair<int, int>;
 
 // represents a social action
 struct Action {
