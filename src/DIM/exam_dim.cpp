@@ -31,10 +31,10 @@ int main(int argc, char *argv[]) {
     }
 
     std::vector<int> lifespans;
-    printf("\t%-12s\n", "time");
-    int t = 1;
+    printf("\t%-12s\t%-14s\n", "step", "val");
+    int t = 0;
     ioutils::TSVParser ss(osutils::join(FLAGS_dir, FLAGS_stream));
-    while (ss.next()) {
+    while (ss.next() && t++ < FLAGS_T) {
         Action a{ss.get<int>(0), ss.get<int>(1)};
 
         lifespans.clear();
@@ -44,19 +44,15 @@ int main(int argc, char *argv[]) {
         dim.add(a, segs);
         dim.update();
 
-        printf("\t%-12d\r", t);
+        auto obj = dim.getObjMgr<GraphObjFun>();
+        double val = obj.getVal(dim.solveIM(FLAGS_B));
+
+        printf("\t%-12d\t%-12.2f\r", t, val);
         fflush(stdout);
 
-        if (t == FLAGS_T) break;
         dim.next();
-        ++t;
     }
     printf("\n");
-
-    auto seeds = dim.solveIM(FLAGS_B);
-    auto obj = dim.getObjMgr<GraphObjFun>();
-    double inf = obj.getVal(seeds);
-    printf("inf: %.2f\n", inf);
 
     printf("cost time %s\n", tm.getStr().c_str());
     gflags::ShutDownCommandLineFlags();
