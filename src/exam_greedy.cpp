@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
     /*** next line code is used for check in data ***/
     //    EvalStream<CheckinObjFun> eval(FLAGS_L);
 
-    EvalStream<GraphObjFun> eval(FLAGS_L);
+    EvalStream eval(FLAGS_L);
 
     std::string lifespan_fnm =
         osutils::join(FLAGS_dir, fmt::format(FLAGS_lifespans, FLAGS_lmd, FLAGS_n,
@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
         ISetSegments segs(lifespans);
 
         eval.add(a, segs);
-        auto obj = eval.getObjMgr(FLAGS_n);
+        auto obj = eval.getObjMgr<GraphObjFun>(FLAGS_n);
         GreedyAlg<GraphObjFun> greedy(&obj, FLAGS_B);
 
         auto users = eval.getNodes();

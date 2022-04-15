@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
     osutils::Timer tm;
 
     rngutils::default_rng rng;
-    EvalStream<GraphObjFun> eval(FLAGS_L);
+    EvalStream eval(FLAGS_L);
 
     std::string lifespan_fnm =
         osutils::join(FLAGS_dir, fmt::format(FLAGS_lifespans, FLAGS_lmd, FLAGS_n,
@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
         ISetSegments segs(lifespans);
 
         eval.add(a, segs);
-        auto obj_mgr = eval.getObjMgr(FLAGS_n);
+        auto obj_mgr = eval.getObjMgr<GraphObjFun>(FLAGS_n);
         auto users_set = eval.getNodes();
 
         eval.next();

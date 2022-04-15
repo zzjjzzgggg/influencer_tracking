@@ -9,9 +9,8 @@
 #include "iset_segment.h"
 #include "obj/obj_mgr.h"
 
-template <typename Fun>
 class EvalStream {
-private:
+protected:
     int L_, cur_ = 0;
     // buf_ stores the I-sets of active social actions at each time step
     std::vector<std::vector<std::pair<Action, ISet>>> buf_;
@@ -33,6 +32,7 @@ public:
     /**
      * Use current actions update ObjMgr
      */
+    template <typename Fun>
     const ObjMgr<Fun> getObjMgr(int n) {
         ObjMgr<Fun> obj_mgr(n);
         for (auto& pr : buf_[cur_]) obj_mgr.update(pr.first, pr.second);
@@ -40,8 +40,8 @@ public:
     }
 
     /**
-     * Get current active nodes. If both=false, only return the nodes from this
-     * first field of Action, which is usefull to hanle check-in data.
+     * Get current active nodes. If both=false, only return the nodes formed by
+     * a.u. This is usefull to handle check-in data.
      */
     std::unordered_set<int> getNodes(const bool both = true) {
         std::unordered_set<int> users;
